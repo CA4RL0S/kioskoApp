@@ -7,29 +7,20 @@ namespace StudentApp.Views;
 public partial class LoginPage : ContentPage
 {
     private readonly IMongoDBService _mongoDBService;
-    private IPublicClientApplication _pca;
+    private readonly IMsalAuthService _authService;
 
-    // TODO: Replace with your actual Azure AD configuration
-    private const string ClientId = "5272e248-fbdb-4761-888a-77c8b1f91ae6";
-    private const string TenantId = "62099667-5562-4feb-a657-cf6bed8a4b72";
-    private const string Authority = $"https://login.microsoftonline.com/{TenantId}";
-    private readonly string[] Scopes = new string[] { "User.Read" };
-
-    public LoginPage(IMongoDBService mongoDBService)
+    public LoginPage(IMongoDBService mongoDBService, IMsalAuthService authService)
     {
         InitializeComponent();
         _mongoDBService = mongoDBService;
-        InitializeMsal();
+        _authService = authService;
     }
 
-    private void InitializeMsal()
+    // Constructor for when only MongoDBService is passed (backwards compatibility/navigation)
+    // Though ideally we should use DI for everything.
+    public LoginPage(IMongoDBService mongoDBService) : this(mongoDBService, new MsalAuthService()) 
     {
-        _pca = PublicClientApplicationBuilder
-            .Create(ClientId)
-            .WithAuthority(Authority)
-            .WithRedirectUri($"msauth.com.companyname.studentapp://auth")
-            .WithIosKeychainSecurityGroup("com.companyname.studentapp")
-            .Build();
+        // Fallback if instantiated manually without auth service
     }
 
     private async void OnMicrosoftLoginClicked(object sender, EventArgs e)
@@ -38,25 +29,7 @@ public partial class LoginPage : ContentPage
         
         try
         {
-            // Attempt silent login first
-            AuthenticationResult result;
-            var accounts = await _pca.GetAccountsAsync();
-            try
-            {
-                result = await _pca.AcquireTokenSilent(Scopes, accounts.FirstOrDefault())
-                                   .ExecuteAsync();
-            }
-            catch (MsalUiRequiredException)
-            {
-                // Interactive login required
-                var builder = _pca.AcquireTokenInteractive(Scopes);
-
-#if ANDROID
-                builder = builder.WithParentActivityOrWindow(Platform.CurrentActivity);
-#endif
-                
-                result = await builder.ExecuteAsync();
-            }
+            var result = await _authService.SignInAsync();
 
             if (result != null)
             {
@@ -69,14 +42,13 @@ public partial class LoginPage : ContentPage
 
                 await DisplayAlert("Bienvenido", $"Has iniciado sesión como: {name}\nEmail: {email}", "OK");
                 
-                // Navigate to main page
-                // Application.Current.MainPage = new AppShell();
+                // Navigate to Profile Page
+                Application.Current.MainPage = new ProfilePage(name, email);
             }
         }
         catch (Exception ex)
         {
-            // Note: If ClientId is not configured, this will likely fail
-            await DisplayAlert("Error de Autenticación", $"No se pudo iniciar sesión. Asegúrate de configurar el Client ID.\nDetalles: {ex.Message}", "OK");
+            await DisplayAlert("Error de Autenticación", $"No se pudo iniciar sesión.\nDetalles: {ex.Message}", "OK");
             Debug.WriteLine($"MSAL Error: {ex}");
         }
         finally

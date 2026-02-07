@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:StudentApp"
+             x:Class="StudentApp.Views.ProfilePage"
+             BackgroundColor="{StaticResource BackgroundLight}"
+             Title="Profile"
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid RowDefinitions="Auto, *, Auto">
+        
+        <!-- Top Navigation Bar -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto" Padding="16, 16, 16, 8" BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource BackgroundDark}}">
+            <BoxView Grid.Column="0" WidthRequest="48" HeightRequest="48" Color="Transparent" /> <!-- Placeholder -->
+            
+            <Label Grid.Column="1" 
+                   Text="Profile" 
+                   FontAttributes="Bold" 
+                   FontSize="18" 
+                   HorizontalOptions="Center" 
+                   VerticalOptions="Center" 
+                   TextColor="{AppThemeBinding Light=#111921, Dark=White}" />
+            
+            <Frame Grid.Column="2" 
+                   WidthRequest="40" 
+                   HeightRequest="40" 
+                   CornerRadius="20" 
+                   Padding="0" 
+                   HasShadow="False"
+                   BackgroundColor="Transparent"
+                   BorderColor="Transparent">
+                <ImageButton Source="settings.png" 
+                             WidthRequest="24" 
+                             HeightRequest="24" 
+                             HorizontalOptions="Center" 
+                             VerticalOptions="Center">
+                     <!-- Assuming you might have an icon or use a font icon. For now using text/placeholder if generic -->
+                </ImageButton>
+                <!-- If using font icons:
+                <Label Text="settings" FontFamily="MaterialIcons" FontSize="24" HorizontalOptions="Center" VerticalOptions="Center" TextColor="{AppThemeBinding Light=#111921, Dark=White}"/>
+                -->
+            </Frame>
+        </Grid>
+
+        <!-- Main Content Scroll Area -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="0, 0, 0, 32" Spacing="0">
+                
+                <!-- Profile Header Section -->
+                <VerticalStackLayout Padding="16, 16, 16, 24" Spacing="4" HorizontalOptions="Center">
+                    <Grid WidthRequest="128" HeightRequest="128" HorizontalOptions="Center" Margin="0,0,0,16">
+                        <Border Stroke="{AppThemeBinding Light=White, Dark=#1a2633}"
+                                StrokeThickness="4"
+                                WidthRequest="128"
+                                HeightRequest="128"
+                                StrokeShape="RoundRectangle 64"
+                                HorizontalOptions="Center">
+                            <Image Source="https://lh3.googleusercontent.com/aida-public/AB6AXuBXAXqV_lTCYDIalrR3VAqqvMrkvn9l1xP3IZxZurFmvdSS6qNv3YZrqRTEIxiEXYygTmGaBwSIMBNMXUhmTYzN_QdosJBPdSI71CKqzmmT14atyexwdOEHvV28UfwdBOG8mNnae1lex_X_p5wN6h4Kr7FEzUXCXoCRlZwMa6PavAigZEjQa0o2Td9Em1fpWGz1mo_dqCNNwyuav0ECOqePDMl7f8TZqe6zMHqjZSEJDq8y6XSLpEn6pkdFEEL90eDM3o2NFmjAD68"
+                                   Aspect="AspectFill"
+                                   WidthRequest="128"
+                                   HeightRequest="128"/>
+                        </Border>
+                        
+                        <!-- Edit Icon Badge -->
+                        <Border BackgroundColor="{StaticResource Primary}"
+                                Stroke="{AppThemeBinding Light=White, Dark=#1a2633}"
+                                StrokeThickness="2"
+                                WidthRequest="32"
+                                HeightRequest="32"
+                                StrokeShape="RoundRectangle 16"
+                                HorizontalOptions="End"
+                                VerticalOptions="End">
+                            <Label Text="&#xe3c9;" 
+                                   FontFamily="MaterialIcons"
+                                   TextColor="White"
+                                   FontSize="16"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"/>
+                        </Border>
+                    </Grid>
+
+                    <Label x:Name="NameLabel"
+                           Text="Alex Rivera"
+                           FontSize="24"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#111921, Dark=White}"
+                           HorizontalOptions="Center"/>
+                    
+                    <Label Text="ID: 2024-8842"
+                           FontSize="14"
+                           TextColor="{AppThemeBinding Light=#4e7397, Dark=#94a3b8}"
+                           FontAttributes="None"
+                           HorizontalOptions="Center"/>
+
+                    <Button Text="Edit Profile"
+                            Margin="0, 24, 0, 0"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="White"
+                            FontAttributes="Bold"
+                            HeightRequest="44"
+                            CornerRadius="8"
+                            WidthRequest="200"
+                            HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+
+                <!-- Current Status Widget -->
+                <VerticalStackLayout Padding="16, 0, 16, 24">
+                   <Border BackgroundColor="{AppThemeBinding Light=#0D197fe6, Dark=#801e293b}"
+                           Stroke="{AppThemeBinding Light=#1A197fe6, Dark=#33475569}"
+                           StrokeThickness="1"
+                           StrokeShape="RoundRectangle 12"
+                           Padding="20">
+                       <VerticalStackLayout Spacing="8">
+                           <Grid ColumnDefinitions="*, Auto">
+                               <Label Text="CURRENT STATUS" 
+                                      FontSize="14" 
+                                      FontAttributes="Bold" 
+                                      TextColor="{AppThemeBinding Light=#111921, Dark=White}"
+                                      Grid.Column="0"/>
+                               <Border Grid.Column="1" 
+                                       BackgroundColor="{AppThemeBinding Light=#dcfce7, Dark=#4d14532d}"
+                                       StrokeThickness="0"
+                                       StrokeShape="RoundRectangle 4"
+                                       Padding="8, 4">
+                                   <Label Text="Active" 
+                                          TextColor="{AppThemeBinding Light=#15803d, Dark=#4ade80}"
+                                          FontSize="12"
+                                          FontAttributes="Bold"/>
+                               </Border>
+                           </Grid>
+
+                           <Grid ColumnDefinitions="Auto, *">
+                               <Frame Grid.Column="0"
+                                      HasShadow="True"
+                                      Padding="8"
+                                      CornerRadius="8"
+                                      BackgroundColor="{AppThemeBinding Light=White, Dark=#334155}"
+                                      BorderColor="Transparent"
+                                      Margin="0, 0, 12, 0">
+                                   <Label Text="&#xe86c;"
+                                          FontFamily="MaterialIcons"
+                                          FontSize="24"
+                                          TextColor="{StaticResource Primary}"/>
+                               </Frame>
+                               <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                   <Label Text="Capstone Evaluation"
+                                          TextColor="{AppThemeBinding Light=#111921, Dark=White}"
+                                          FontSize="14"
+                                          FontAttributes="Bold"/>
+                                   <Label Text="Due in 5 days"
+                                          TextColor="{AppThemeBinding Light=#4e7397, Dark=#94a3b8}"
+                                          FontSize="12"/>
+                               </VerticalStackLayout>
+                           </Grid>
+
+                           <ProgressBar Progress="0.75" 
+                                        ProgressColor="{StaticResource Primary}"
+                                        BackgroundColor="{AppThemeBinding Light=White, Dark=#334155}"
+                                        HeightRequest="8"/>
+                           
+                           <Grid ColumnDefinitions="*, Auto" Margin="0, 4, 0, 0">
+                               <Label Text="Progress"
+                                      FontSize="12"
+                                      TextColor="{AppThemeBinding Light=#4e7397, Dark=#94a3b8}"
+                                      Grid.Column="0"/>
+                               <Label Text="75%"
+                                      FontSize="12"
+                                      FontAttributes="Bold"
+                                      TextColor="{StaticResource Primary}"
+                                      Grid.Column="1"/>
+                           </Grid>
+                       </VerticalStackLayout>
+                   </Border>
+                </VerticalStackLayout>
+
+                <!-- Info Lists -->
+                <VerticalStackLayout Padding="16, 0">
+                    <Label Text="Academic Info"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#111921, Dark=White}"
+                           Margin="4, 0, 0, 12"/>
+                    
+                    <Border BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark=#1a2633}"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 12"
+                            Margin="0, 0, 0, 24">
+                        <VerticalStackLayout>
+                            <!-- Major Item -->
+                            <Grid ColumnDefinitions="Auto, *" Padding="16" RowDefinitions="Auto">
+                                <Frame Grid.Column="0"
+                                       WidthRequest="40"
+                                       HeightRequest="40"
+                                       CornerRadius="20"
+                                       HasShadow="False"
+                                       Padding="0"
+                                       BackgroundColor="{AppThemeBinding Light=#dbeafe, Dark=#331e3a8a}"
+                                       BorderColor="Transparent"
+                                       Margin="0, 0, 16, 0">
+                                    <Label Text="&#xe80c;"
+                                           FontFamily="MaterialIcons"
+                                           FontSize="20"
+                                           TextColor="{StaticResource Primary}"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"/>
+                                </Frame>
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="Major"
+                                           TextColor="{AppThemeBinding Light=#4e7397, Dark=#94a3b8}"
+                                           FontSize="12"
+                                           FontAttributes="Bold"/>
+                                    <Label Text="Computer Science"
+                                           TextColor="{AppThemeBinding Light=#111921, Dark=White}"
+                                           FontSize="14"
+                                           FontAttributes="Bold"
+                                           LineBreakMode="TailTruncation"/>
+                                </VerticalStackLayout>
+                            </Grid>
+                            
+                            <BoxView HeightRequest="1" Color="{AppThemeBinding Light=#e5e7eb, Dark=#80374151}" Margin="16, 0"/>
+                            
+                            <!-- Term Item -->
+                            <Grid ColumnDefinitions="Auto, *" Padding="16" RowDefinitions="Auto">
+                                <Frame Grid.Column="0"
+                                       WidthRequest="40"
+                                       HeightRequest="40"
+                                       CornerRadius="20"
+                                       HasShadow="False"
+                                       Padding="0"
+                                       BackgroundColor="{AppThemeBinding Light=#f3e8ff, Dark=#33581c87}"
+                                       BorderColor="Transparent"
+                                       Margin="0, 0, 16, 0">
+                                    <Label Text="&#xebcc;"
+                                           FontFamily="MaterialIcons"
+                                           FontSize="20"
+                                           TextColor="{AppThemeBinding Light=#9333ea, Dark=#c084fc}"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"/>
+                                </Frame>
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="Academic Term"
+                                           TextColor="{AppThemeBinding Light=#4e7397, Dark=#94a3b8}"
+                                           FontSize="12"
+                                           FontAttributes="Bold"/>
+                                    <Label Text="Fall 2024"
+                                           TextColor="{AppThemeBinding Light=#111921, Dark=White}"
+                                           FontSize="14"
+                                           FontAttributes="Bold"
+                                           LineBreakMode="TailTruncation"/>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Label Text="Contact Details"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#111921, Dark=White}"
+                           Margin="4, 0, 0, 12"/>
+
+                    <Border BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark=#1a2633}"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 12"
+                            Margin="0, 0, 0, 32">
+                        <VerticalStackLayout>
+                            <!-- Email Item -->
+                            <Grid ColumnDefinitions="Auto, *, Auto" Padding="16" RowDefinitions="Auto">
+                                <Frame Grid.Column="0"
+                                       WidthRequest="40"
+                                       HeightRequest="40"
+                                       CornerRadius="20"
+                                       HasShadow="False"
+                                       Padding="0"
+                                       BackgroundColor="{AppThemeBinding Light=#e2e8f0, Dark=#33475569}"
+                                       BorderColor="Transparent"
+                                       Margin="0, 0, 16, 0">
+                                    <Label Text="&#xe0be;"
+                                           FontFamily="MaterialIcons"
+                                           FontSize="20"
+                                           TextColor="{AppThemeBinding Light=#4e7397, Dark=#94a3b8}"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"/>
+                                </Frame>
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="Email"
+                                           TextColor="{AppThemeBinding Light=#4e7397, Dark=#94a3b8}"
+                                           FontSize="12"
+                                           FontAttributes="Bold"/>
+                                    <Label x:Name="EmailLabel"
+                                           Text="alex.rivera@university.edu"
+                                           TextColor="{AppThemeBinding Light=#111921, Dark=White}"
+                                           FontSize="14"
+                                           FontAttributes="Bold"
+                                           LineBreakMode="TailTruncation"/>
+                                </VerticalStackLayout>
+                                <ImageButton Grid.Column="2"
+                                             Source="copy_icon.png" 
+                                             WidthRequest="24"
+                                             HeightRequest="24"
+                                             BackgroundColor="Transparent">
+                                    <!-- Use FontIcon if available: content_copy -->
+                                </ImageButton>
+                            </Grid>
+
+                            <BoxView HeightRequest="1" Color="{AppThemeBinding Light=#e5e7eb, Dark=#80374151}" Margin="16, 0"/>
+
+                            <!-- Phone Item -->
+                            <Grid ColumnDefinitions="Auto, *" Padding="16" RowDefinitions="Auto">
+                                <Frame Grid.Column="0"
+                                       WidthRequest="40"
+                                       HeightRequest="40"
+                                       CornerRadius="20"
+                                       HasShadow="False"
+                                       Padding="0"
+                                       BackgroundColor="{AppThemeBinding Light=#e2e8f0, Dark=#33475569}"
+                                       BorderColor="Transparent"
+                                       Margin="0, 0, 16, 0">
+                                    <Label Text="&#xe0b0;"
+                                           FontFamily="MaterialIcons"
+                                           FontSize="20"
+                                           TextColor="{AppThemeBinding Light=#4e7397, Dark=#94a3b8}"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"/>
+                                </Frame>
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="Phone"
+                                           TextColor="{AppThemeBinding Light=#4e7397, Dark=#94a3b8}"
+                                           FontSize="12"
+                                           FontAttributes="Bold"/>
+                                    <Label Text="+1 (555) 012-3456"
+                                           TextColor="{AppThemeBinding Light=#111921, Dark=White}"
+                                           FontSize="14"
+                                           FontAttributes="Bold"
+                                           LineBreakMode="TailTruncation"/>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+                    
+                    <!-- Secondary Actions -->
+                    <VerticalStackLayout Spacing="8">
+                        <Button Text="Privacy &amp; Security"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark=#1a2633}"
+                                TextColor="{AppThemeBinding Light=#111921, Dark=White}"
+                                HeightRequest="56"
+                                CornerRadius="12"
+                                FontAttributes="Bold"
+                                HorizontalOptions="Fill"/>
+                         <!-- Note: Standard Button has limitations on left/right content alignment compared to HTML flexbox. 
+                              For verify exact match would need ControlTemplate or Custom Control, but Button is decent start. -->
+                        
+                        <Button Text="Sign Out"
+                                Clicked="OnSignOutClicked"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark=#1a2633}"
+                                TextColor="#dc2626"
+                                HeightRequest="56"
+                                CornerRadius="12"
+                                FontAttributes="Bold"
+                                HorizontalOptions="Fill"/>
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Bottom Navigation Bar (Visual Only for now) -->
+        <Grid Grid.Row="2" ColumnDefinitions="*, *, *, *" Padding="0, 16, 0, 32" BackgroundColor="{AppThemeBinding Light=White, Dark=#111921}">
+             <!-- Home -->
+             <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center" Spacing="2">
+                 <Label Text="&#xe88a;" FontFamily="MaterialIcons" FontSize="24" TextColor="{AppThemeBinding Light=#4e7397, Dark=#94a3b8}"/>
+                 <Label Text="Home" FontSize="10" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#4e7397, Dark=#94a3b8}"/>
+             </VerticalStackLayout>
+             
+             <!-- Projects -->
+             <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="2">
+                 <Label Text="&#xe85d;" FontFamily="MaterialIcons" FontSize="24" TextColor="{AppThemeBinding Light=#4e7397, Dark=#94a3b8}"/>
+                 <Label Text="Projects" FontSize="10" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#4e7397, Dark=#94a3b8}"/>
+             </VerticalStackLayout>
+
+             <!-- Alerts -->
+             <VerticalStackLayout Grid.Column="2" HorizontalOptions="Center" Spacing="2">
+                 <Label Text="&#xe7f4;" FontFamily="MaterialIcons" FontSize="24" TextColor="{AppThemeBinding Light=#4e7397, Dark=#94a3b8}"/>
+                 <Label Text="Alerts" FontSize="10" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#4e7397, Dark=#94a3b8}"/>
+             </VerticalStackLayout>
+
+             <!-- Profile (Active) -->
+             <VerticalStackLayout Grid.Column="3" HorizontalOptions="Center" Spacing="2">
+                 <Label Text="&#xe7fd;" FontFamily="MaterialIcons" FontSize="24" TextColor="{StaticResource Primary}"/>
+                 <Label Text="Profile" FontSize="10" FontAttributes="Bold" TextColor="{StaticResource Primary}"/>
+             </VerticalStackLayout>
+             
+             <!-- Top Border -->
+             <BoxView Grid.ColumnSpan="4" VerticalOptions="Start" HeightRequest="1" Color="{AppThemeBinding Light=#f1f5f9, Dark=#1e293b}"/>
+        </Grid>
+    </Grid>
+</ContentPage>

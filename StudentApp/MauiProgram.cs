@@ -34,6 +34,7 @@ public static class MauiProgram
         builder.Configuration.AddConfiguration(config);
 
         builder.Services.AddSingleton<Services.IMongoDBService, Services.MongoDBService>();
+        builder.Services.AddSingleton<Services.IMsalAuthService, Services.MsalAuthService>();
         builder.Services.AddTransient<Views.LoginPage>();
 
 #if DEBUG
