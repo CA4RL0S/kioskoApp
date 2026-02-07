@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="EvaluatorApp.ProjectDetailsPage"
+             BackgroundColor="{StaticResource BackgroundLight}"
+             Title="Project Details"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False">
+
+    <Grid>
+        <!-- Sticky Footer -->
+        <Grid RowDefinitions="Auto" VerticalOptions="End" ZIndex="10" BackgroundColor="White" Padding="16,16,16,32">
+            <Grid.Shadow>
+                <Shadow Brush="Black" Opacity="0.1" Radius="10" Offset="0,-4"/>
+            </Grid.Shadow>
+            <VerticalStackLayout Spacing="16">
+                 <Grid ColumnDefinitions="*, Auto">
+                    <Label Text="Total Score" TextColor="{StaticResource TextSecondary}" FontSize="14" FontAttributes="Bold" VerticalOptions="Center"/>
+                    <HorizontalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                        <Label Text="{Binding TotalScore}" TextColor="{StaticResource TextPrimary}" FontSize="20" FontAttributes="Bold"/>
+                        <Label Text="/ 30" TextColor="{StaticResource Gray400}" FontSize="16" VerticalOptions="End" Margin="0,0,0,2"/>
+                    </HorizontalStackLayout>
+                </Grid>
+                <Button Text="Submit Evaluation" 
+                        FontSize="16" 
+                        FontAttributes="Bold"
+                        TextColor="White" 
+                        BackgroundColor="{StaticResource Primary}" 
+                        CornerRadius="8" 
+                        HeightRequest="48"
+                        Clicked="OnSubmitClicked"/>
+            </VerticalStackLayout>
+        </Grid>
+
+        <!-- Main Content -->
+        <ScrollView Margin="0,0,0,120">
+            <VerticalStackLayout>
+                <!-- Header -->
+                <Grid ColumnDefinitions="Auto, *, Auto" Padding="16,12,16,12" BackgroundColor="White">
+                    <ImageButton Source="back_arrow.svg" HeightRequest="24" WidthRequest="24" Clicked="OnBackClicked">
+                         <ImageButton.Source>
+                            <FontImageSource FontFamily="MaterialIcons" Glyph="arrow_back" Color="{StaticResource TextPrimary}" Size="24"/>
+                        </ImageButton.Source>
+                    </ImageButton>
+                    <Label Grid.Column="1" Text="Project Details" TextColor="{StaticResource TextPrimary}" FontSize="18" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    <ImageButton Grid.Column="2" HeightRequest="24" WidthRequest="24">
+                        <ImageButton.Source>
+                            <FontImageSource FontFamily="MaterialIcons" Glyph="bookmark_border" Color="{StaticResource TextPrimary}" Size="24"/>
+                        </ImageButton.Source>
+                    </ImageButton>
+                </Grid>
+
+                <!-- Project Info -->
+                <VerticalStackLayout Padding="16,24,16,12" Spacing="0">
+                     <Border HeightRequest="192" StrokeShape="RoundRectangle 12" StrokeThickness="0" BackgroundColor="{StaticResource Gray200}">
+                        <Grid>
+                            <Image Source="{Binding Project.ImageUrl}" Aspect="AspectFill" BackgroundColor="{StaticResource Gray100}"/>
+                            <BoxView Color="Black" Opacity="0.3"/>
+                            <Border VerticalOptions="End" HorizontalOptions="Start" Margin="12" BackgroundColor="#33FFFFFF" StrokeThickness="1" Stroke="White" StrokeShape="RoundRectangle 4" Padding="8,4">
+                                <Label Text="{Binding Project.Cycle}" TextColor="White" FontSize="12" FontAttributes="Bold"/>
+                            </Border>
+                        </Grid>
+                    </Border>
+                    <Label Text="{Binding Project.Title}" TextColor="{StaticResource TextPrimary}" FontSize="26" FontAttributes="Bold" Margin="0,20,0,8" LineHeight="1.1"/>
+                </VerticalStackLayout>
+
+                 <!-- Team Section -->
+                <Grid ColumnDefinitions="*, Auto" Padding="16,12">
+                     <HorizontalStackLayout Spacing="12" VerticalOptions="Center">
+                        <!-- Avatars (Keep simulated for now as we don't have student data) -->
+                        <Grid WidthRequest="80">
+                             <Border StrokeShape="RoundRectangle 16" HeightRequest="32" WidthRequest="32" Stroke="White" StrokeThickness="2" HorizontalOptions="Start" Margin="0">
+                                 <Image Source="https://lh3.googleusercontent.com/aida-public/AB6AXuB-Cw4hUhJ4lJOxxyB3QpVbOTtQxMroYWm-iGgHq7rSuQMM7WT9Xmm_IKqrhiJqM7f4VEhlFyeE745fALKWzZq2wETGS4NmO3uE1eucqDwbJuqaQRd6Jevg1XCX122dvKztrfZIAgEc1Wj90CHlIk1SceVWM75La0xPCd_b8VGH6NfSqFJqd7rwN7jVyGpfrQr8fQk4ZMqT2258Ty-dbIbJlaHKTcUDtPlFbyhYS0zit2byO-kjKX3iXLXBjI6qArb-2QBNqX37FpY" Aspect="AspectFill"/>
+                             </Border>
+                             <Border StrokeShape="RoundRectangle 16" HeightRequest="32" WidthRequest="32" Stroke="White" StrokeThickness="2" HorizontalOptions="Start" Margin="24,0,0,0">
+                                 <Image Source="https://lh3.googleusercontent.com/aida-public/AB6AXuAtSFWqD8Mq2wwYGVcAkNX3s0m3ER0i8kD_IiayoKjD2xLU5OyUt_8pfG8V3YCH1KAAVG3FRlCbFAQkKgeTz10xYQzKUDK_mJ_ys-wSxdD6XXhKXigKBHyYjhunNDuczhazhYPyECv-avYEktq4K0Z6_VFReiV4iCjhdQluS9XKxMHwoD2ID5RBIUOOb5WjQ2zlFSqM7zvqrBZW4aDiy2y_BieMwRZJXmemiDhd0iQ0-W1Q1cppBv8Xshc68JdBoA7HhpJexpo9lbo" Aspect="AspectFill"/>
+                             </Border>
+                             <Border StrokeShape="RoundRectangle 16" HeightRequest="32" WidthRequest="32" Stroke="White" StrokeThickness="2" HorizontalOptions="Start" Margin="48,0,0,0">
+                                 <Image Source="https://lh3.googleusercontent.com/aida-public/AB6AXuC_XK1MnWnDo7sMcHhO6cjTl3kSbQ_wiNMFmaZxPPtVgDId8YZowF4LJVDGWN6OAA2Tq18acfPUscR-jV3XPqBs0SZxBL81BRIQ1Y5zQNWjppMkvVUqMl4SWCq2zwbQpyw0eOGcIDSZ8f2V0Xui1X6dY9Qzk0QAnbxQmNSDWRJcOY1UNeVne-natM9gOGreCWvHPCU3LuYwAeV9yxf6r5_F6tRwPMyD3WcKizpzlNK7cez-0ztd5eroKwYdYS91cOm4xmnpBCUnPXg" Aspect="AspectFill"/>
+                             </Border>
+                        </Grid>
+                        <Label Text="Equipo Estudiantes" TextColor="{StaticResource TextSecondary}" FontSize="14" FontAttributes="Bold" VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+                    <Label Grid.Column="1" Text="Ver Perfil" TextColor="{StaticResource Primary}" FontSize="14" FontAttributes="Bold" VerticalOptions="Center"/>
+                </Grid>
+
+                 <!-- Abstract -->
+                <VerticalStackLayout Padding="16,0,16,24">
+                    <Label Text="{Binding Project.Description}" 
+                           TextColor="{StaticResource TextPrimary}" 
+                           FontSize="16" 
+                           LineHeight="1.5"/>
+                    
+                    <Button Text="Evaluate Now" 
+                             Margin="0,16,0,0"
+                             FontSize="16" 
+                             FontAttributes="Bold" 
+                             TextColor="{StaticResource Primary}" 
+                             BackgroundColor="#1A135BEC" 
+                             HeightRequest="48" 
+                             CornerRadius="8">
+                        <Button.ImageSource>
+                            <FontImageSource FontFamily="MaterialIcons" Glyph="arrow_downward" Color="{StaticResource Primary}" Size="18"/>
+                        </Button.ImageSource>
+                    </Button>
+                </VerticalStackLayout>
+                
+                <BoxView HeightRequest="8" Color="{StaticResource BackgroundLight}"/>
+
+                <!-- Rubric Section -->
+                <VerticalStackLayout Padding="16,24" Spacing="32">
+                    <Grid ColumnDefinitions="*, Auto">
+                        <Label Text="Evaluation Rubric" FontSize="18" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}"/>
+                        <Border Grid.Column="1" StrokeThickness="0" BackgroundColor="#E0F2FE" StrokeShape="RoundRectangle 12" Padding="12,4">
+                            <Label Text="Pending" TextColor="{StaticResource Primary}" FontSize="12" FontAttributes="Bold"/>
+                        </Border>
+                    </Grid>
+
+                    <!-- Innovation -->
+                    <VerticalStackLayout Spacing="12">
+                         <Grid ColumnDefinitions="*, Auto">
+                            <Label Text="Innovation" FontSize="16" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}"/>
+                            <HorizontalStackLayout Grid.Column="1" Spacing="2">
+                                <Label Text="{Binding InnovationScore}" TextColor="{StaticResource Primary}" FontSize="18" FontAttributes="Bold"/>
+                                <Label Text="/10" TextColor="{StaticResource Gray400}" FontSize="14" VerticalOptions="End" Margin="0,0,0,2"/>
+                            </HorizontalStackLayout>
+                        </Grid>
+                        <Label Text="Originality of the solution and use of resources." TextColor="{StaticResource TextSecondary}" FontSize="14"/>
+                        <Slider Minimum="0" Maximum="10" Value="{Binding InnovationScore}" MinimumTrackColor="{StaticResource Primary}" MaximumTrackColor="{StaticResource Gray200}" ThumbColor="{StaticResource Primary}"/>
+                        <Grid ColumnDefinitions="*, *">
+                            <Label Text="Poor" TextColor="{StaticResource Gray400}" FontSize="12"/>
+                            <Label Grid.Column="1" Text="Excellent" TextColor="{StaticResource Gray400}" FontSize="12" HorizontalOptions="End"/>
+                        </Grid>
+                    </VerticalStackLayout>
+
+                     <!-- Presentation -->
+                    <VerticalStackLayout Spacing="12">
+                         <Grid ColumnDefinitions="*, Auto">
+                            <Label Text="Presentation" FontSize="16" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}"/>
+                            <Label Grid.Column="1" Text="Clarity &amp; Visuals" TextColor="{StaticResource Gray400}" FontSize="14"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8" BackgroundColor="{StaticResource BackgroundLight}" Padding="6" >
+                             <Border x:Name="OptionPoor" StrokeThickness="0" BackgroundColor="Transparent" Padding="0,10">
+                                 <Border.GestureRecognizers>
+                                     <TapGestureRecognizer Command="{Binding SelectPresentationCommand}" CommandParameter="1"/>
+                                 </Border.GestureRecognizers>
+                                <Label x:Name="LabelPoor" Text="Poor" HorizontalOptions="Center" TextColor="{StaticResource Gray500}" FontSize="12" FontAttributes="Bold"/>
+                            </Border>
+                            <Border x:Name="OptionFair" StrokeThickness="0" BackgroundColor="Transparent" Padding="0,10">
+                                <Border.GestureRecognizers>
+                                     <TapGestureRecognizer Command="{Binding SelectPresentationCommand}" CommandParameter="2"/>
+                                 </Border.GestureRecognizers>
+                                <Label x:Name="LabelFair" Text="Fair" HorizontalOptions="Center" TextColor="{StaticResource Gray500}" FontSize="12" FontAttributes="Bold"/>
+                            </Border>
+                            <Border x:Name="OptionGood" StrokeThickness="0" BackgroundColor="White" Padding="0,10" StrokeShape="RoundRectangle 6">
+                                <Border.Shadow>
+                                    <Shadow x:Name="ShadowGood" Brush="Black" Opacity="0.05" Radius="2" Offset="0,1"/>
+                                </Border.Shadow>
+                                <Border.GestureRecognizers>
+                                     <TapGestureRecognizer Command="{Binding SelectPresentationCommand}" CommandParameter="3"/>
+                                 </Border.GestureRecognizers>
+                                <Label x:Name="LabelGood" Text="Good" HorizontalOptions="Center" TextColor="{StaticResource Primary}" FontSize="12" FontAttributes="Bold"/>
+                            </Border>
+                             <Border x:Name="OptionGreat" StrokeThickness="0" BackgroundColor="Transparent" Padding="0,10">
+                                 <Border.GestureRecognizers>
+                                     <TapGestureRecognizer Command="{Binding SelectPresentationCommand}" CommandParameter="4"/>
+                                 </Border.GestureRecognizers>
+                                <Label x:Name="LabelGreat" Text="Great" HorizontalOptions="Center" TextColor="{StaticResource Gray500}" FontSize="12" FontAttributes="Bold"/>
+                            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <!-- Technical Execution -->
+                    <VerticalStackLayout Spacing="12">
+                         <Grid ColumnDefinitions="*, Auto">
+                            <Label Text="Technical Execution" FontSize="16" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}"/>
+                            <HorizontalStackLayout Grid.Column="1" Spacing="2">
+                                <Label Text="{Binding TechScore}" TextColor="{StaticResource Primary}" FontSize="18" FontAttributes="Bold"/>
+                                <Label Text="/10" TextColor="{StaticResource Gray400}" FontSize="14" VerticalOptions="End" Margin="0,0,0,2"/>
+                            </HorizontalStackLayout>
+                        </Grid>
+                        <Label Text="Functionality and prototype robustness." TextColor="{StaticResource TextSecondary}" FontSize="14"/>
+                         <Slider Minimum="0" Maximum="10" Value="{Binding TechScore}" MinimumTrackColor="{StaticResource Primary}" MaximumTrackColor="{StaticResource Gray200}" ThumbColor="{StaticResource Primary}"/>
+                        <Grid ColumnDefinitions="*, *">
+                            <Label Text="Unstable" TextColor="{StaticResource Gray400}" FontSize="12"/>
+                            <Label Grid.Column="1" Text="Robust" TextColor="{StaticResource Gray400}" FontSize="12" HorizontalOptions="End"/>
+                        </Grid>
+                    </VerticalStackLayout>
+                    
+                    <!-- Comments -->
+                     <VerticalStackLayout Spacing="12">
+                        <Label Text="Additional Comments" FontSize="16" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}"/>
+                        <Editor Placeholder="Provide constructive feedback for the students..." 
+                                HeightRequest="120" 
+                                BackgroundColor="{StaticResource BackgroundLight}" 
+                                TextColor="{StaticResource TextPrimary}"
+                                PlaceholderColor="{StaticResource Gray400}"/>
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="EvaluatorApp.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:EvaluatorApp"
+    Title="EvaluatorApp">
+
+    <ShellContent
+        ContentTemplate="{DataTemplate local:LoginPage}"
+        Route="LoginPage"
+        Shell.FlyoutBehavior="Disabled"
+        Shell.NavBarIsVisible="False" />
+
+    <TabBar>
+        <ShellContent
+            Title="Inicio"
+            ContentTemplate="{DataTemplate local:MainPage}"
+            Route="MainPage" />
+        
+        <ShellContent
+            Title="Proyectos"
+            ContentTemplate="{DataTemplate local:ProjectsPage}"
+            Route="ProjectsPage" />
+            
+        <ShellContent
+            Title="Ranking"
+            ContentTemplate="{DataTemplate local:RankingPage}"
+            Route="RankingPage" />
+            
+        <ShellContent
+            Title="Perfil"
+            ContentTemplate="{DataTemplate local:ProfilePage}"
+            Route="ProfilePage" />
+    </TabBar>
+</Shell>

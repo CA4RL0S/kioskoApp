@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="StudentApp.Views.LoginPage"
+             BackgroundColor="#f3f4f6">
+
+    <Grid RowDefinitions="*,Auto,*" Padding="24">
+        
+        <VerticalStackLayout Grid.Row="1" Spacing="20" VerticalOptions="Center">
+            
+            <Label Text="Alumno" 
+                   FontSize="32" 
+                   FontAttributes="Bold" 
+                   HorizontalOptions="Center" 
+                   TextColor="#111827"/>
+            
+            <Label Text="Inicia sesión para comenzar" 
+                   FontSize="16" 
+                   HorizontalOptions="Center" 
+                   TextColor="#6b7280"
+                   Margin="0,0,0,20"/>
+
+            <Frame Padding="0" CornerRadius="8" HasShadow="False" BorderColor="#e5e7eb">
+                <Entry x:Name="UsernameEntry"
+                       Placeholder="Usuario"
+                       PlaceholderColor="#9ca3af"
+                       TextColor="#1f2937"
+                       HeightRequest="50"
+                       BackgroundColor="White"/>
+            </Frame>
+
+            <Frame Padding="0" CornerRadius="8" HasShadow="False" BorderColor="#e5e7eb">
+                <Entry x:Name="PasswordEntry"
+                       Placeholder="Contraseña"
+                       PlaceholderColor="#9ca3af"
+                       TextColor="#1f2937"
+                       IsPassword="True"
+                       HeightRequest="50"
+                       BackgroundColor="White"/>
+            </Frame>
+
+            <Button Text="Entrar"
+                    Clicked="OnLoginClicked"
+                    BackgroundColor="#2563eb"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    CornerRadius="8"
+                    HeightRequest="50"
+                    Margin="0,10,0,0"/>
+
+            <ActivityIndicator x:Name="LoadingIndicator"
+                               IsRunning="False"
+                               Color="#2563eb"/>
+        </VerticalStackLayout>
+    </Grid>
+
+</ContentPage>
