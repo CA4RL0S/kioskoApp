@@ -2,56 +2,160 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="StudentApp.Views.LoginPage"
-             BackgroundColor="#f3f4f6">
+             BackgroundColor="{AppThemeBinding Light={DynamicResource BackgroundLight}, Dark={DynamicResource BackgroundDark}}"
+             NavigationPage.HasNavigationBar="False">
 
-    <Grid RowDefinitions="*,Auto,*" Padding="24">
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Header -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="16" BackgroundColor="{AppThemeBinding Light={DynamicResource BackgroundLight}, Dark={DynamicResource BackgroundDark}}">
+            <Button Grid.Column="0" 
+                    Text="&#xe5c4;" 
+                    FontFamily="MaterialSymbolsRounded"
+                    FontSize="24"
+                    TextColor="{AppThemeBinding Light={DynamicResource Gray900}, Dark={DynamicResource White}}"
+                    BackgroundColor="Transparent"
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    CornerRadius="20"/>
+            
+            <Label Grid.Column="1" 
+                   Text="Student Portal" 
+                   HorizontalOptions="Center" 
+                   VerticalOptions="Center"
+                   FontAttributes="Bold"
+                   TextColor="{AppThemeBinding Light={DynamicResource Gray500}, Dark={DynamicResource Gray400}}"/>
+            
+            <BoxView Grid.Column="2" WidthRequest="40" Color="Transparent"/>
+        </Grid>
+
+        <!-- Main Content -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="24" Padding="24" VerticalOptions="Center">
+
+                <!-- Illustration -->
+                <Grid HeightRequest="250">
+                    <Border StrokeShape="RoundRectangle 16" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light={DynamicResource Gray100}, Dark={DynamicResource Gray900}}">
+                        <Grid>
+                            <Image Source="https://lh3.googleusercontent.com/aida-public/AB6AXuDLRyT_gdByQ_LudTRgSYrodmQBxzULrIYKln8t0btZC3J9AEK3jNFBIQkyuc52oIpWlmQpYEhuN-KfIAWZkdDVvIHjqRQ1pO2CUYl7pXN78AcytK-gFnYwS548wNdP0L-85NByGsPcDIJf-96U08oQyjE1LCdw5IXt4DQU6Fw2s5tt3QA29XWAlDz6AGvBQso_c66EvQd-RiCAWW_qRXFomXDvyQoJcrDrWPNfYllL3bF5t_lbtkG5FYgT9ugLpuwHo_ZouTFZoi0"
+                                   Aspect="AspectFill"
+                                   Opacity="0.9"/>
+                            <BoxView Color="{AppThemeBinding Light={DynamicResource BackgroundLight}, Dark={DynamicResource BackgroundDark}}"
+                                     Opacity="0.1"/>
+                            
+                            <!-- Gradient Overlay (Simulated) -->
+                            <BoxView>
+                                <BoxView.Background>
+                                    <LinearGradientBrush StartPoint="0,1" EndPoint="0,0">
+                                        <GradientStop Offset="0.0" Color="{AppThemeBinding Light={DynamicResource BackgroundLight}, Dark={DynamicResource BackgroundDark}}"/>
+                                        <GradientStop Offset="0.5" Color="Transparent"/>
+                                    </LinearGradientBrush>
+                                </BoxView.Background>
+                            </BoxView>
+                        </Grid>
+                    </Border>
+                    
+                    <!-- Icon Overlay -->
+                    <Border VerticalOptions="End" 
+                            HorizontalOptions="Center" 
+                            TranslationY="20"
+                            Stroke="{AppThemeBinding Light={DynamicResource BackgroundLight}, Dark={DynamicResource BackgroundDark}}"
+                            StrokeThickness="4"
+                            StrokeShape="RoundRectangle 16"
+                            BackgroundColor="{AppThemeBinding Light={DynamicResource SurfaceLight}, Dark={DynamicResource SurfaceDark}}"
+                            WidthRequest="80"
+                            HeightRequest="80">
+                        <Label Text="&#xe853;" 
+                               FontFamily="MaterialSymbolsRounded"
+                               FontSize="40"
+                               TextColor="{DynamicResource Primary}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+                    </Border>
+                </Grid>
+
+                <!-- Titles -->
+                <VerticalStackLayout Spacing="8" Margin="0,30,0,0">
+                    <Label Text="Welcome Back" 
+                           FontSize="30"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"
+                           TextColor="{AppThemeBinding Light={DynamicResource Gray900}, Dark={DynamicResource White}}"/>
+                    <Label Text="Log in to track your project evaluations" 
+                           FontSize="16"
+                           HorizontalOptions="Center"
+                           TextColor="{AppThemeBinding Light={DynamicResource Gray500}, Dark={DynamicResource Gray400}}"/>
+                </VerticalStackLayout>
+
+                <!-- Login Button -->
+                <Button Text="Sign in with Microsoft"
+                        Clicked="OnMicrosoftLoginClicked"
+                        BackgroundColor="{DynamicResource Primary}"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        FontSize="16"
+                        CornerRadius="12"
+                        HeightRequest="56"
+                        Margin="0,20,0,0">
+                    <Button.Shadow>
+                        <Shadow Brush="{DynamicResource PrimaryBrush}"
+                                Offset="0,4"
+                                Radius="8"
+                                Opacity="0.3"/>
+                    </Button.Shadow>
+                </Button>
+                
+                <ActivityIndicator x:Name="LoadingIndicator"
+                                   IsRunning="False"
+                                   Color="{DynamicResource Primary}"
+                                   HorizontalOptions="Center"/>
+
+                <!-- Divider -->
+                <Grid ColumnDefinitions="*,Auto,*" ColumnSpacing="16" Margin="0,10">
+                    <BoxView HeightRequest="1" Color="{AppThemeBinding Light={DynamicResource Gray200}, Dark={DynamicResource Gray900}}" VerticalOptions="Center"/>
+                    <Label Text="OR CONTINUE WITH" 
+                           FontSize="12" 
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light={DynamicResource Gray400}, Dark={DynamicResource Gray600}}"/>
+                    <BoxView HeightRequest="1" Color="{AppThemeBinding Light={DynamicResource Gray200}, Dark={DynamicResource Gray900}}" VerticalOptions="Center"/>
+                </Grid>
+
+                <!-- Biometric Button -->
+                 <Button Text="&#xe87c;" 
+                        FontFamily="MaterialSymbolsRounded"
+                        FontSize="30"
+                        TextColor="{DynamicResource Primary}"
+                        BackgroundColor="{AppThemeBinding Light={DynamicResource SurfaceLight}, Dark={DynamicResource SurfaceDark}}"
+                        BorderColor="{AppThemeBinding Light={DynamicResource Gray200}, Dark={DynamicResource Gray900}}"
+                        BorderWidth="1"
+                        WidthRequest="60"
+                        HeightRequest="60"
+                        CornerRadius="30"
+                        HorizontalOptions="Center">
+                    <Button.Shadow>
+                         <Shadow Brush="{DynamicResource Gray200Brush}"
+                                Offset="0,2"
+                                Radius="4"
+                                Opacity="0.5"/>
+                    </Button.Shadow>
+                </Button>
+
+            </VerticalStackLayout>
+        </ScrollView>
         
-        <VerticalStackLayout Grid.Row="1" Spacing="20" VerticalOptions="Center">
-            
-            <Label Text="Alumno" 
-                   FontSize="32" 
-                   FontAttributes="Bold" 
-                   HorizontalOptions="Center" 
-                   TextColor="#111827"/>
-            
-            <Label Text="Inicia sesión para comenzar" 
-                   FontSize="16" 
-                   HorizontalOptions="Center" 
-                   TextColor="#6b7280"
-                   Margin="0,0,0,20"/>
-
-            <Frame Padding="0" CornerRadius="8" HasShadow="False" BorderColor="#e5e7eb">
-                <Entry x:Name="UsernameEntry"
-                       Placeholder="Usuario"
-                       PlaceholderColor="#9ca3af"
-                       TextColor="#1f2937"
-                       HeightRequest="50"
-                       BackgroundColor="White"/>
-            </Frame>
-
-            <Frame Padding="0" CornerRadius="8" HasShadow="False" BorderColor="#e5e7eb">
-                <Entry x:Name="PasswordEntry"
-                       Placeholder="Contraseña"
-                       PlaceholderColor="#9ca3af"
-                       TextColor="#1f2937"
-                       IsPassword="True"
-                       HeightRequest="50"
-                       BackgroundColor="White"/>
-            </Frame>
-
-            <Button Text="Entrar"
-                    Clicked="OnLoginClicked"
-                    BackgroundColor="#2563eb"
-                    TextColor="White"
-                    FontAttributes="Bold"
-                    CornerRadius="8"
-                    HeightRequest="50"
-                    Margin="0,10,0,0"/>
-
-            <ActivityIndicator x:Name="LoadingIndicator"
-                               IsRunning="False"
-                               Color="#2563eb"/>
-        </VerticalStackLayout>
+        <!-- Footer -->
+        <Label Grid.Row="2" 
+               Padding="24"
+               HorizontalOptions="Center"
+               FontSize="14"
+               TextColor="{AppThemeBinding Light={DynamicResource Gray500}, Dark={DynamicResource Gray400}}">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="Don't have an account? "/>
+                    <Span Text="Contact Admin" 
+                          FontAttributes="Bold"
+                          TextColor="{DynamicResource Primary}"/>
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
     </Grid>
-
 </ContentPage>
