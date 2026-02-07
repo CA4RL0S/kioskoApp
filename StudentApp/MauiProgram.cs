@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace StudentApp;
 
@@ -14,6 +15,26 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
+
+        var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+        using var stream = assembly.GetManifestResourceStream("StudentApp.Resources.Raw.appsettings.json");
+        
+        var configBuilder = new ConfigurationBuilder()
+            .AddJsonStream(stream);
+
+#if DEBUG
+        using var devStream = assembly.GetManifestResourceStream("StudentApp.Resources.Raw.appsettings.Development.json");
+        if (devStream != null)
+        {
+            configBuilder.AddJsonStream(devStream);
+        }
+#endif
+
+        var config = configBuilder.Build();
+        builder.Configuration.AddConfiguration(config);
+
+        builder.Services.AddSingleton<Services.IMongoDBService, Services.MongoDBService>();
+        builder.Services.AddTransient<Views.LoginPage>();
 
 #if DEBUG
 		builder.Logging.AddDebug();

@@ -2,6 +2,7 @@ using MongoDB.Driver;
 using EvaluatorApp.Models;
 using System.Security.Authentication;
 using MongoDB.Bson;
+using Microsoft.Extensions.Configuration;
 
 namespace EvaluatorApp.Services;
 
@@ -15,7 +16,7 @@ public interface IMongoDBService
 
 public class MongoDBService : IMongoDBService
 {
-    private const string ConnectionString = "mongodb+srv://carlosriv082_db_user:CZMcLReUnyAKFwXj@kiosko.jmgzydq.mongodb.net/?retryWrites=true&w=majority";
+    private string ConnectionString;
     private const string DatabaseName = "kioskoAppDB";
     private const string UserCollectionName = "users_v2";
     private const string ProjectCollectionName = "projects_v2";
@@ -23,6 +24,13 @@ public class MongoDBService : IMongoDBService
     private IMongoCollection<User> _usersCollection;
     private IMongoCollection<Project> _projectsCollection;
     private bool _isInitialized;
+    private readonly IConfiguration _configuration;
+
+    public MongoDBService(IConfiguration configuration)
+    {
+        _configuration = configuration;
+        ConnectionString = _configuration.GetConnectionString("MongoDB");
+    }
 
     public async Task Init()
     {

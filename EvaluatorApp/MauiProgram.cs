@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace EvaluatorApp;
 
@@ -16,6 +17,23 @@ public static class MauiProgram
 
                 fonts.AddFont("MaterialSymbolsOutlined.ttf", "MaterialIcons");
 			});
+
+        var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+        using var stream = assembly.GetManifestResourceStream("EvaluatorApp.Resources.Raw.appsettings.json");
+
+        var configBuilder = new ConfigurationBuilder()
+            .AddJsonStream(stream);
+
+#if DEBUG
+        using var devStream = assembly.GetManifestResourceStream("EvaluatorApp.Resources.Raw.appsettings.Development.json");
+        if (devStream != null)
+        {
+            configBuilder.AddJsonStream(devStream);
+        }
+#endif
+
+        var config = configBuilder.Build();
+        builder.Configuration.AddConfiguration(config);
 
         builder.Services.AddSingleton<Services.IMongoDBService, Services.MongoDBService>();
         builder.Services.AddSingleton<LoginPage>();

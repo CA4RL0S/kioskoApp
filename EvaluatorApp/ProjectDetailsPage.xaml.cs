@@ -90,10 +90,7 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
         BindingContext = this;
     }
 
-     // Default ctor just in case, but DI should use the one above
-    public ProjectDetailsPage() : this(new MongoDBService()) // Fallback (shouldn't happen with correct DI)
-    {
-    }
+
 
 
     private async void OnBackClicked(object sender, EventArgs e)

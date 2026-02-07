@@ -6,10 +6,10 @@ public partial class LoginPage : ContentPage
 {
     private readonly IMongoDBService _mongoDBService;
 
-    public LoginPage()
+    public LoginPage(IMongoDBService mongoDBService)
     {
         InitializeComponent();
-        _mongoDBService = new MongoDBService();
+        _mongoDBService = mongoDBService;
     }
 
     private async void OnLoginClicked(object sender, EventArgs e)

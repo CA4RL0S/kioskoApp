@@ -4,13 +4,16 @@ namespace StudentApp;
 
 public partial class App : Application
 {
-	public App()
+    private readonly Views.LoginPage _loginPage;
+
+	public App(Views.LoginPage loginPage)
 	{
 		InitializeComponent();
+        _loginPage = loginPage;
 	}	
 
 	protected override Window CreateWindow(IActivationState? activationState)
 	{
-		return new Window(new Views.LoginPage());
+		return new Window(_loginPage);
 	}
 }
