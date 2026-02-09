@@ -1,13 +1,107 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:StudentApp.Models"
              x:Class="StudentApp.Views.TasksPage"
-             Title="Tasks"
-             BackgroundColor="{StaticResource White}">
-    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
-        <Label 
-            Text="Tasks Page"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             Title="Mis Tareas"
+             BackgroundColor="#0f172a">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Status Color Converter (Simple Trigger via DataTrigger is easier in MAUI sometimes without code) -->
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto, *">
+        <!-- Header -->
+        <VerticalStackLayout Grid.Row="0" Padding="20,20,20,10" Spacing="5">
+            <Label Text="Tareas del Proyecto" 
+                   FontSize="24" 
+                   FontAttributes="Bold" 
+                   TextColor="White"/>
+            <Label Text="Gestiona tus entregables" 
+                   FontSize="14" 
+                   TextColor="#94a3b8"/>
+        </VerticalStackLayout>
+
+        <!-- Tasks List -->
+        <RefreshView x:Name="TasksRefreshView" 
+                     Grid.Row="1"
+                     Command="{Binding RefreshCommand}"
+                     Refreshing="TasksRefreshView_Refreshing">
+            <CollectionView x:Name="TasksCollectionView"
+                            SelectionMode="None"
+                            EmptyView="No hay tareas asignadas aún.">
+                <CollectionView.EmptyViewTemplate>
+                    <DataTemplate>
+                        <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="10">
+                            <Label Text="📭" FontSize="40" HorizontalOptions="Center"/>
+                            <Label Text="No hay tareas pendientes" 
+                                   TextColor="#94a3b8" 
+                                   HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </DataTemplate>
+                </CollectionView.EmptyViewTemplate>
+                
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:StudentTask">
+                        <Frame Margin="16,8" 
+                               Padding="15" 
+                               BackgroundColor="#1e293b" 
+                               BorderColor="Transparent" 
+                               CornerRadius="10"
+                               HasShadow="True">
+                            <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto, Auto">
+                                
+                                <!-- Task Title -->
+                                <Label Grid.Row="0" Grid.Column="0" 
+                                       Text="{Binding Title}" 
+                                       TextColor="White" 
+                                       FontSize="16" 
+                                       FontAttributes="Bold"/>
+
+                                <!-- Status Badge -->
+                                <Frame Grid.Row="0" Grid.Column="1" 
+                                       Padding="8,4" 
+                                       CornerRadius="5"
+                                       BackgroundColor="{Binding IsCompleted, Converter={StaticResource BoolToColorConverter}}" 
+                                       BorderColor="Transparent">
+                                    <Label Text="{Binding Status}" 
+                                           TextColor="White" 
+                                           FontSize="10" 
+                                           FontAttributes="Bold"/>
+                                    <Frame.Triggers>
+                                        <DataTrigger TargetType="Frame" Binding="{Binding IsCompleted}" Value="True">
+                                            <Setter Property="BackgroundColor" Value="#10b981"/> <!-- Green for Completed -->
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Frame" Binding="{Binding IsCompleted}" Value="False">
+                                            <Setter Property="BackgroundColor" Value="#f59e0b"/> <!-- Orange for Pending -->
+                                        </DataTrigger>
+                                    </Frame.Triggers>
+                                </Frame>
+
+                                <!-- Description -->
+                                <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                       Text="{Binding Description}" 
+                                       TextColor="#cbd5e1" 
+                                       FontSize="13" 
+                                       MaxLines="2" 
+                                       LineBreakMode="TailTruncation"
+                                       Margin="0,5,0,5"/>
+
+                                <!-- Due Date -->
+                                <HorizontalStackLayout Grid.Row="2" Grid.Column="0" Spacing="5">
+                                    <Label Text="📅" FontSize="12"/>
+                                    <Label Text="{Binding DueDate, StringFormat='{0:dd MMM yyyy}'}" 
+                                           TextColor="#94a3b8" 
+                                           FontSize="12"/>
+                                </HorizontalStackLayout>
+
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
 </ContentPage>

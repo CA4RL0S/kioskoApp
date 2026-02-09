@@ -13,9 +13,12 @@ public partial class ProfilePage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        // Load data from session
-        NameLabel.Text = StudentApp.MainPage.CurrentStudentName;
-        EmailLabel.Text = StudentApp.MainPage.CurrentStudentEmail;
+        // Load data from session safely
+        if (StudentApp.MainPage.CurrentStudentName != null)
+            NameLabel.Text = StudentApp.MainPage.CurrentStudentName;
+            
+        if (StudentApp.MainPage.CurrentStudentEmail != null)
+            EmailLabel.Text = StudentApp.MainPage.CurrentStudentEmail;
     }
 
     private async void OnSignOutClicked(object sender, EventArgs e)

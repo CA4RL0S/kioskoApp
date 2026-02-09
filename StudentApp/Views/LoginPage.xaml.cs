@@ -33,7 +33,7 @@ public partial class LoginPage : ContentPage
 
             if (result != null)
             {
-                // Login Success
+                // Login Success // ... rest of logic
                 string email = result.Account.Username;
                 string name = result.ClaimsPrincipal?.FindFirst("name")?.Value ?? email;
 
@@ -52,8 +52,9 @@ public partial class LoginPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error de Autenticación", $"No se pudo iniciar sesión.\nDetalles: {ex.Message}", "OK");
-            Debug.WriteLine($"MSAL Error: {ex}");
+            var detail = ex.InnerException?.Message ?? ex.Message;
+            await DisplayAlert("Error de Conexión", $"No se pudo conectar a la base de datos.\n\nVerifique su conexión a Internet o Firewall.\n\nDetalle Técnico: {detail}", "OK");
+            Debug.WriteLine($"Login Error: {ex}");
         }
         finally
         {
