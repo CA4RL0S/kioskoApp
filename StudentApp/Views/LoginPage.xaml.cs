@@ -37,13 +37,17 @@ public partial class LoginPage : ContentPage
                 string email = result.Account.Username;
                 string name = result.ClaimsPrincipal?.FindFirst("name")?.Value ?? email;
 
-                // Here you would typically verify the user in your MongoDB or auto-register them
-                // var user = await _mongoDBService.LoginWithEmail(email); 
+                // Auto-register or get existing student
+                var student = await _mongoDBService.GetOrCreateStudent(email, name);
 
-                await DisplayAlert("Bienvenido", $"Has iniciado sesión como: {name}\nEmail: {email}", "OK");
+                await DisplayAlert("Bienvenido", $"Has iniciado sesión como: {student.Name}\nMatrícula: {student.Matricula}", "OK");
                 
-                // Navigate to Profile Page
-                Application.Current.MainPage = new ProfilePage(name, email);
+                // Store session data (using MainPage statics for now as established in previous step)
+                StudentApp.MainPage.CurrentStudentEmail = email;
+                StudentApp.MainPage.CurrentStudentName = name;
+
+                // Navigate to AppShell (which contains the TabBar)
+                Application.Current.MainPage = new AppShell();
             }
         }
         catch (Exception ex)

@@ -4,23 +4,18 @@ namespace StudentApp.Views;
 
 public partial class ProfilePage : ContentPage
 {
-    private string _userName;
-    private string _userEmail;
 
-    public ProfilePage(string userName, string userEmail)
-    {
-        InitializeComponent();
-        _userName = userName;
-        _userEmail = userEmail;
-
-        NameLabel.Text = _userName;
-        EmailLabel.Text = _userEmail;
-    }
-    
-    // Default constructor for preview/navigation without data
     public ProfilePage()
     {
         InitializeComponent();
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        // Load data from session
+        NameLabel.Text = StudentApp.MainPage.CurrentStudentName;
+        EmailLabel.Text = StudentApp.MainPage.CurrentStudentEmail;
     }
 
     private async void OnSignOutClicked(object sender, EventArgs e)

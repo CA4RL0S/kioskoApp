@@ -9,7 +9,7 @@
 			<string>MSAL Redirect URI</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>msauth.com.companyname.studentapp</string>
+				<string>msauth.com.carlos.kiosko.studentapp</string>
 			</array>
 		</dict>
 	</array>

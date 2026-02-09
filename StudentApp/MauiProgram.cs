@@ -35,7 +35,14 @@ public static class MauiProgram
 
         builder.Services.AddSingleton<Services.IMongoDBService, Services.MongoDBService>();
         builder.Services.AddSingleton<Services.IMsalAuthService, Services.MsalAuthService>();
+        
+        // Register Pages
+        builder.Services.AddTransient<Views.LoadingPage>();
         builder.Services.AddTransient<Views.LoginPage>();
+        builder.Services.AddTransient<MainPage>();
+        builder.Services.AddTransient<Views.TasksPage>();
+        builder.Services.AddTransient<Views.MessagesPage>();
+        builder.Services.AddTransient<Views.ProfilePage>();
 
 #if DEBUG
 		builder.Logging.AddDebug();

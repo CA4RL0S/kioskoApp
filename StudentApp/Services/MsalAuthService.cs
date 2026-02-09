@@ -6,6 +6,7 @@ namespace StudentApp.Services;
 public interface IMsalAuthService
 {
     Task<AuthenticationResult> SignInAsync();
+    Task<AuthenticationResult> CheckCachedLoginAsync();
     Task SignOutAsync();
 }
 
@@ -29,8 +30,8 @@ public class MsalAuthService : IMsalAuthService
         _pca = PublicClientApplicationBuilder
             .Create(ClientId)
             .WithAuthority(Authority)
-            .WithRedirectUri($"msauth.com.companyname.studentapp://auth")
-            .WithIosKeychainSecurityGroup("com.companyname.studentapp")
+            .WithRedirectUri("msauth.com.carlos.kiosko.studentapp://auth")
+            .WithIosKeychainSecurityGroup("com.microsoft.adalcache")
             .Build();
     }
 
@@ -61,10 +62,39 @@ public class MsalAuthService : IMsalAuthService
         catch (Exception ex)
         {
             Debug.WriteLine($"MSAL Error: {ex}");
-            throw; // Re-throw to let UI handle it or log it
+            // Return null instead of throwing to let caller decide (cleaner for silent checks)
+            // But for interactive login we might want to know.
+            // For now, returning null is safe for silent flow.
+            return null;
         }
 
         return result;
+    }
+
+    public async Task<AuthenticationResult> CheckCachedLoginAsync()
+    {
+        try
+        {
+            var accounts = await _pca.GetAccountsAsync();
+            var account = accounts.FirstOrDefault();
+
+            if (account != null)
+            {
+                return await _pca.AcquireTokenSilent(Scopes, account)
+                                   .ExecuteAsync();
+            }
+        }
+        catch (MsalUiRequiredException)
+        {
+            // Token expired or needs interaction
+            return null;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Silent Auth Error: {ex.Message}");
+            return null;
+        }
+        return null;
     }
 
     public async Task SignOutAsync()

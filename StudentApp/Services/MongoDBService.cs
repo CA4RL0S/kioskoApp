@@ -9,16 +9,17 @@ namespace StudentApp.Services;
 public interface IMongoDBService
 {
     Task Init();
-    Task<EvaluatorUser> Login(string username, string password);
+    Task<Student> GetOrCreateStudent(string email, string name);
+    Task<Project> GetProject(string projectId);
 }
 
 public class MongoDBService : IMongoDBService
 {
     private string ConnectionString;
     private const string DatabaseName = "kioskoAppDB";
-    private const string CollectionName = "student_users";
+    private const string CollectionName = "alumnos";
 
-    private IMongoCollection<EvaluatorUser> _usersCollection;
+    private IMongoCollection<Student> _studentCollection;
     private bool _isInitialized;
     private readonly IConfiguration _configuration;
 
@@ -38,31 +39,46 @@ public class MongoDBService : IMongoDBService
         var client = new MongoClient(settings);
         var database = client.GetDatabase(DatabaseName);
 
-        _usersCollection = database.GetCollection<EvaluatorUser>(CollectionName);
+        _studentCollection = database.GetCollection<Student>(CollectionName);
 
         _isInitialized = true;
-        await SeedData();
+        // SeedData no longer needed for auth as we auto-create on login
     }
 
-    private async Task SeedData()
-    {
-        var userCount = await _usersCollection.CountDocumentsAsync(new BsonDocument());
-        if (userCount == 0)
-        {
-            var admin = new EvaluatorUser 
-            { 
-                Username = "alumno", 
-                Password = "123", 
-                FullName = "Alumno Demo", 
-                Role = "Student" 
-            };
-            await _usersCollection.InsertOneAsync(admin);
-        }
-    }
-
-    public async Task<EvaluatorUser> Login(string username, string password)
+    public async Task<Student> GetOrCreateStudent(string email, string name)
     {
         await Init();
-        return await _usersCollection.Find(u => u.Username == username && u.Password == password).FirstOrDefaultAsync();
+        
+        var existingStudent = await _studentCollection.Find(s => s.Email == email).FirstOrDefaultAsync();
+        if (existingStudent != null)
+        {
+            return existingStudent;
+        }
+
+        // Create new student
+        // Extract matricula from email (assuming standard format like 21310243@...)
+        string matricula = email.Split('@')[0];
+
+        var newStudent = new Student
+        {
+            Email = email,
+            Name = name,
+            Matricula = matricula,
+            Role = "Student"
+        };
+
+        await _studentCollection.InsertOneAsync(newStudent);
+        return newStudent;
+    }
+
+    public async Task<Project> GetProject(string projectId)
+    {
+        await Init();
+        // Since we don't have a direct reference to the project collection in this file yet,
+        // we need to add it.
+        var database = new MongoClient(ConnectionString).GetDatabase(DatabaseName);
+        var projectCollection = database.GetCollection<Project>("proyectos");
+        
+        return await projectCollection.Find(p => p.Id == projectId).FirstOrDefaultAsync();
     }
 }

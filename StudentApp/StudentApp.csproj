@@ -22,7 +22,7 @@
 		<ApplicationTitle>Kiosko Alumnos</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.studentapp</ApplicationId>
+		<ApplicationId>com.carlos.kiosko.studentapp</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -39,9 +39,10 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="$(TargetFramework.Contains('-ios'))">
-		<CodesignEntitlements>Platforms\iOS\Entitlements.plist</CodesignEntitlements>
-		<CodesignKey>-</CodesignKey>
-		<CodesignProvision></CodesignProvision>
+		<CodesignEntitlements>Platforms/iOS/Entitlements.plist</CodesignEntitlements>
+        <MtouchLink>None</MtouchLink>
+        <UseInterpreter>true</UseInterpreter>
+        <CodesignKey>iPhone Developer</CodesignKey>
 	</PropertyGroup>
 
 

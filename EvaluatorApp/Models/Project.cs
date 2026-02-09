@@ -9,17 +9,20 @@ public class Project
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; }
 
-    [BsonElement("title")]
+    [BsonElement("nombre")] // Renamed from "title" as per request
 	public string? Title { get; set; }
 
     [BsonElement("cycle")]
 	public string? Cycle { get; set; }
 
-    [BsonElement("description")]
+    [BsonElement("informacion")] // Renamed from "description" as per request
 	public string? Description { get; set; }
 
     [BsonElement("imageUrl")]
 	public string? ImageUrl { get; set; }
+
+    [BsonElement("integrantes")] // New field for matriculas
+    public List<string> Members { get; set; } = new List<string>();
 	
     [BsonElement("statusText")]
 	public string? StatusText { get; set; }

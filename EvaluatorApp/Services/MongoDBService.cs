@@ -18,8 +18,8 @@ public class MongoDBService : IMongoDBService
 {
     private string ConnectionString;
     private const string DatabaseName = "kioskoAppDB";
-    private const string UserCollectionName = "users_v2";
-    private const string ProjectCollectionName = "projects_v2";
+    private const string UserCollectionName = "maestros";
+    private const string ProjectCollectionName = "proyectos";
 
     private IMongoCollection<User> _usersCollection;
     private IMongoCollection<Project> _projectsCollection;
@@ -72,7 +72,8 @@ public class MongoDBService : IMongoDBService
                     ImageUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuCr-YCpixRfBIMF8fitAAvhprepyTj1MiK2S0svbMfdNQxzTec1DM--qt4XgB84RK7OfwsGt_q3lHlXx7nIEYg36VtZ3oNdfp-aa8eX_Ak6gJhcTDgAjYO9ldipOOroQzK2vLz_bpgt147ZqkYcSWJxVvP6rxPQ-QqCGNgjvLCcNDtQKIclSF3qNY307dFoOxZ-YbG5ff60ffbwEwhsdNWK_zNJ2-Orf404VXISVVouns1nmJ09xTGN56WLZY3Wj-mrAYYaftz8O9c",
                     StatusText = "Pendiente de Evaluación",
                     IsPending = true,
-                    IsEvaluated = false
+                    IsEvaluated = false,
+                    Members = new List<string> { "21310243", "21310100" }
                 },
                 new Project
                 {
@@ -86,7 +87,8 @@ public class MongoDBService : IMongoDBService
                     Score = "18",
                     InnovationScore = 9,
                     TechScore = 9,
-                    PresentationScore = 0 // Legacy
+                    PresentationScore = 0, // Legacy
+                    Members = new List<string> { "21310300" }
                 },
                 new Project
                 {
@@ -96,7 +98,8 @@ public class MongoDBService : IMongoDBService
                     ImageUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuDSnAEBtq5DwuNpyqDa3DzMWqjRgcUfGQchan26XUIntTfpltZ5CEz92shE7-YTuTnqwxtGBm88NVu1dV4GlBR5bydqS153t48ha6wfbQlHQHgGlVgBrj5q4JyMGLWgyeIYGAGiTA1OSw-g_n8rwEHokqaepnLUNEHnOB_3rGimBEzEE7e0bD9q43Nb2gq870R4EiPVQPl11H3ZjRL01cc0Gme1VXPMi8T0gaaHTVn-3dO501JuwnEDBquvWNdqpOvuQloe-na8YtQ",
                     StatusText = "Pendiente de Evaluación",
                     IsPending = true,
-                    IsEvaluated = false
+                    IsEvaluated = false,
+                    Members = new List<string> { "21310400", "21310401", "21310402" }
                 },
                 new Project
                 {
@@ -110,7 +113,8 @@ public class MongoDBService : IMongoDBService
                     Score = "16",
                     InnovationScore = 8,
                     TechScore = 8,
-                    PresentationScore = 0
+                    PresentationScore = 0,
+                    Members = new List<string> { "21310500" }
                 }
             };
 
