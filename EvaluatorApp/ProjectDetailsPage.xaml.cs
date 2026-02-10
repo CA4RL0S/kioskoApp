@@ -9,6 +9,20 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
 {
     private readonly IMongoDBService _mongoDBService;
     
+    private string _comments;
+    public string Comments
+    {
+        get => _comments;
+        set
+        {
+            if (_comments != value)
+            {
+                _comments = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
     private Project _project;
     public Project Project
     {
@@ -19,20 +33,36 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
             OnPropertyChanged();
             if (_project != null)
             {
-                 InnovationScore = _project.InnovationScore > 0 ? _project.InnovationScore : 8; // Default 8 if 0
-                 TechScore = _project.TechScore > 0 ? _project.TechScore : 6; // Default 6
-                 
-                 // Map presentation score to index
-                 int presentationScore = _project.PresentationScore > 0 ? _project.PresentationScore : 8; // Default 8 (Good)
-                 int index = presentationScore switch
+                 // Check if current user has already evaluated
+                 string userId = Preferences.Get("UserId", string.Empty);
+                 var myEval = _project.Evaluations?.FirstOrDefault(e => e.EvaluatorId == userId);
+
+                 if (myEval != null)
                  {
-                     2 => 1,
-                     5 => 2,
-                     8 => 3,
-                     10 => 4,
-                     _ => 3
-                 };
-                 UpdatePresentationSelection(index);
+                     // Load existing evaluation
+                     InnovationScore = myEval.InnovationScore;
+                     TechScore = myEval.TechScore;
+                     Comments = myEval.Comments;
+
+                     int presentationScore = myEval.PresentationScore;
+                     int index = presentationScore switch
+                     {
+                         2 => 1,
+                         5 => 2,
+                         8 => 3,
+                         10 => 4,
+                         _ => 3
+                     };
+                     UpdatePresentationSelection(index);
+                 }
+                 else
+                 {
+                     // Default values for new evaluation
+                     InnovationScore = 8;
+                     TechScore = 6;
+                     Comments = string.Empty;
+                     UpdatePresentationSelection(3); // Good
+                 }
             }
         }
     }
@@ -138,17 +168,65 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
     
     private async void OnSubmitClicked(object sender, EventArgs e)
     {
-        if (Project == null) return; // Should not happen
+        if (Project == null) return;
 
-        // 1. Update Model
-        Project.InnovationScore = InnovationScore;
-        Project.TechScore = TechScore;
-        Project.PresentationScore = _presentationScore;
-        Project.Score = TotalScore.ToString();
+        // Get Current User Info
+        string userId = Preferences.Get("UserId", string.Empty);
+        string userName = Preferences.Get("UserFullName", "Evaluador");
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            await DisplayAlert("Error", "No se pudo identificar al evaluador. Por favor inicia sesión nuevamente.", "OK");
+            return;
+        }
+
+        // Create or Update Evaluation
+        var evaluation = new Evaluation
+        {
+            EvaluatorId = userId,
+            EvaluatorName = userName,
+            InnovationScore = InnovationScore,
+            TechScore = TechScore,
+            PresentationScore = _presentationScore,
+            TotalScore = TotalScore,
+            Comments = Comments,
+            Timestamp = DateTime.UtcNow
+        };
+
+        // Remove existing evaluation by this user if any
+        var existingEvaluation = Project.Evaluations.FirstOrDefault(ev => ev.EvaluatorId == userId);
+        if (existingEvaluation != null)
+        {
+            Project.Evaluations.Remove(existingEvaluation);
+        }
+
+        // Add new evaluation
+        Project.Evaluations.Add(evaluation);
+
+        // Recalculate Project Averages
+        if (Project.Evaluations.Any())
+        {
+            Project.InnovationScore = Math.Round(Project.Evaluations.Average(ev => ev.InnovationScore), 1);
+            Project.TechScore = Math.Round(Project.Evaluations.Average(ev => ev.TechScore), 1);
+            
+            // For presentation score (int), we can round to nearest int
+            Project.PresentationScore = (int)Math.Round(Project.Evaluations.Average(ev => ev.PresentationScore));
+            
+            Project.Score = Math.Round(Project.Evaluations.Average(ev => ev.TotalScore), 1).ToString();
+        }
+        else
+        {
+             // Fallback (shouldn't happen directly after add)
+            Project.InnovationScore = InnovationScore;
+            Project.TechScore = TechScore;
+            Project.PresentationScore = _presentationScore;
+            Project.Score = TotalScore.ToString();
+        }
+
         Project.IsEvaluated = true;
         Project.IsPending = false;
         
-        // Update visual properties (though we reconstruct them on load, setting them here makes UI updating smoother if we navigate back)
+        // Update visual properties
         Project.RestoreVisuals();
 
         // 2. Persist
@@ -161,10 +239,10 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
             {
                 { "ProjectTitle", Project.Title },
                 { "ProjectImageUrl", Project.ImageUrl },
-                { "InnovationScore", InnovationScore.ToString() },
-                { "TechScore", TechScore.ToString() },
-                { "PresentationScore", _presentationScore.ToString() },
-                { "TotalScore", TotalScore.ToString() }
+                { "InnovationScore", Project.InnovationScore.ToString() }, // Show AVERAGE
+                { "TechScore", Project.TechScore.ToString() }, // Show AVERAGE
+                { "PresentationScore", Project.PresentationScore.ToString() }, // Show AVERAGE
+                { "TotalScore", Project.Score } // Show AVERAGE
             };
 
             await Shell.Current.GoToAsync(nameof(EvaluationResultPage), navigationParameter);

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="EvaluatorApp.EditProfilePage"
+             BackgroundColor="{AppThemeBinding Light=#f6f8f6, Dark=#101622}"
+             Title="Editar Perfil">
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- Custom Navigation Bar (Optional, but using standard NavigationPage is often better for native feel. 
+             If user wants exact custom look, we can hide NavBar and build custom. 
+             For now, let's use the standard NavigationBar but style the page content heavily.) -->
+        
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="20" Padding="16,20,16,40">
+                
+                <!-- Profile Image & Camera Button -->
+                <Grid HorizontalOptions="Center" WidthRequest="140" HeightRequest="160">
+                    <Border Stroke="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                            StrokeThickness="4"
+                            StrokeShape="RoundRectangle 64"
+                            HeightRequest="128"
+                            WidthRequest="128"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Start">
+                        <Image x:Name="ProfileImage"
+                               Aspect="AspectFill"
+                               HeightRequest="128"
+                               WidthRequest="128"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center">
+                            <Image.Clip>
+                                <EllipseGeometry Center="64,64" RadiusX="64" RadiusY="64"/>
+                            </Image.Clip>
+                        </Image>
+                    </Border>
+                    
+                    <!-- Camera Button (FAB style) -->
+                    <Button Clicked="OnChangePhotoClicked"
+                            Text="photo_camera"
+                            FontFamily="MaterialIcons"
+                            FontSize="20"
+                            TextColor="White"
+                            BackgroundColor="{StaticResource Primary}"
+                            CornerRadius="20"
+                            HeightRequest="40"
+                            WidthRequest="40"
+                            HorizontalOptions="End"
+                            VerticalOptions="End"
+                            Margin="0,0,10,40"
+                            Shadow="{Shadow Radius=4, Opacity=0.3}"/>
+                    
+                    <Label Text="Toca la cámara para cambiar foto"
+                           TextColor="{AppThemeBinding Light=#616f89, Dark=#9ca3af}"
+                           FontSize="12"
+                           HorizontalOptions="Center"
+                           VerticalOptions="End"/>
+                </Grid>
+
+                <!-- Form Fields -->
+                <VerticalStackLayout Spacing="16">
+                    
+                    <!-- Full Name -->
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Nombre Completo" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#111318, Dark=White}"/>
+                        <Entry x:Name="FullNameEntry"
+                               Placeholder="Ingresa tu nombre"
+                               BackgroundColor="{AppThemeBinding Light=White, Dark=#1f2937}"
+                               TextColor="{AppThemeBinding Light=#111318, Dark=White}"
+                               HeightRequest="50"/>
+                    </VerticalStackLayout>
+
+                    <!-- Institutional Email (Read Only) -->
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Correo Institucional" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#111318, Dark=White}"/>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Entry x:Name="EmailEntry"
+                                   IsReadOnly="True"
+                                   TextColor="{AppThemeBinding Light=#616f89, Dark=#9ca3af}"
+                                   BackgroundColor="{AppThemeBinding Light=#f0f2f4, Dark=#374151}"
+                                   HeightRequest="50"/>
+                            <Label Text="lock"
+                                   FontFamily="MaterialIcons"
+                                   TextColor="{AppThemeBinding Light=#616f89, Dark=#9ca3af}"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="End"
+                                   Margin="0,0,10,0"
+                                   InputTransparent="True"/>
+                        </Grid>
+                        <Label Text="Este campo está gestionado por tu institución." FontSize="11" TextColor="{AppThemeBinding Light=#616f89, Dark=#9ca3af}"/>
+                    </VerticalStackLayout>
+
+                    <!-- Department/Career -->
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Carrera / Departamento" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#111318, Dark=White}"/>
+                        <Picker x:Name="DepartmentPicker"
+                                BackgroundColor="{AppThemeBinding Light=White, Dark=#1f2937}"
+                                TextColor="{AppThemeBinding Light=#111318, Dark=White}"
+                                Title="Selecciona tu departamento"
+                                HeightRequest="50" />
+                    </VerticalStackLayout>
+
+                    <!-- Pronouns -->
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Pronombres" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#111318, Dark=White}"/>
+                        <Entry x:Name="PronounsEntry"
+                               Placeholder="Ej. Él/Él, Ella/Ella"
+                               BackgroundColor="{AppThemeBinding Light=White, Dark=#1f2937}"
+                               TextColor="{AppThemeBinding Light=#111318, Dark=White}"
+                               HeightRequest="50"/>
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+
+                <!-- Action Buttons -->
+                <VerticalStackLayout Spacing="12" Margin="0,20,0,0">
+                    <Button Text="Guardar Cambios"
+                            Clicked="OnSaveClicked"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="White"
+                            FontAttributes="Bold"
+                            CornerRadius="12"
+                            HeightRequest="56"/>
+                    
+                    <Button Text="Cancelar"
+                            Clicked="OnCancelClicked"
+                            BackgroundColor="Transparent"
+                            TextColor="{AppThemeBinding Light=#111318, Dark=White}"
+                            FontAttributes="Bold"
+                            HeightRequest="56"/>
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using EvaluatorApp.Services;
 
 namespace EvaluatorApp;
 
@@ -36,10 +37,15 @@ public static class MauiProgram
         builder.Configuration.AddConfiguration(config);
 
         builder.Services.AddSingleton<Services.IMongoDBService, Services.MongoDBService>();
+        builder.Services.AddSingleton<Services.ICloudinaryService, Services.CloudinaryService>();
         builder.Services.AddSingleton<LoginPage>();
         builder.Services.AddSingleton<ProjectsPage>();
         builder.Services.AddSingleton<RankingPage>();
         builder.Services.AddTransient<ProjectDetailsPage>();
+        builder.Services.AddTransient<SignUpPage>();
+        builder.Services.AddTransient<ProfilePage>();
+        builder.Services.AddTransient<EditProfilePage>();
+        builder.Services.AddSingleton<Services.IMsalAuthService, Services.MsalAuthService>();
 
 
 #if DEBUG

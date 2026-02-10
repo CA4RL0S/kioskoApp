@@ -9,15 +9,16 @@ public partial class RankingPage : ContentPage
     private readonly IMongoDBService _mongoDBService;
     public ObservableCollection<RankedProject> RankedProjects { get; set; }
 
-	public RankingPage(IMongoDBService mongoDBService)
-	{
-		InitializeComponent();
+    public RankingPage(IMongoDBService mongoDBService)
+    {
+        InitializeComponent();
         _mongoDBService = mongoDBService;
-	}
+    }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific.Page.SetUseSafeArea(this, false);
         await LoadRanking();
     }
 

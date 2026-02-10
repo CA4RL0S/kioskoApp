@@ -78,6 +78,7 @@
                                         Padding="15,0">
                                     <Entry x:Name="EmailEntry"
                                            Placeholder="usuario@institucion.edu.co"
+                                           Keyboard="Email"
                                            HeightRequest="50"
                                            TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"
                                            PlaceholderColor="{StaticResource TextSecondary}"/>
@@ -128,13 +129,16 @@
 
                         <!-- Footer -->
                         <VerticalStackLayout Spacing="10" Margin="0,10,0,0" HorizontalOptions="Center">
-                            <Label Text="¿Tienes problemas? Contactar Soporte" 
-                                   FontSize="14"
-                                   TextColor="{StaticResource TextSecondary}">
+                             <!-- Sign Up Link -->
+                            <Label HorizontalOptions="Center" FontSize="14" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource Gray400}}">
                                 <Label.FormattedText>
                                     <FormattedString>
-                                        <Span Text="¿Tienes problemas? " />
-                                        <Span Text="Contactar Soporte" TextColor="{StaticResource Primary}" FontAttributes="Bold" />
+                                        <Span Text="¿No tienes cuenta? " />
+                                        <Span Text="Regístrate aquí" TextColor="{StaticResource Primary}" FontAttributes="Bold">
+                                            <Span.GestureRecognizers>
+                                                <TapGestureRecognizer Tapped="OnSignUpClicked"/>
+                                            </Span.GestureRecognizers>
+                                        </Span>
                                     </FormattedString>
                                 </Label.FormattedText>
                             </Label>

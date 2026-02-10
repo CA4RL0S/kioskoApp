@@ -9,6 +9,12 @@ public partial class MainPage : ContentPage
 		InitializeComponent();
 	}
 
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific.Page.SetUseSafeArea(this, false);
+    }
+
 	private void OnCounterClicked(object? sender, EventArgs e)
 	{
 		count++;

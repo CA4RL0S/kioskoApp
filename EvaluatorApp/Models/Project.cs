@@ -76,6 +76,9 @@ public class Project
         }
     }
 
+    [BsonElement("evaluations")]
+    public List<Evaluation> Evaluations { get; set; } = new List<Evaluation>();
+
     public void RestoreVisuals()
     {
         if (IsEvaluated)
@@ -93,4 +96,56 @@ public class Project
             StatusBackgroundColor = Color.FromRgba(255, 251, 235, 255);
         }
     }
+
+    public void UpdatePersonalizedStatus(string currentUserId)
+    {
+        var myEval = Evaluations?.FirstOrDefault(e => e.EvaluatorId == currentUserId);
+        
+        if (myEval != null)
+        {
+            IsEvaluated = true;
+            IsPending = false;
+            Score = myEval.TotalScore.ToString(); // Show MY score in the list
+            RestoreVisuals();
+        }
+        else
+        {
+            IsEvaluated = false;
+            IsPending = true;
+            Score = string.Empty; // No score for me yet
+            
+            // Re-apply "Pending" visuals
+            StatusText = "Pendiente de Evaluación";
+            StatusColor = Color.FromArgb("#F59E0B");
+            StatusTextColor = Color.FromRgb(180, 83, 9);
+            StatusBackgroundColor = Color.FromRgba(255, 251, 235, 255);
+        }
+    }
+}
+
+public class Evaluation
+{
+    [BsonElement("evaluatorId")]
+    public string EvaluatorId { get; set; }
+
+    [BsonElement("evaluatorName")]
+    public string EvaluatorName { get; set; }
+
+    [BsonElement("innovationScore")]
+    public double InnovationScore { get; set; }
+
+    [BsonElement("techScore")]
+    public double TechScore { get; set; }
+
+    [BsonElement("presentationScore")]
+    public int PresentationScore { get; set; }
+
+    [BsonElement("totalScore")]
+    public double TotalScore { get; set; }
+
+    [BsonElement("timestamp")]
+    public DateTime Timestamp { get; set; }
+
+    [BsonElement("comments")]
+    public string? Comments { get; set; }
 }

@@ -22,7 +22,7 @@ public partial class LoginPage : ContentPage
     
     private async void OnLoginClicked(object sender, EventArgs e)
     {
-        string email = EmailEntry.Text?.Trim();
+        string email = EmailEntry.Text?.Trim().ToLower();
         string password = PasswordEntry.Text?.Trim();
 
         if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
@@ -37,6 +37,15 @@ public partial class LoginPage : ContentPage
              var user = await _mongoDBService.Login(email, password);
              if (user != null)
              {
+                 // Store session data
+                 Preferences.Set("UserFullName", user.FullName ?? user.Username); // Fallback if FullName null
+                 Preferences.Set("UserEmail", user.Email);
+                 Preferences.Set("UserRole", user.Role);
+                 Preferences.Set("UserId", user.Id);
+                 Preferences.Set("UserProfileImage", user.ProfileImageUrl ?? string.Empty);
+                 Preferences.Set("UserDepartment", user.Department ?? string.Empty);
+                 Preferences.Set("UserPronouns", user.Pronouns ?? string.Empty);
+
                  await Shell.Current.GoToAsync("//ProjectsPage");
              }
              else
@@ -53,5 +62,9 @@ public partial class LoginPage : ContentPage
         {
             IsBusy = false;
         }
+    }
+    private async void OnSignUpClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync(nameof(SignUpPage));
     }
 }

@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using EvaluatorApp.Models;
 using EvaluatorApp.Services;
 
+
 namespace EvaluatorApp;
 
 public partial class ProjectsPage : ContentPage
@@ -20,6 +21,7 @@ public partial class ProjectsPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific.Page.SetUseSafeArea(this, false);
         await LoadProjects();
     }
 
@@ -30,6 +32,14 @@ public partial class ProjectsPage : ContentPage
         try 
         {
             var projects = await _mongoDBService.GetProjects();
+            
+            // Personalize status for current user
+            string userId = Preferences.Get("UserId", string.Empty);
+            foreach (var p in projects)
+            {
+                p.UpdatePersonalizedStatus(userId);
+            }
+
             _allProjects = projects; // Store full list
             ApplyFilter("All"); // Apply default filter
         }

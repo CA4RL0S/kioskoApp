@@ -1,8 +1,10 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
              x:Class="EvaluatorApp.ProfilePage"
              Title="Perfil"
+             Shell.NavBarIsVisible="False"
+             ios:Page.UseSafeArea="False"
              BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
 
     <ScrollView>
@@ -16,12 +18,22 @@
                             StrokeShape="RoundRectangle 64"
                             HeightRequest="128"
                             WidthRequest="128"
-                            HorizontalOptions="Center">
+                            HorizontalOptions="Center"
+                            Padding="0">
                         <Border.Shadow>
                             <Shadow Brush="Black" Offset="0,4" Opacity="0.1" Radius="10"/>
                         </Border.Shadow>
-                        <Image Source="https://lh3.googleusercontent.com/aida-public/AB6AXuCG7GOAWsNtdUBrJaetYgnJWHlhAE9Nn5bKx-hcr1nNu_C1gLCqPFy3kA6RcIYuihk5QEBFp_jN1ChpBXD-PI-e1q_SR9S2vuLErRhYYBrIwzqHnTP47Y-bF7NNpxMKRUGE6bwoDZsA_EEc4y7PmbEkvZYUmn37Ey4c3Plmt6pj2_8zW5aIxD4ctYtk_r70jNUyTQ3zeQ2Q9PurlJuVB4gKhzf4g75UUmkgUcoqqcir1hZvJ8TNl3n_K2sU-2vkvQejNTvLCbytEjA"
-                               Aspect="AspectFill"/>
+                        <Image x:Name="ProfileImage"
+                               Source="https://res.cloudinary.com/djwpi6z29/image/upload/v1770699551/avatar-default-user-profile-icon-social-media-vector-57234208_y8gtgs.jpg"
+                               Aspect="AspectFill"
+                               HeightRequest="120"
+                               WidthRequest="120"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center">
+                               <Image.Clip>
+                                   <EllipseGeometry Center="60,60" RadiusX="60" RadiusY="60"/>
+                               </Image.Clip>
+                        </Image>
                     </Border>
                     
                     <!-- Camera Icon Badge -->
@@ -47,7 +59,8 @@
                 </Grid>
 
                 <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
-                    <Label Text="Maria Rodriguez"
+                    <Label x:Name="NameLabel"
+                           Text="Cargando..."
                            FontSize="24"
                            FontAttributes="Bold"
                            TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"
@@ -59,13 +72,15 @@
                                 BackgroundColor="#1A135bec"
                                 StrokeShape="RoundRectangle 10"
                                 Padding="10,2">
-                            <Label Text="Evaluador"
+                            <Label x:Name="RoleLabel"
+                                   Text="Evaluador"
                                    FontSize="12"
                                    FontAttributes="Bold"
                                    TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark=#93c5fd}"/>
                         </Border>
                         
-                        <Label Text="m.rodriguez@university.edu"
+                        <Label x:Name="EmailLabel"
+                               Text="..."
                                FontSize="14"
                                TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSubDark}}"
                                VerticalOptions="Center"/>

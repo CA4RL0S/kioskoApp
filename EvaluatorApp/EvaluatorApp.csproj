@@ -20,7 +20,7 @@
     <ApplicationTitle>Kiosko Evaluadores</ApplicationTitle>
 
     <!-- Bundle ID -->
-    <ApplicationId>com.companyname.evaluatorapp</ApplicationId>
+    <ApplicationId>com.carlos.kiosko</ApplicationId>
 
     <!-- Versiones -->
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -59,6 +59,11 @@
 
   </PropertyGroup>
 
+  <PropertyGroup Condition="$(TargetFramework.Contains('-ios'))">
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignProvision>Automatic</CodesignProvision>
+  </PropertyGroup>
+
   <!-- ========================= -->
   <!-- Recursos MAUI -->
   <!-- ========================= -->
@@ -79,6 +84,8 @@
   <!-- Paquetes -->
   <!-- ========================= -->
   <ItemGroup>
+    <PackageReference Include="CloudinaryDotNet" Version="1.28.0" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.82.1" />
     <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
     <PackageReference Include="MongoDB.Driver" Version="3.6.0" />

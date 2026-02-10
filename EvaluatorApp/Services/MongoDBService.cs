@@ -10,8 +10,11 @@ public interface IMongoDBService
 {
     Task Init();
     Task<User> Login(string username, string password);
+    Task<User> CreateUser(User user);
     Task<List<Project>> GetProjects();
     Task UpdateProject(Project project);
+    Task UpdateUser(User user);
+    Task UpdateUserProfileImage(string userId, string imageUrl);
 }
 
 public class MongoDBService : IMongoDBService
@@ -125,7 +128,31 @@ public class MongoDBService : IMongoDBService
     public async Task<User> Login(string username, string password)
     {
         await Init();
-        return await _usersCollection.Find(u => (u.Username == username || u.Email == username) && u.Password == password).FirstOrDefaultAsync();
+        var user = await _usersCollection.Find(u => (u.Username == username || u.Email == username) && u.Password == password).FirstOrDefaultAsync();
+        
+        if (user != null && !user.IsVerified)
+        {
+            throw new Exception("Tu cuenta aún no ha sido verificada por un administrador.");
+        }
+
+        return user;
+    }
+
+    public async Task<User> CreateUser(User user)
+    {
+        await Init();
+        
+        var existingUser = await _usersCollection.Find(u => u.Email == user.Email).FirstOrDefaultAsync();
+        if (existingUser != null)
+        {
+            throw new Exception("El correo electrónico ya está registrado.");
+        }
+
+        user.IsVerified = false; // Default to unverified
+        user.Role = "Evaluador";
+        
+        await _usersCollection.InsertOneAsync(user);
+        return user;
     }
 
     public async Task<List<Project>> GetProjects()
@@ -143,5 +170,27 @@ public class MongoDBService : IMongoDBService
     {
         await Init();
         await _projectsCollection.ReplaceOneAsync(p => p.Id == project.Id, project);
+    }
+
+    public async Task UpdateUser(User user)
+    {
+        await Init();
+        var filter = Builders<User>.Filter.Eq(u => u.Id, user.Id);
+        
+        var update = Builders<User>.Update
+            .Set(u => u.FullName, user.FullName)
+            .Set(u => u.Department, user.Department)
+            .Set(u => u.Pronouns, user.Pronouns)
+            .Set(u => u.ProfileImageUrl, user.ProfileImageUrl);
+            
+        await _usersCollection.UpdateOneAsync(filter, update);
+    }
+
+    public async Task UpdateUserProfileImage(string userId, string imageUrl)
+    {
+        await Init();
+        var filter = Builders<User>.Filter.Eq(u => u.Id, userId);
+        var update = Builders<User>.Update.Set(u => u.ProfileImageUrl, imageUrl);
+        await _usersCollection.UpdateOneAsync(filter, update);
     }
 }

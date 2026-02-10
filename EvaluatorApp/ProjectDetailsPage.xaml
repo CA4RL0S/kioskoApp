@@ -190,11 +190,21 @@
                     <!-- Comments -->
                      <VerticalStackLayout Spacing="12">
                         <Label Text="Additional Comments" FontSize="16" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}"/>
-                        <Editor Placeholder="Provide constructive feedback for the students..." 
-                                HeightRequest="120" 
-                                BackgroundColor="{StaticResource BackgroundLight}" 
-                                TextColor="{StaticResource TextPrimary}"
-                                PlaceholderColor="{StaticResource Gray400}"/>
+                        <Border StrokeShape="RoundRectangle 12" 
+                                BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource CardDark}}" 
+                                StrokeThickness="0" 
+                                Padding="12,8">
+                            <Border.Shadow>
+                                <Shadow Brush="Black" Offset="0,4" Radius="8" Opacity="0.05"/>
+                            </Border.Shadow>
+                            <Editor Text="{Binding Comments}"
+                                    Placeholder="Escribe comentarios constructivos para los estudiantes..." 
+                                    AutoSize="TextChanges"
+                                    HeightRequest="120" 
+                                    BackgroundColor="Transparent" 
+                                    TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"
+                                    PlaceholderColor="{StaticResource Gray400}"/>
+                        </Border>
                     </VerticalStackLayout>
 
                 </VerticalStackLayout>
