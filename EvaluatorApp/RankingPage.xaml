@@ -45,7 +45,7 @@
             <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" Padding="24,0,24,16">
                 <HorizontalStackLayout Spacing="8">
                     <Button Text="Todos" 
-                            FontSize="12"
+                            FontSize="13"
                             FontAttributes="Bold"
                             TextColor="White" 
                             BackgroundColor="{StaticResource Primary}" 
@@ -54,7 +54,7 @@
                             Padding="16,0"/>
                     
                     <Button Text="Ingeniería" 
-                            FontSize="12"
+                            FontSize="13"
                             TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" 
                             BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource Gray900}}" 
                             BorderColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
@@ -64,7 +64,7 @@
                             Padding="16,0"/>
 
                     <Button Text="Diseño" 
-                            FontSize="12"
+                            FontSize="13"
                             TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" 
                             BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource Gray900}}" 
                             BorderColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
@@ -74,7 +74,7 @@
                             Padding="16,0"/>
 
                     <Button Text="Negocios" 
-                            FontSize="12"
+                            FontSize="13"
                             TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" 
                             BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource Gray900}}" 
                             BorderColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
@@ -104,9 +104,9 @@
                             <Shadow Brush="Black" Offset="0,4" Radius="8" Opacity="0.1"/>
                         </Border.Shadow>
                         <VerticalStackLayout Spacing="2" HorizontalOptions="Center">
-                            <Label Text="Plata" FontSize="10" TextColor="Silver" FontAttributes="Bold" TextTransform="Uppercase" HorizontalOptions="Center"/>
-                            <Label Text="{Binding Rank2.Project.Title}" FontSize="12" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" LineBreakMode="TailTruncation" HorizontalOptions="Center" HorizontalTextAlignment="Center" MaxLines="2"/>
-                            <Label Text="{Binding Rank2.Project.Cycle}" FontSize="10" TextColor="{StaticResource TextSecondary}" HorizontalOptions="Center" LineBreakMode="TailTruncation"/>
+                            <Label Text="Plata" FontSize="11" TextColor="Silver" FontAttributes="Bold" TextTransform="Uppercase" HorizontalOptions="Center"/>
+                            <Label Text="{Binding Rank2.Project.Title}" FontSize="13" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" LineBreakMode="TailTruncation" HorizontalOptions="Center" HorizontalTextAlignment="Center" MaxLines="2"/>
+                            <Label Text="{Binding Rank2.Project.Cycle}" FontSize="11" TextColor="{StaticResource TextSecondary}" HorizontalOptions="Center" LineBreakMode="TailTruncation"/>
                             <Label Text="{Binding Rank2.Project.Score}" FontSize="14" FontAttributes="Bold" TextColor="{StaticResource Primary}" HorizontalOptions="Center" Margin="0,4,0,0"/>
                         </VerticalStackLayout>
                     </Border>
@@ -130,9 +130,9 @@
                             <Shadow Brush="#FFD700" Offset="0,8" Radius="16" Opacity="0.15"/>
                         </Border.Shadow>
                         <VerticalStackLayout Spacing="2" HorizontalOptions="Center">
-                            <Label Text="Oro" FontSize="12" TextColor="#FFD700" FontAttributes="Bold" TextTransform="Uppercase" HorizontalOptions="Center"/>
-                            <Label Text="{Binding Rank1.Project.Title}" FontSize="14" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" LineBreakMode="TailTruncation" HorizontalOptions="Center" HorizontalTextAlignment="Center" MaxLines="2"/>
-                            <Label Text="{Binding Rank1.Project.Cycle}" FontSize="10" TextColor="{StaticResource TextSecondary}" HorizontalOptions="Center" LineBreakMode="TailTruncation"/>
+                            <Label Text="Oro" FontSize="13" TextColor="#FFD700" FontAttributes="Bold" TextTransform="Uppercase" HorizontalOptions="Center"/>
+                            <Label Text="{Binding Rank1.Project.Title}" FontSize="15" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" LineBreakMode="TailTruncation" HorizontalOptions="Center" HorizontalTextAlignment="Center" MaxLines="2"/>
+                            <Label Text="{Binding Rank1.Project.Cycle}" FontSize="11" TextColor="{StaticResource TextSecondary}" HorizontalOptions="Center" LineBreakMode="TailTruncation"/>
                             <Label Text="{Binding Rank1.Project.Score}" FontSize="18" FontAttributes="Bold" TextColor="{StaticResource Primary}" HorizontalOptions="Center" Margin="0,4,0,0"/>
                         </VerticalStackLayout>
                     </Border>
@@ -155,9 +155,9 @@
                             <Shadow Brush="Black" Offset="0,4" Radius="8" Opacity="0.1"/>
                         </Border.Shadow>
                         <VerticalStackLayout Spacing="2" HorizontalOptions="Center">
-                            <Label Text="Bronce" FontSize="10" TextColor="#CD7F32" FontAttributes="Bold" TextTransform="Uppercase" HorizontalOptions="Center"/>
-                            <Label Text="{Binding Rank3.Project.Title}" FontSize="12" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" LineBreakMode="TailTruncation" HorizontalOptions="Center" HorizontalTextAlignment="Center" MaxLines="2"/>
-                            <Label Text="{Binding Rank3.Project.Cycle}" FontSize="10" TextColor="{StaticResource TextSecondary}" HorizontalOptions="Center" LineBreakMode="TailTruncation"/>
+                            <Label Text="Bronce" FontSize="11" TextColor="#CD7F32" FontAttributes="Bold" TextTransform="Uppercase" HorizontalOptions="Center"/>
+                            <Label Text="{Binding Rank3.Project.Title}" FontSize="13" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" LineBreakMode="TailTruncation" HorizontalOptions="Center" HorizontalTextAlignment="Center" MaxLines="2"/>
+                            <Label Text="{Binding Rank3.Project.Cycle}" FontSize="11" TextColor="{StaticResource TextSecondary}" HorizontalOptions="Center" LineBreakMode="TailTruncation"/>
                             <Label Text="{Binding Rank3.Project.Score}" FontSize="14" FontAttributes="Bold" TextColor="{StaticResource Primary}" HorizontalOptions="Center" Margin="0,4,0,0"/>
                         </VerticalStackLayout>
                     </Border>
@@ -173,7 +173,7 @@
                      <!-- List Header -->
                     <Grid Padding="24,20,24,12" ColumnDefinitions="*, Auto">
                         <Label Grid.Column="0" Text="Top General" FontSize="18" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"/>
-                        <Label Grid.Column="1" Text="Actualizado: Hoy" FontSize="12" TextColor="{StaticResource TextSecondary}" VerticalOptions="Center"/>
+                        <Label Grid.Column="1" Text="Actualizado: Hoy" FontSize="13" TextColor="{StaticResource TextSecondary}" VerticalOptions="Center"/>
                     </Grid>
 
                     <!-- Items via BindableLayout -->
@@ -190,15 +190,15 @@
                                     </Border>
                                     
                                     <VerticalStackLayout Grid.Column="2" Spacing="2" VerticalOptions="Center">
-                                        <Label Text="{Binding Project.Title}" FontSize="14" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" LineBreakMode="TailTruncation"/>
-                                        <Label Text="{Binding Project.Cycle}" FontSize="10" TextColor="{StaticResource TextSecondary}"/>
+                                        <Label Text="{Binding Project.Title}" FontSize="15" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" LineBreakMode="TailTruncation"/>
+                                        <Label Text="{Binding Project.Cycle}" FontSize="12" TextColor="{StaticResource TextSecondary}"/>
                                     </VerticalStackLayout>
                                     
                                     <VerticalStackLayout Grid.Column="3" HorizontalOptions="End" VerticalOptions="Center" Spacing="0">
                                         <Label Text="{Binding Project.Score}" FontSize="14" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" HorizontalOptions="End"/>
                                         <HorizontalStackLayout Spacing="2" HorizontalOptions="End">
-                                            <Label Text="arrow_drop_up" FontFamily="MaterialIcons" FontSize="12" TextColor="#10B981" VerticalOptions="Center"/>
-                                            <Label Text="2" FontSize="10" FontAttributes="Bold" TextColor="#10B981" VerticalOptions="Center"/>
+                                            <Label Text="arrow_drop_up" FontFamily="MaterialIcons" FontSize="13" TextColor="#10B981" VerticalOptions="Center"/>
+                                            <Label Text="2" FontSize="11" FontAttributes="Bold" TextColor="#10B981" VerticalOptions="Center"/>
                                         </HorizontalStackLayout>
                                     </VerticalStackLayout>
                                 </Grid>

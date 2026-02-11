@@ -25,7 +25,7 @@
                     <!-- Welcome Text -->
                     <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
                         <Label Text="Bienvenido de nuevo" 
-                               FontSize="11" 
+                               FontSize="12" 
                                TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSubDark}}"
                                FontAttributes="Bold"/>
                         <Label x:Name="UserNameLabel" 
@@ -60,11 +60,11 @@
                                 <Label Text="task_alt" FontFamily="MaterialIcons" FontSize="24" TextColor="White" Opacity="0.8"/>
                                 <Border Grid.Column="1" StrokeThickness="0" BackgroundColor="#33FFFFFF" 
                                         StrokeShape="RoundRectangle 10" Padding="8,2">
-                                    <Label x:Name="EvalPercentLabel" Text="+0%" FontSize="10" TextColor="White" FontAttributes="Bold"/>
+                                    <Label x:Name="EvalPercentLabel" Text="+0%" FontSize="11" TextColor="White" FontAttributes="Bold"/>
                                 </Border>
                             </Grid>
                             <Label x:Name="EvaluatedCountLabel" Text="0" FontSize="32" FontAttributes="Bold" TextColor="White"/>
-                            <Label Text="Evaluados" FontSize="12" TextColor="White" Opacity="0.8"/>
+                            <Label Text="Evaluados" FontSize="13" TextColor="White" Opacity="0.8"/>
                         </VerticalStackLayout>
                     </Border>
 
@@ -78,12 +78,12 @@
                                 <Label Text="pending_actions" FontFamily="MaterialIcons" FontSize="24" TextColor="{StaticResource Primary}"/>
                                 <Border Grid.Column="1" StrokeThickness="0" BackgroundColor="#1A135bec" 
                                         StrokeShape="RoundRectangle 10" Padding="8,2">
-                                    <Label Text="Pendiente" FontSize="10" TextColor="{StaticResource Primary}" FontAttributes="Bold"/>
+                                    <Label Text="Pendiente" FontSize="11" TextColor="{StaticResource Primary}" FontAttributes="Bold"/>
                                 </Border>
                             </Grid>
                             <Label x:Name="PendingCountLabel" Text="0" FontSize="32" FontAttributes="Bold" 
                                    TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"/>
-                            <Label Text="Por revisar" FontSize="12" 
+                            <Label Text="Por revisar" FontSize="13" 
                                    TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSubDark}}"/>
                         </VerticalStackLayout>
                     </Border>
@@ -111,7 +111,7 @@
                            TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" VerticalOptions="Center"/>
                     <Border Grid.Column="1" StrokeThickness="0" BackgroundColor="#1A135bec" 
                             StrokeShape="RoundRectangle 10" Padding="8,4">
-                        <Label Text="URGENTE" FontSize="10" TextColor="{StaticResource Primary}" 
+                        <Label Text="URGENTE" FontSize="11" TextColor="{StaticResource Primary}" 
                                FontAttributes="Bold" CharacterSpacing="1"/>
                     </Border>
                 </Grid>
