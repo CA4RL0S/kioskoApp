@@ -233,6 +233,25 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
         try
         {
             await _mongoDBService.UpdateProject(Project);
+
+            // Record activity for this user
+            try
+            {
+                var activity = new Activity
+                {
+                    UserId = userId,
+                    Type = existingEvaluation != null ? "evaluation_updated" : "evaluation_completed",
+                    ProjectTitle = Project.Title,
+                    Description = existingEvaluation != null
+                        ? $"Actualizaste la evaluación de {Project.Title}"
+                        : $"Evaluaste {Project.Title}",
+                    Timestamp = DateTime.UtcNow,
+                    Icon = "check_circle",
+                    IconColor = "#10B981"
+                };
+                await _mongoDBService.CreateActivity(activity);
+            }
+            catch { /* Activity recording is non-critical */ }
         
             // 3. Navigate to Confirmation
             var navigationParameter = new Dictionary<string, object>

@@ -16,21 +16,37 @@
         <ShellContent
             Title="Inicio"
             ContentTemplate="{DataTemplate local:MainPage}"
-            Route="MainPage" />
+            Route="MainPage">
+            <ShellContent.Icon>
+                <FontImageSource FontFamily="MaterialIcons" Glyph="home" Size="24" />
+            </ShellContent.Icon>
+        </ShellContent>
         
         <ShellContent
             Title="Proyectos"
             ContentTemplate="{DataTemplate local:ProjectsPage}"
-            Route="ProjectsPage" />
+            Route="ProjectsPage">
+            <ShellContent.Icon>
+                <FontImageSource FontFamily="MaterialIcons" Glyph="assignment" Size="24" />
+            </ShellContent.Icon>
+        </ShellContent>
             
         <ShellContent
             Title="Ranking"
             ContentTemplate="{DataTemplate local:RankingPage}"
-            Route="RankingPage" />
+            Route="RankingPage">
+            <ShellContent.Icon>
+                <FontImageSource FontFamily="MaterialIcons" Glyph="leaderboard" Size="24" />
+            </ShellContent.Icon>
+        </ShellContent>
             
         <ShellContent
             Title="Perfil"
             ContentTemplate="{DataTemplate local:ProfilePage}"
-            Route="ProfilePage" />
+            Route="ProfilePage">
+            <ShellContent.Icon>
+                <FontImageSource FontFamily="MaterialIcons" Glyph="person" Size="24" />
+            </ShellContent.Icon>
+        </ShellContent>
     </TabBar>
 </Shell>

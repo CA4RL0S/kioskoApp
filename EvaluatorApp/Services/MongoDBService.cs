@@ -15,6 +15,8 @@ public interface IMongoDBService
     Task UpdateProject(Project project);
     Task UpdateUser(User user);
     Task UpdateUserProfileImage(string userId, string imageUrl);
+    Task<List<Activity>> GetActivities(string userId);
+    Task CreateActivity(Activity activity);
 }
 
 public class MongoDBService : IMongoDBService
@@ -118,6 +120,21 @@ public class MongoDBService : IMongoDBService
                     TechScore = 8,
                     PresentationScore = 0,
                     Members = new List<string> { "21310500" }
+                },
+                new Project
+                {
+                    Title = "Local Space",
+                    Cycle = "Ciclo 2024-A",
+                    Description = "Información del proyecto Local Space",
+                    ImageUrl = "https://imgs.search.brave.com/jJ-rmu1_J2ro-xUlAqDOZ2_utbwc1GhE9qr7wXQJI8E/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudG9ra29icm9r/ZXIuY29tL3BpY3R1/cmVzLzc1NjM2Nzlf/NDU1ODkzMjY2NDkz/MzAxMjYxMTA4MzEy/NjA0NzMzMTk4MDM2/NzIzNjI0MTU0ODY2/MzU3NTgzMTA4NjM2/NzY5MDU1NDUzOTkz/MjYzODAuanBn",
+                    StatusText = "Pendiente de Evaluación",
+                    IsPending = true,
+                    IsEvaluated = false,
+                    Score = "0",
+                    InnovationScore = 0,
+                    TechScore = 0,
+                    PresentationScore = 0,
+                    Members = new List<string> { "Equipo Local" }
                 }
             };
 
@@ -192,5 +209,17 @@ public class MongoDBService : IMongoDBService
         var filter = Builders<User>.Filter.Eq(u => u.Id, userId);
         var update = Builders<User>.Update.Set(u => u.ProfileImageUrl, imageUrl);
         await _usersCollection.UpdateOneAsync(filter, update);
+    }
+
+    public Task<List<Activity>> GetActivities(string userId)
+    {
+        // Not implemented for local MongoDB — activities go through API
+        return Task.FromResult(new List<Activity>());
+    }
+
+    public Task CreateActivity(Activity activity)
+    {
+        // Not implemented for local MongoDB — activities go through API
+        return Task.CompletedTask;
     }
 }

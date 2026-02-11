@@ -36,7 +36,9 @@ public static class MauiProgram
         var config = configBuilder.Build();
         builder.Configuration.AddConfiguration(config);
 
-        builder.Services.AddSingleton<Services.IMongoDBService, Services.MongoDBService>();
+        // Register API Service instead of direct MongoDB
+        builder.Services.AddSingleton<Services.IMongoDBService, Services.ApiService>();
+        // builder.Services.AddSingleton<Services.IMongoDBService, Services.MongoDBService>();
         builder.Services.AddSingleton<Services.ICloudinaryService, Services.CloudinaryService>();
         builder.Services.AddSingleton<LoginPage>();
         builder.Services.AddSingleton<ProjectsPage>();

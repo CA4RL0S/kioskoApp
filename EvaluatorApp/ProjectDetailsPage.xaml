@@ -2,22 +2,22 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="EvaluatorApp.ProjectDetailsPage"
-             BackgroundColor="{StaticResource BackgroundLight}"
+             BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}"
              Title="Project Details"
              Shell.NavBarIsVisible="False"
              Shell.TabBarIsVisible="False">
 
     <Grid>
         <!-- Sticky Footer -->
-        <Grid RowDefinitions="Auto" VerticalOptions="End" ZIndex="10" BackgroundColor="White" Padding="16,16,16,32">
+        <Grid RowDefinitions="Auto" VerticalOptions="End" ZIndex="10" BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource SurfaceDark}}" Padding="16,16,16,32">
             <Grid.Shadow>
                 <Shadow Brush="Black" Opacity="0.1" Radius="10" Offset="0,-4"/>
             </Grid.Shadow>
             <VerticalStackLayout Spacing="16">
                  <Grid ColumnDefinitions="*, Auto">
-                    <Label Text="Total Score" TextColor="{StaticResource TextSecondary}" FontSize="14" FontAttributes="Bold" VerticalOptions="Center"/>
+                    <Label Text="Total Score" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSubDark}}" FontSize="14" FontAttributes="Bold" VerticalOptions="Center"/>
                     <HorizontalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
-                        <Label Text="{Binding TotalScore}" TextColor="{StaticResource TextPrimary}" FontSize="20" FontAttributes="Bold"/>
+                        <Label Text="{Binding TotalScore}" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" FontSize="20" FontAttributes="Bold"/>
                         <Label Text="/ 30" TextColor="{StaticResource Gray400}" FontSize="16" VerticalOptions="End" Margin="0,0,0,2"/>
                     </HorizontalStackLayout>
                 </Grid>
@@ -33,16 +33,16 @@
         </Grid>
 
         <!-- Main Content -->
-        <ScrollView Margin="0,0,0,120">
+        <ScrollView Margin="0,0,0,120" VerticalScrollBarVisibility="Never">
             <VerticalStackLayout>
                 <!-- Header -->
-                <Grid ColumnDefinitions="Auto, *, Auto" Padding="16,12,16,12" BackgroundColor="White">
+                <Grid ColumnDefinitions="Auto, *, Auto" Padding="16,12,16,12" BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource BackgroundDark}}">
                     <ImageButton Source="back_arrow.svg" HeightRequest="24" WidthRequest="24" Clicked="OnBackClicked">
                          <ImageButton.Source>
                             <FontImageSource FontFamily="MaterialIcons" Glyph="arrow_back" Color="{StaticResource TextPrimary}" Size="24"/>
                         </ImageButton.Source>
                     </ImageButton>
-                    <Label Grid.Column="1" Text="Project Details" TextColor="{StaticResource TextPrimary}" FontSize="18" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    <Label Grid.Column="1" Text="Project Details" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" FontSize="18" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
                     <ImageButton Grid.Column="2" HeightRequest="24" WidthRequest="24">
                         <ImageButton.Source>
                             <FontImageSource FontFamily="MaterialIcons" Glyph="bookmark_border" Color="{StaticResource TextPrimary}" Size="24"/>
@@ -61,7 +61,7 @@
                             </Border>
                         </Grid>
                     </Border>
-                    <Label Text="{Binding Project.Title}" TextColor="{StaticResource TextPrimary}" FontSize="26" FontAttributes="Bold" Margin="0,20,0,8" LineHeight="1.1"/>
+                    <Label Text="{Binding Project.Title}" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" FontSize="26" FontAttributes="Bold" Margin="0,20,0,8" LineHeight="1.1"/>
                 </VerticalStackLayout>
 
                  <!-- Team Section -->
@@ -87,7 +87,7 @@
                  <!-- Abstract -->
                 <VerticalStackLayout Padding="16,0,16,24">
                     <Label Text="{Binding Project.Description}" 
-                           TextColor="{StaticResource TextPrimary}" 
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" 
                            FontSize="16" 
                            LineHeight="1.5"/>
                     
@@ -105,12 +105,12 @@
                     </Button>
                 </VerticalStackLayout>
                 
-                <BoxView HeightRequest="8" Color="{StaticResource BackgroundLight}"/>
+                <BoxView HeightRequest="8" Color="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}"/>
 
                 <!-- Rubric Section -->
                 <VerticalStackLayout Padding="16,24" Spacing="32">
                     <Grid ColumnDefinitions="*, Auto">
-                        <Label Text="Evaluation Rubric" FontSize="18" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}"/>
+                        <Label Text="Evaluation Rubric" FontSize="18" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"/>
                         <Border Grid.Column="1" StrokeThickness="0" BackgroundColor="#E0F2FE" StrokeShape="RoundRectangle 12" Padding="12,4">
                             <Label Text="Pending" TextColor="{StaticResource Primary}" FontSize="12" FontAttributes="Bold"/>
                         </Border>
@@ -119,7 +119,7 @@
                     <!-- Innovation -->
                     <VerticalStackLayout Spacing="12">
                          <Grid ColumnDefinitions="*, Auto">
-                            <Label Text="Innovation" FontSize="16" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}"/>
+                            <Label Text="Innovation" FontSize="16" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"/>
                             <HorizontalStackLayout Grid.Column="1" Spacing="2">
                                 <Label Text="{Binding InnovationScore}" TextColor="{StaticResource Primary}" FontSize="18" FontAttributes="Bold"/>
                                 <Label Text="/10" TextColor="{StaticResource Gray400}" FontSize="14" VerticalOptions="End" Margin="0,0,0,2"/>
@@ -139,7 +139,7 @@
                             <Label Text="Presentation" FontSize="16" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}"/>
                             <Label Grid.Column="1" Text="Clarity &amp; Visuals" TextColor="{StaticResource Gray400}" FontSize="14"/>
                         </Grid>
-                        <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8" BackgroundColor="{StaticResource BackgroundLight}" Padding="6" >
+                        <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8" BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource SurfaceDark}}" Padding="6" >
                              <Border x:Name="OptionPoor" StrokeThickness="0" BackgroundColor="Transparent" Padding="0,10">
                                  <Border.GestureRecognizers>
                                      <TapGestureRecognizer Command="{Binding SelectPresentationCommand}" CommandParameter="1"/>
@@ -173,7 +173,7 @@
                     <!-- Technical Execution -->
                     <VerticalStackLayout Spacing="12">
                          <Grid ColumnDefinitions="*, Auto">
-                            <Label Text="Technical Execution" FontSize="16" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}"/>
+                            <Label Text="Technical Execution" FontSize="16" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"/>
                             <HorizontalStackLayout Grid.Column="1" Spacing="2">
                                 <Label Text="{Binding TechScore}" TextColor="{StaticResource Primary}" FontSize="18" FontAttributes="Bold"/>
                                 <Label Text="/10" TextColor="{StaticResource Gray400}" FontSize="14" VerticalOptions="End" Margin="0,0,0,2"/>
@@ -189,7 +189,7 @@
                     
                     <!-- Comments -->
                      <VerticalStackLayout Spacing="12">
-                        <Label Text="Additional Comments" FontSize="16" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}"/>
+                        <Label Text="Additional Comments" FontSize="16" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"/>
                         <Border StrokeShape="RoundRectangle 12" 
                                 BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource CardDark}}" 
                                 StrokeThickness="0" 

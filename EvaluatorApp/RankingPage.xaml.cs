@@ -4,15 +4,57 @@ using EvaluatorApp.Services;
 
 namespace EvaluatorApp;
 
-public partial class RankingPage : ContentPage
+public partial class RankingPage : ContentPage, System.ComponentModel.INotifyPropertyChanged
 {
     private readonly IMongoDBService _mongoDBService;
-    public ObservableCollection<RankedProject> RankedProjects { get; set; }
+    
+    private RankedProject _rank1;
+    public RankedProject Rank1
+    {
+        get => _rank1;
+        set
+        {
+            _rank1 = value;
+            OnPropertyChanged(nameof(Rank1));
+            OnPropertyChanged(nameof(HasRank1));
+        }
+    }
+
+    private RankedProject _rank2;
+    public RankedProject Rank2
+    {
+        get => _rank2;
+        set
+        {
+            _rank2 = value;
+            OnPropertyChanged(nameof(Rank2));
+            OnPropertyChanged(nameof(HasRank2));
+        }
+    }
+
+    private RankedProject _rank3;
+    public RankedProject Rank3
+    {
+        get => _rank3;
+        set
+        {
+            _rank3 = value;
+            OnPropertyChanged(nameof(Rank3));
+            OnPropertyChanged(nameof(HasRank3));
+        }
+    }
+
+    public bool HasRank1 => Rank1 != null;
+    public bool HasRank2 => Rank2 != null;
+    public bool HasRank3 => Rank3 != null;
+
+    public ObservableCollection<RankedProject> RestProjects { get; set; } = new ObservableCollection<RankedProject>();
 
     public RankingPage(IMongoDBService mongoDBService)
     {
         InitializeComponent();
         _mongoDBService = mongoDBService;
+        BindingContext = this;
     }
 
     protected override async void OnAppearing()
@@ -33,15 +75,24 @@ public partial class RankingPage : ContentPage
                 .OrderByDescending(p => p.ScoreValue)
                 .ToList();
 
-            RankedProjects = new ObservableCollection<RankedProject>();
+            // Clear previous
+            Rank1 = null;
+            Rank2 = null;
+            Rank3 = null;
+            RestProjects.Clear();
+
             int rank = 1;
             foreach (var proj in sortedProjects)
             {
-                RankedProjects.Add(new RankedProject(proj, rank));
+                var rankedProj = new RankedProject(proj, rank);
+
+                if (rank == 1) Rank1 = rankedProj;
+                else if (rank == 2) Rank2 = rankedProj;
+                else if (rank == 3) Rank3 = rankedProj;
+                else RestProjects.Add(rankedProj);
+
                 rank++;
             }
-
-            RankingCollectionView.ItemsSource = RankedProjects;
         }
         catch (Exception ex)
         {
@@ -51,13 +102,21 @@ public partial class RankingPage : ContentPage
 
     private async void OnBackClicked(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync("//ProjectsPage");
+        await Shell.Current.GoToAsync("//MainPage"); // Changed to Main or back to Dashboard
     }
 
     private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-         RankingCollectionView.SelectedItem = null;
+         // Handle selection if needed
+         if (e.CurrentSelection.FirstOrDefault() is RankedProject selected)
+         {
+             // Navigation logic here if details page is desired
+         }
+         ((CollectionView)sender).SelectedItem = null;
     }
+
+    public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+    protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
 }
 
 public class RankedProject

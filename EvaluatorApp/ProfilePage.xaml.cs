@@ -20,6 +20,11 @@ public partial class ProfilePage : ContentPage
         base.OnAppearing();
         Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific.Page.SetUseSafeArea(this, false);
         LoadUserProfile();
+
+        // Set switch state without firing Toggled event
+        DarkModeSwitch.Toggled -= OnDarkModeToggled;
+        DarkModeSwitch.IsToggled = ThemeService.IsDarkMode();
+        DarkModeSwitch.Toggled += OnDarkModeToggled;
     }
 
     private void LoadUserProfile()
@@ -49,6 +54,11 @@ public partial class ProfilePage : ContentPage
     private async void OnChangePasswordClicked(object sender, EventArgs e)
     {
         await DisplayAlert("Seguridad", "Navegar a Cambiar Contraseña", "OK");
+    }
+
+    private void OnDarkModeToggled(object sender, ToggledEventArgs e)
+    {
+        ThemeService.ApplyTheme(e.Value);
     }
 
     private async void OnHelpClicked(object sender, EventArgs e)

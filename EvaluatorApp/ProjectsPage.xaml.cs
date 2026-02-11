@@ -26,6 +26,8 @@ public partial class ProjectsPage : ContentPage
     }
 
     private List<Project> _allProjects = new();
+    private string _currentFilter = "All";
+    private string _searchText = string.Empty;
 
     private async Task LoadProjects()
     {
@@ -54,9 +56,16 @@ public partial class ProjectsPage : ContentPage
     {
         if (sender is Button btn && btn.CommandParameter is string mainFilter)
         {
+             _currentFilter = mainFilter;
              ApplyFilter(mainFilter);
              UpdateFilterVisuals(btn);
         }
+    }
+
+    private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+    {
+        _searchText = e.NewTextValue ?? string.Empty;
+        ApplyFilter(_currentFilter);
     }
 
     private string _emptyStatusText = "No se encontraron proyectos";
@@ -105,6 +114,15 @@ public partial class ProjectsPage : ContentPage
 
         foreach (var p in filtered)
         {
+            // Apply search text filter
+            if (!string.IsNullOrWhiteSpace(_searchText))
+            {
+                var search = _searchText.ToLowerInvariant();
+                bool matches = (p.Title?.ToLowerInvariant().Contains(search) == true) ||
+                               (p.Description?.ToLowerInvariant().Contains(search) == true) ||
+                               (p.Members?.Any(m => m.ToLowerInvariant().Contains(search)) == true);
+                if (!matches) continue;
+            }
             Projects.Add(p);
         }
     }
@@ -127,9 +145,16 @@ public partial class ProjectsPage : ContentPage
 
     private void ResetButtonVisual(Button btn)
     {
-        btn.BackgroundColor = Colors.White;
-        btn.TextColor = (Color)Application.Current.Resources["TextPrimary"];
-        btn.BorderColor = (Color)Application.Current.Resources["Gray200"];
+        bool isDark = Microsoft.Maui.Controls.Application.Current!.UserAppTheme == AppTheme.Dark;
+        btn.BackgroundColor = isDark 
+            ? (Color)Microsoft.Maui.Controls.Application.Current.Resources["SurfaceDark"] 
+            : Colors.White;
+        btn.TextColor = isDark 
+            ? Colors.White 
+            : (Color)Microsoft.Maui.Controls.Application.Current.Resources["TextPrimary"];
+        btn.BorderColor = isDark 
+            ? (Color)Microsoft.Maui.Controls.Application.Current.Resources["Gray600"] 
+            : (Color)Microsoft.Maui.Controls.Application.Current.Resources["Gray200"];
         btn.BorderWidth = 1;
         btn.FontAttributes = FontAttributes.None;
     }

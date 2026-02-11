@@ -10,7 +10,7 @@
              If user wants exact custom look, we can hide NavBar and build custom. 
              For now, let's use the standard NavigationBar but style the page content heavily.) -->
         
-        <ScrollView Grid.Row="1">
+        <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
             <VerticalStackLayout Spacing="20" Padding="16,20,16,40">
                 
                 <!-- Profile Image & Camera Button -->
