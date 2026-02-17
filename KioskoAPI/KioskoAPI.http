@@ -1,6 +1,124 @@
 @KioskoAPI_HostAddress = http://localhost:5146
 
-GET {{KioskoAPI_HostAddress}}/weatherforecast/
+### ---------------- AUTH ----------------
+
+### Login
+POST {{KioskoAPI_HostAddress}}/api/Auth/login
+Content-Type: application/json
+
+{
+  "username": "evaluator1",
+  "password": "password123"
+}
+
+### Register
+POST {{KioskoAPI_HostAddress}}/api/Auth/register
+Content-Type: application/json
+
+{
+  "username": "new_user",
+  "password": "password123",
+  "email": "test@test.com",
+  "role": "Evaluator"
+}
+
+### ---------------- PROJECTS ----------------
+
+### Get All Projects
+GET {{KioskoAPI_HostAddress}}/api/Projects
 Accept: application/json
 
-###
+### Get Project By ID
+GET {{KioskoAPI_HostAddress}}/api/Projects/65c4a1b2c3d4e5f6a7b8c9d0
+Accept: application/json
+
+### Update Project
+PUT {{KioskoAPI_HostAddress}}/api/Projects/65c4a1b2c3d4e5f6a7b8c9d0
+Content-Type: application/json
+
+{
+  "id": "65c4a1b2c3d4e5f6a7b8c9d0",
+  "title": "Proyecto Actualizado",
+  "cycle": "2024-1",
+  "description": "Descripción actualizada via API",
+  "imageUrl": "https://via.placeholder.com/150",
+  "members": ["A00123456"],
+  "statusText": "Evaluado",
+  "isPending": false,
+  "isEvaluated": true,
+  "score": "95"
+}
+
+### Create Project
+POST {{KioskoAPI_HostAddress}}/api/Projects
+Content-Type: application/json
+
+{
+  "title": "Nuevo Proyecto Demo",
+  "cycle": "2024-2",
+  "description": "Proyecto creado desde el archivo .http",
+  "imageUrl": "https://via.placeholder.com/150",
+  "members": ["A01234567", "A07654321"],
+  "statusText": "Pendiente",
+  "isPending": true,
+  "isEvaluated": false,
+  "score": "0",
+  "innovationScore": 0,
+  "techScore": 0,
+  "presentationScore": 0,
+  "evaluations": [],
+  "videos": [],
+  "documents": []
+}
+
+### Delete Project
+DELETE {{KioskoAPI_HostAddress}}/api/Projects/65c4a1b2c3d4e5f6a7b8c9d0
+
+### ---------------- UPLOAD ----------------
+
+### Upload File (Multipart)
+# POST {{KioskoAPI_HostAddress}}/api/Upload
+# Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+# 
+# ------WebKitFormBoundary7MA4YWxkTrZu0gW
+# Content-Disposition: form-data; name="file"; filename="test.jpg"
+# Content-Type: image/jpeg
+# 
+# < ./test.jpg
+# ------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### ---------------- ACTIVITIES ----------------
+
+### Get Activities for User
+GET {{KioskoAPI_HostAddress}}/api/Activities/user123
+Accept: application/json
+
+### Create Activity
+POST {{KioskoAPI_HostAddress}}/api/Activities
+Content-Type: application/json
+
+{
+  "userId": "user123",
+  "title": "Inicio de Sesión",
+  "description": "El usuario inició sesión en el sistema",
+  "type": "Login"
+}
+
+### ---------------- USERS ----------------
+
+### Update User
+PUT {{KioskoAPI_HostAddress}}/api/Users/user123
+Content-Type: application/json
+
+{
+  "id": "user123",
+  "username": "updated_user",
+  "email": "updated@test.com",
+  "role": "Evaluator"
+}
+
+### Update Profile Image
+PATCH {{KioskoAPI_HostAddress}}/api/Users/user123/image
+Content-Type: application/json
+
+"https://via.placeholder.com/200"

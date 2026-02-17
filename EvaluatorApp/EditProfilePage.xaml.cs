@@ -60,17 +60,13 @@ public partial class EditProfilePage : ContentPage
     {
         try
         {
-            var result = await FilePicker.PickAsync(new PickOptions
-            {
-                PickerTitle = "Selecciona una imagen",
-                FileTypes = FilePickerFileType.Images
-            });
+            var photo = await MediaPicker.PickPhotoAsync();
 
-            if (result != null)
+            if (photo != null)
             {
                 // Show loading indicator usually, here simple alert/swapping
-                using var stream = await result.OpenReadAsync();
-                var imageUrl = await _cloudinaryService.UploadImage(stream, result.FileName);
+                using var stream = await photo.OpenReadAsync();
+                var imageUrl = await _cloudinaryService.UploadImage(stream, photo.FileName);
                 
                 if (!string.IsNullOrEmpty(imageUrl))
                 {

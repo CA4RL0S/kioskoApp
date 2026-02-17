@@ -1,13 +1,32 @@
-﻿using EvaluatorApp.Models;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows.Input;
+using EvaluatorApp.Models;
 using EvaluatorApp.Services;
 
 namespace EvaluatorApp;
 
-public partial class MainPage : ContentPage
+public partial class MainPage : ContentPage, INotifyPropertyChanged
 {
     private readonly IMongoDBService _dbService;
     private List<Project> _allProjects = new();
     private string _userId = string.Empty;
+
+    private bool _isRefreshing;
+    public bool IsRefreshing
+    {
+        get => _isRefreshing;
+        set
+        {
+            if (_isRefreshing != value)
+            {
+                _isRefreshing = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public ICommand RefreshCommand { get; private set; }
 
     public MainPage()
     {
@@ -15,6 +34,15 @@ public partial class MainPage : ContentPage
         _dbService = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions
             .GetRequiredService<IMongoDBService>(
                 IPlatformApplication.Current!.Services);
+        
+        RefreshCommand = new Command(async () =>
+        {
+            IsRefreshing = true;
+            await LoadDataAsync();
+            IsRefreshing = false;
+        });
+
+        BindingContext = this;
     }
 
     protected override async void OnAppearing()
@@ -211,7 +239,11 @@ public partial class MainPage : ContentPage
         var tapGesture = new TapGestureRecognizer();
         tapGesture.Tapped += async (s, e) =>
         {
-            await Shell.Current.GoToAsync($"ProjectDetailsPage?projectId={project.Id}");
+            var navigationParameter = new Dictionary<string, object>
+            {
+                { "Project", project }
+            };
+            await Shell.Current.GoToAsync("ProjectDetailsPage", navigationParameter);
         };
         border.GestureRecognizers.Add(tapGesture);
 
@@ -322,7 +354,11 @@ public partial class MainPage : ContentPage
         };
         evalButton.Clicked += async (s, e) =>
         {
-            await Shell.Current.GoToAsync($"ProjectDetailsPage?projectId={project.Id}");
+            var navigationParameter = new Dictionary<string, object>
+            {
+                { "Project", project }
+            };
+            await Shell.Current.GoToAsync("ProjectDetailsPage", navigationParameter);
         };
         grid.SetColumn(evalButton, 2);
         grid.Children.Add(evalButton);

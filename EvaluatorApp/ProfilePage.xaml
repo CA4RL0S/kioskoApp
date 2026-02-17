@@ -13,6 +13,9 @@
             <!-- Profile Header -->
             <VerticalStackLayout Spacing="16" Margin="0,20,0,0">
                 <Grid HorizontalOptions="Center" WidthRequest="128" HeightRequest="128">
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnProfileImageClicked"/>
+                    </Grid.GestureRecognizers>
                     <Border Stroke="{AppThemeBinding Light=White, Dark={StaticResource SurfaceDark}}"
                             StrokeThickness="4"
                             StrokeShape="RoundRectangle 64"

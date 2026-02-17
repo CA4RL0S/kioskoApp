@@ -47,6 +47,12 @@ public class Project
 
     [BsonElement("evaluations")]
     public List<Evaluation> Evaluations { get; set; } = new List<Evaluation>();
+
+    [BsonElement("videos")]
+    public List<Video> Videos { get; set; } = new List<Video>();
+
+    [BsonElement("documentos")]
+    public List<Document> Documents { get; set; } = new List<Document>();
 }
 
 public class Evaluation
@@ -75,3 +81,5 @@ public class Evaluation
     [BsonElement("comments")]
     public string? Comments { get; set; }
 }
+
+

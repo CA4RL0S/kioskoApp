@@ -13,13 +13,14 @@ public class ApiService : IMongoDBService
     public ApiService()
     {
         _httpClient = new HttpClient();
+        _httpClient.Timeout = TimeSpan.FromSeconds(10); // Prevent infinite loading
         
         // Android Emulator: 10.0.2.2 maps to host localhost
         // iOS Simulator: localhost works directly
         // Physical device: use your Mac's local IP on the same WiFi network
         _baseUrl = DeviceInfo.Platform == DevicePlatform.Android 
             ? "http://10.0.2.2:5146" 
-            : "http://192.168.1.150:5146";
+            : "http://192.168.1.153:5146";
 
         _httpClient.BaseAddress = new Uri(_baseUrl);
     }

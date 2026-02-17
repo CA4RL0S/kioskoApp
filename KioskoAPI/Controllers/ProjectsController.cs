@@ -65,4 +65,37 @@ public class ProjectsController : ControllerBase
             return BadRequest(new { message = ex.Message });
         }
     }
+    [HttpPost]
+    public async Task<IActionResult> CreateProject([FromBody] Project project)
+    {
+        try
+        {
+            await _mongoDBService.CreateProject(project);
+            return CreatedAtAction(nameof(GetProject), new { id = project.Id }, project);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteProject(string id)
+    {
+        try
+        {
+            var project = await _mongoDBService.GetProject(id);
+            if (project == null)
+            {
+                return NotFound();
+            }
+
+            await _mongoDBService.DeleteProject(id);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="EvaluatorApp.ProjectDetailsPage"
              BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}"
              Title="Project Details"
@@ -52,15 +53,45 @@
 
                 <!-- Project Info -->
                 <VerticalStackLayout Padding="16,24,16,12" Spacing="0">
-                     <Border HeightRequest="192" StrokeShape="RoundRectangle 12" StrokeThickness="0" BackgroundColor="{StaticResource Gray200}">
-                        <Grid>
-                            <Image Source="{Binding Project.ImageUrl}" Aspect="AspectFill" BackgroundColor="{StaticResource Gray100}"/>
-                            <BoxView Color="Black" Opacity="0.3"/>
-                            <Border VerticalOptions="End" HorizontalOptions="Start" Margin="12" BackgroundColor="#33FFFFFF" StrokeThickness="1" Stroke="White" StrokeShape="RoundRectangle 4" Padding="8,4">
-                                <Label Text="{Binding Project.Cycle}" TextColor="White" FontSize="12" FontAttributes="Bold"/>
-                            </Border>
-                        </Grid>
-                    </Border>
+                    <Grid HeightRequest="220" Margin="0,0,0,0">
+                        <!-- Video Player (Visible if HasVideo=True) -->
+                        <Border StrokeShape="RoundRectangle 12" StrokeThickness="0" BackgroundColor="Black" IsVisible="False">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding Project.HasVideo}" Value="True">
+                                    <Setter Property="IsVisible" Value="True"/>
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Grid>
+                                <toolkit:MediaElement 
+                                    Source="{Binding Project.Videos[0].Url}"
+                                    Aspect="AspectFill"
+                                    ShouldShowPlaybackControls="True"
+                                    ShouldAutoPlay="True"
+                                    BackgroundColor="Black"/>
+                                
+                                <Border VerticalOptions="End" HorizontalOptions="Start" Margin="12" BackgroundColor="#33FFFFFF" StrokeThickness="1" Stroke="White" StrokeShape="RoundRectangle 4" Padding="8,4" InputTransparent="True">
+                                    <Label Text="{Binding Project.Cycle}" TextColor="White" FontSize="12" FontAttributes="Bold"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+
+                        <!-- Cover Image (Visible if HasVideo=False) -->
+                        <Border StrokeShape="RoundRectangle 12" StrokeThickness="0" BackgroundColor="{StaticResource Gray200}" IsVisible="True">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding Project.HasVideo}" Value="True">
+                                    <Setter Property="IsVisible" Value="False"/>
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Grid>
+                                <Image Source="{Binding Project.ImageUrl}" Aspect="AspectFill" BackgroundColor="{StaticResource Gray100}"/>
+                                <BoxView Color="Black" Opacity="0.3"/>
+                                <Border VerticalOptions="End" HorizontalOptions="Start" Margin="12" BackgroundColor="#33FFFFFF" StrokeThickness="1" Stroke="White" StrokeShape="RoundRectangle 4" Padding="8,4">
+                                    <Label Text="{Binding Project.Cycle}" TextColor="White" FontSize="12" FontAttributes="Bold"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                    
                     <Label Text="{Binding Project.Title}" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" FontSize="26" FontAttributes="Bold" Margin="0,20,0,8" LineHeight="1.1"/>
                 </VerticalStackLayout>
 

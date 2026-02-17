@@ -6,12 +6,14 @@ public partial class ProfilePage : ContentPage
 {
     private readonly IMongoDBService _mongoDBService;
     private readonly IMsalAuthService _msalAuthService;
+    private readonly ICloudinaryService _cloudinaryService;
 
-    public ProfilePage(IMongoDBService mongoDBService, IMsalAuthService msalAuthService)
+    public ProfilePage(IMongoDBService mongoDBService, IMsalAuthService msalAuthService, ICloudinaryService cloudinaryService)
     {
         InitializeComponent();
         _mongoDBService = mongoDBService;
         _msalAuthService = msalAuthService;
+        _cloudinaryService = cloudinaryService;
         BindingContext = this;
     }
 
@@ -41,6 +43,43 @@ public partial class ProfilePage : ContentPage
         if (!string.IsNullOrEmpty(profileImage))
         {
             ProfileImage.Source = profileImage;
+        }
+    }
+
+    private async void OnProfileImageClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            var photo = await MediaPicker.Default.PickPhotoAsync();
+            if (photo != null)
+            {
+                // Show loading state (optional, could add an activity indicator)
+                
+                using var stream = await photo.OpenReadAsync();
+                var imageUrl = await _cloudinaryService.UploadImage(stream, photo.FileName);
+
+                if (!string.IsNullOrEmpty(imageUrl))
+                {
+                    // Update UI
+                    ProfileImage.Source = imageUrl;
+
+                    // Update Local Preferences
+                    Preferences.Set("UserProfileImage", imageUrl);
+
+                    // Update Database
+                    var userId = Preferences.Get("UserId", string.Empty);
+                    if (!string.IsNullOrEmpty(userId))
+                    {
+                        await _mongoDBService.UpdateUserProfileImage(userId, imageUrl);
+                    }
+                    
+                    await DisplayAlert("Éxito", "Foto de perfil actualizada correctamente.", "OK");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"No se pudo actualizar la foto: {ex.Message}", "OK");
         }
     }
 

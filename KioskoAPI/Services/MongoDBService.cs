@@ -49,29 +49,72 @@ public class MongoDBService
 
     private async Task SeedData()
     {
-        if (_projectsCollection == null) return;
-        var count = await _projectsCollection.CountDocumentsAsync(new BsonDocument());
-        if (count == 0)
+        if (_projectsCollection != null)
         {
-            var projects = new List<Project>
+            var count = await _projectsCollection.CountDocumentsAsync(new BsonDocument());
+            if (count == 0)
             {
-                new Project
+                var projects = new List<Project>
                 {
-                    Title = "Local Space",
-                    Cycle = "Ciclo 2024-A",
-                    Description = "Información del proyecto Local Space",
-                    ImageUrl = "https://imgs.search.brave.com/jJ-rmu1_J2ro-xUlAqDOZ2_utbwc1GhE9qr7wXQJI8E/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudG9ra29icm9r/ZXIuY29tL3BpY3R1/cmVzLzc1NjM2Nzlf/NDU1ODkzMjY2NDkz/MzAxMjYxMTA4MzEy/NjA0NzMzMTk4MDM2/NzIzNjI0MTU0ODY2/MzU3NTgzMTA4NjM2/NzY5MDU1NDUzOTkz/MjYzODAuanBn",
-                    StatusText = "Pendiente de Evaluación",
-                    IsPending = true,
-                    IsEvaluated = false,
-                    Score = "0",
-                    InnovationScore = 0,
-                    TechScore = 0,
-                    PresentationScore = 0,
-                    Members = new List<string> { "Equipo Local" }
-                }
-            };
-            await _projectsCollection.InsertManyAsync(projects);
+                    new Project
+                    {
+                        Title = "Local Space",
+                        Cycle = "Ciclo 2024-A",
+                        Description = "Información del proyecto Local Space",
+                        ImageUrl = "https://imgs.search.brave.com/jJ-rmu1_J2ro-xUlAqDOZ2_utbwc1GhE9qr7wXQJI8E/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudG9ra29icm9r/ZXIuY29tL3BpY3R1/cmVzLzc1NjM2Nzlf/NDU1ODkzMjY2NDkz/MzAxMjYxMTA4MzEy/NjA0NzMzMTk4MDM2/NzIzNjI0MTU0ODY2/MzU3NTgzMTA4NjM2/NzY5MDU1NDUzOTkz/MjYzODAuanBn",
+                        StatusText = "Pendiente de Evaluación",
+                        IsPending = true,
+                        IsEvaluated = false,
+                        Score = "0",
+                        InnovationScore = 0,
+                        TechScore = 0,
+                        PresentationScore = 0,
+                        Members = new List<string> { "Equipo Local" }
+                    }
+                };
+                await _projectsCollection.InsertManyAsync(projects);
+            }
+        }
+
+        if (_usersCollection != null)
+        {
+            var userCount = await _usersCollection.CountDocumentsAsync(new BsonDocument());
+            if (userCount == 0)
+            {
+                var users = new List<User>
+                {
+                    new User 
+                    { 
+                        Username = "maestro1", 
+                        Email = "maestro1@test.com", 
+                        FullName = "Juan Pérez", 
+                        Department = "Ingeniería", 
+                        Role = "Evaluador", 
+                        IsVerified = true, 
+                        ProfileImageUrl = "https://randomuser.me/api/portraits/men/32.jpg" 
+                    },
+                    new User 
+                    { 
+                        Username = "maestro2", 
+                        Email = "maestro2@test.com", 
+                        FullName = "Ana García", 
+                        Department = "Ciencias", 
+                        Role = "Evaluador", 
+                        IsVerified = false, 
+                        ProfileImageUrl = "https://randomuser.me/api/portraits/women/44.jpg" 
+                    },
+                    new User 
+                    { 
+                        Username = "maestro3", 
+                        Email = "maestro3@test.com", 
+                        FullName = "Carlos López", 
+                        Department = "Artes", 
+                        Role = "Evaluador", 
+                        IsVerified = false 
+                    }
+                };
+                await _usersCollection.InsertManyAsync(users);
+            }
         }
     }
 
@@ -127,6 +170,49 @@ public class MongoDBService
         await Init();
         if (_projectsCollection == null) return;
         await _projectsCollection.ReplaceOneAsync(p => p.Id == project.Id, project);
+    }
+
+    public async Task CreateProject(Project project)
+    {
+        await Init();
+        if (_projectsCollection == null) return;
+        await _projectsCollection.InsertOneAsync(project);
+    }
+
+    public async Task DeleteProject(string id)
+    {
+        await Init();
+        if (_projectsCollection == null) return;
+        await _projectsCollection.DeleteOneAsync(p => p.Id == id);
+    }
+
+    // --- User Management ---
+
+    public async Task<List<User>> GetUsers()
+    {
+        await Init();
+        if (_usersCollection == null) return new List<User>();
+        return await _usersCollection.Find(_ => true).ToListAsync();
+    }
+
+    public async Task VerifyUser(string id)
+    {
+        await Init();
+        if (_usersCollection == null) return;
+        
+        var user = await _usersCollection.Find(u => u.Id == id).FirstOrDefaultAsync();
+        if (user == null) return;
+
+        var filter = Builders<User>.Filter.Eq(u => u.Id, id);
+        var update = Builders<User>.Update.Set(u => u.IsVerified, !user.IsVerified); // Toggle
+        await _usersCollection.UpdateOneAsync(filter, update);
+    }
+
+    public async Task DeleteUser(string id)
+    {
+        await Init();
+        if (_usersCollection == null) return;
+        await _usersCollection.DeleteOneAsync(u => u.Id == id);
     }
 
     public async Task UpdateUser(User user)

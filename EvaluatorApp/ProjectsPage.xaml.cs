@@ -1,20 +1,47 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows.Input;
 using EvaluatorApp.Models;
 using EvaluatorApp.Services;
 
 
 namespace EvaluatorApp;
 
-public partial class ProjectsPage : ContentPage
+public partial class ProjectsPage : ContentPage, INotifyPropertyChanged
 {
     private readonly IMongoDBService _mongoDBService;
 	public ObservableCollection<Project> Projects { get; set; }
+
+    private bool _isRefreshing;
+    public bool IsRefreshing
+    {
+        get => _isRefreshing;
+        set
+        {
+            if (_isRefreshing != value)
+            {
+                _isRefreshing = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public ICommand RefreshCommand { get; private set; }
 
 	public ProjectsPage(IMongoDBService mongoDBService)
 	{
 		InitializeComponent();
         _mongoDBService = mongoDBService;
 		Projects = new ObservableCollection<Project>();
+        
+        RefreshCommand = new Command(async () =>
+        {
+            IsRefreshing = true;
+            await LoadProjects();
+            IsRefreshing = false;
+        });
+
 		BindingContext = this;
 	}
 
@@ -22,6 +49,10 @@ public partial class ProjectsPage : ContentPage
     {
         base.OnAppearing();
         Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific.Page.SetUseSafeArea(this, false);
+        
+        // Only load if empty to act as initial load, otherwise refresh command handles it
+        // Or we can just load silently. Let's load silently to ensure up to date.
+        // We do NOT set IsRefreshing here to avoid spinner on every tab switch
         await LoadProjects();
     }
 
@@ -43,12 +74,17 @@ public partial class ProjectsPage : ContentPage
             }
 
             _allProjects = projects; // Store full list
-            ApplyFilter("All"); // Apply default filter
+            ApplyFilter(_currentFilter); // Apply current filter to update view
         }
         catch (Exception ex)
         {
             await DisplayAlert("Error", $"No se pudieron cargar los proyectos: {ex.Message}", "OK");
             System.Diagnostics.Debug.WriteLine($"Error loading projects: {ex.Message}");
+        }
+        finally
+        {
+            // Ensure refreshing spinner stops if it was started by command
+            if (IsRefreshing) IsRefreshing = false;
         }
     }
 
@@ -169,5 +205,11 @@ public partial class ProjectsPage : ContentPage
             };
             await Shell.Current.GoToAsync(nameof(ProjectDetailsPage), navigationParameter);
         }
+    }
+
+    public new event PropertyChangedEventHandler? PropertyChanged;
+    protected new void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

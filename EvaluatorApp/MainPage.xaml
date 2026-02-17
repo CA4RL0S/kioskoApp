@@ -9,134 +9,136 @@
              ios:Page.UseSafeArea="False">
 
     <Grid BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
-        <ScrollView VerticalScrollBarVisibility="Never" BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
-            <VerticalStackLayout Spacing="0" BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
+        <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
+            <ScrollView VerticalScrollBarVisibility="Never" BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
+                <VerticalStackLayout Spacing="0" BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
+                
+                    <!-- Header Section -->
+                    <Grid Padding="24,20,24,16" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12"
+                          BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
+                        
+                        <!-- Profile Image -->
+                        <Border Grid.Column="0" StrokeThickness="2" Stroke="{StaticResource Primary}" 
+                                StrokeShape="RoundRectangle 24" HeightRequest="48" WidthRequest="48">
+                            <Image x:Name="ProfileImage" Aspect="AspectFill" HeightRequest="44" WidthRequest="44"/>
+                        </Border>
 
-                <!-- Header Section -->
-                <Grid Padding="24,20,24,16" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12"
-                      BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
-                    
-                    <!-- Profile Image -->
-                    <Border Grid.Column="0" StrokeThickness="2" Stroke="{StaticResource Primary}" 
-                            StrokeShape="RoundRectangle 24" HeightRequest="48" WidthRequest="48">
-                        <Image x:Name="ProfileImage" Aspect="AspectFill" HeightRequest="44" WidthRequest="44"/>
-                    </Border>
+                        <!-- Welcome Text -->
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                            <Label Text="Bienvenido de nuevo" 
+                                   FontSize="12" 
+                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSubDark}}"
+                                   FontAttributes="Bold"/>
+                            <Label x:Name="UserNameLabel" 
+                                   Text="Evaluador" 
+                                   FontSize="18" 
+                                   FontAttributes="Bold" 
+                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"/>
+                        </VerticalStackLayout>
 
-                    <!-- Welcome Text -->
-                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
-                        <Label Text="Bienvenido de nuevo" 
-                               FontSize="12" 
-                               TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSubDark}}"
-                               FontAttributes="Bold"/>
-                        <Label x:Name="UserNameLabel" 
-                               Text="Evaluador" 
-                               FontSize="18" 
-                               FontAttributes="Bold" 
-                               TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"/>
+                        <!-- Notification Bell -->
+                        <Border Grid.Column="2" StrokeThickness="0" 
+                                BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}" 
+                                HeightRequest="40" WidthRequest="40" StrokeShape="RoundRectangle 20">
+                            <Label Text="notifications_none" 
+                                   FontFamily="MaterialIcons" FontSize="22" 
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}" 
+                                   HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Border>
+                    </Grid>
+
+                    <!-- Quick Stats Section -->
+                    <Grid Padding="24,8,24,0" ColumnDefinitions="*,*" ColumnSpacing="16">
+                        
+                        <!-- Evaluated Card (Primary) -->
+                        <Border Grid.Column="0" StrokeThickness="0" BackgroundColor="{StaticResource Primary}" 
+                                StrokeShape="RoundRectangle 16" Padding="16">
+                            <Border.Shadow>
+                                <Shadow Brush="{StaticResource Primary}" Opacity="0.2" Radius="12" Offset="0,4"/>
+                            </Border.Shadow>
+                            <VerticalStackLayout Spacing="4">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="task_alt" FontFamily="MaterialIcons" FontSize="24" TextColor="White" Opacity="0.8"/>
+                                    <Border Grid.Column="1" StrokeThickness="0" BackgroundColor="#33FFFFFF" 
+                                            StrokeShape="RoundRectangle 10" Padding="8,2">
+                                        <Label x:Name="EvalPercentLabel" Text="+0%" FontSize="11" TextColor="White" FontAttributes="Bold"/>
+                                    </Border>
+                                </Grid>
+                                <Label x:Name="EvaluatedCountLabel" Text="0" FontSize="32" FontAttributes="Bold" TextColor="White"/>
+                                <Label Text="Evaluados" FontSize="13" TextColor="White" Opacity="0.8"/>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- Pending Card -->
+                        <Border Grid.Column="1" StrokeThickness="1" 
+                                Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" 
+                                BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}" 
+                                StrokeShape="RoundRectangle 16" Padding="16">
+                            <VerticalStackLayout Spacing="4">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="pending_actions" FontFamily="MaterialIcons" FontSize="24" TextColor="{StaticResource Primary}"/>
+                                    <Border Grid.Column="1" StrokeThickness="0" BackgroundColor="#1A135bec" 
+                                            StrokeShape="RoundRectangle 10" Padding="8,2">
+                                        <Label Text="Pendiente" FontSize="11" TextColor="{StaticResource Primary}" FontAttributes="Bold"/>
+                                    </Border>
+                                </Grid>
+                                <Label x:Name="PendingCountLabel" Text="0" FontSize="32" FontAttributes="Bold" 
+                                       TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"/>
+                                <Label Text="Por revisar" FontSize="13" 
+                                       TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSubDark}}"/>
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+
+                    <!-- Featured Projects Section -->
+                    <Grid Padding="24,24,24,8" ColumnDefinitions="*,Auto">
+                        <Label Text="Proyectos Destacados" FontSize="18" FontAttributes="Bold" 
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" VerticalOptions="Center"/>
+                        <Label Grid.Column="1" Text="Ver todos" FontSize="14" TextColor="{StaticResource Primary}" 
+                               FontAttributes="Bold" VerticalOptions="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnViewAllProjectsTapped"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Grid>
+
+                    <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" Padding="24,0,0,0">
+                        <HorizontalStackLayout x:Name="FeaturedProjectsLayout" Spacing="16"/>
+                    </ScrollView>
+
+                    <!-- Pending Evaluations Section -->
+                    <Grid Padding="24,24,24,8" ColumnDefinitions="*,Auto">
+                        <Label Text="Evaluaciones Pendientes" FontSize="18" FontAttributes="Bold" 
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" VerticalOptions="Center"/>
+                        <Border Grid.Column="1" StrokeThickness="0" BackgroundColor="#1A135bec" 
+                                StrokeShape="RoundRectangle 10" Padding="8,4">
+                            <Label Text="URGENTE" FontSize="11" TextColor="{StaticResource Primary}" 
+                                   FontAttributes="Bold" CharacterSpacing="1"/>
+                        </Border>
+                    </Grid>
+
+                    <VerticalStackLayout x:Name="PendingEvaluationsLayout" Spacing="12" Padding="24,8,24,0"/>
+
+                    <!-- Recent Activity Section -->
+                    <Label Text="Actividad Reciente" FontSize="18" FontAttributes="Bold" 
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" 
+                           Padding="24,24,24,12"/>
+
+                    <VerticalStackLayout x:Name="ActivityTimelineLayout" Spacing="0" Padding="24,0,24,0"/>
+
+                    <!-- Empty Activity placeholder -->
+                    <VerticalStackLayout x:Name="EmptyActivityView" IsVisible="False" Padding="24,8,24,0" HorizontalOptions="Center" Spacing="8">
+                        <Label Text="📭" FontSize="40" HorizontalOptions="Center"/>
+                        <Label Text="No hay actividad reciente" FontSize="14" 
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSubDark}}" 
+                               HorizontalOptions="Center"/>
                     </VerticalStackLayout>
 
-                    <!-- Notification Bell -->
-                    <Border Grid.Column="2" StrokeThickness="0" 
-                            BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}" 
-                            HeightRequest="40" WidthRequest="40" StrokeShape="RoundRectangle 20">
-                        <Label Text="notifications_none" 
-                               FontFamily="MaterialIcons" FontSize="22" 
-                               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}" 
-                               HorizontalOptions="Center" VerticalOptions="Center"/>
-                    </Border>
-                </Grid>
+                    <!-- Bottom safe area spacing -->
+                    <BoxView HeightRequest="120" Color="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}"/>
 
-                <!-- Quick Stats Section -->
-                <Grid Padding="24,8,24,0" ColumnDefinitions="*,*" ColumnSpacing="16">
-                    
-                    <!-- Evaluated Card (Primary) -->
-                    <Border Grid.Column="0" StrokeThickness="0" BackgroundColor="{StaticResource Primary}" 
-                            StrokeShape="RoundRectangle 16" Padding="16">
-                        <Border.Shadow>
-                            <Shadow Brush="{StaticResource Primary}" Opacity="0.2" Radius="12" Offset="0,4"/>
-                        </Border.Shadow>
-                        <VerticalStackLayout Spacing="4">
-                            <Grid ColumnDefinitions="*,Auto">
-                                <Label Text="task_alt" FontFamily="MaterialIcons" FontSize="24" TextColor="White" Opacity="0.8"/>
-                                <Border Grid.Column="1" StrokeThickness="0" BackgroundColor="#33FFFFFF" 
-                                        StrokeShape="RoundRectangle 10" Padding="8,2">
-                                    <Label x:Name="EvalPercentLabel" Text="+0%" FontSize="11" TextColor="White" FontAttributes="Bold"/>
-                                </Border>
-                            </Grid>
-                            <Label x:Name="EvaluatedCountLabel" Text="0" FontSize="32" FontAttributes="Bold" TextColor="White"/>
-                            <Label Text="Evaluados" FontSize="13" TextColor="White" Opacity="0.8"/>
-                        </VerticalStackLayout>
-                    </Border>
-
-                    <!-- Pending Card -->
-                    <Border Grid.Column="1" StrokeThickness="1" 
-                            Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" 
-                            BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}" 
-                            StrokeShape="RoundRectangle 16" Padding="16">
-                        <VerticalStackLayout Spacing="4">
-                            <Grid ColumnDefinitions="*,Auto">
-                                <Label Text="pending_actions" FontFamily="MaterialIcons" FontSize="24" TextColor="{StaticResource Primary}"/>
-                                <Border Grid.Column="1" StrokeThickness="0" BackgroundColor="#1A135bec" 
-                                        StrokeShape="RoundRectangle 10" Padding="8,2">
-                                    <Label Text="Pendiente" FontSize="11" TextColor="{StaticResource Primary}" FontAttributes="Bold"/>
-                                </Border>
-                            </Grid>
-                            <Label x:Name="PendingCountLabel" Text="0" FontSize="32" FontAttributes="Bold" 
-                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"/>
-                            <Label Text="Por revisar" FontSize="13" 
-                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSubDark}}"/>
-                        </VerticalStackLayout>
-                    </Border>
-                </Grid>
-
-                <!-- Featured Projects Section -->
-                <Grid Padding="24,24,24,8" ColumnDefinitions="*,Auto">
-                    <Label Text="Proyectos Destacados" FontSize="18" FontAttributes="Bold" 
-                           TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" VerticalOptions="Center"/>
-                    <Label Grid.Column="1" Text="Ver todos" FontSize="14" TextColor="{StaticResource Primary}" 
-                           FontAttributes="Bold" VerticalOptions="Center">
-                        <Label.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnViewAllProjectsTapped"/>
-                        </Label.GestureRecognizers>
-                    </Label>
-                </Grid>
-
-                <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" Padding="24,0,0,0">
-                    <HorizontalStackLayout x:Name="FeaturedProjectsLayout" Spacing="16"/>
-                </ScrollView>
-
-                <!-- Pending Evaluations Section -->
-                <Grid Padding="24,24,24,8" ColumnDefinitions="*,Auto">
-                    <Label Text="Evaluaciones Pendientes" FontSize="18" FontAttributes="Bold" 
-                           TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" VerticalOptions="Center"/>
-                    <Border Grid.Column="1" StrokeThickness="0" BackgroundColor="#1A135bec" 
-                            StrokeShape="RoundRectangle 10" Padding="8,4">
-                        <Label Text="URGENTE" FontSize="11" TextColor="{StaticResource Primary}" 
-                               FontAttributes="Bold" CharacterSpacing="1"/>
-                    </Border>
-                </Grid>
-
-                <VerticalStackLayout x:Name="PendingEvaluationsLayout" Spacing="12" Padding="24,8,24,0"/>
-
-                <!-- Recent Activity Section -->
-                <Label Text="Actividad Reciente" FontSize="18" FontAttributes="Bold" 
-                       TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" 
-                       Padding="24,24,24,12"/>
-
-                <VerticalStackLayout x:Name="ActivityTimelineLayout" Spacing="0" Padding="24,0,24,0"/>
-
-                <!-- Empty Activity placeholder -->
-                <VerticalStackLayout x:Name="EmptyActivityView" IsVisible="False" Padding="24,8,24,0" HorizontalOptions="Center" Spacing="8">
-                    <Label Text="📭" FontSize="40" HorizontalOptions="Center"/>
-                    <Label Text="No hay actividad reciente" FontSize="14" 
-                           TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSubDark}}" 
-                           HorizontalOptions="Center"/>
                 </VerticalStackLayout>
-
-                <!-- Bottom safe area spacing -->
-                <BoxView HeightRequest="120" Color="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}"/>
-
-            </VerticalStackLayout>
-        </ScrollView>
+            </ScrollView>
+        </RefreshView>
     </Grid>
 </ContentPage>

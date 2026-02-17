@@ -121,6 +121,22 @@ public class Project
             StatusBackgroundColor = Color.FromRgba(255, 251, 235, 255);
         }
     }
+    [BsonElement("videos")]
+    public List<Video> Videos { get; set; } = new List<Video>();
+
+    public bool HasVideo => Videos != null && Videos.Count > 0;
+}
+
+public class Video
+{
+    [BsonElement("url")]
+    public string Url { get; set; }
+
+    [BsonElement("title")]
+    public string Title { get; set; }
+
+    [BsonElement("description")]
+    public string Description { get; set; }
 }
 
 public class Evaluation

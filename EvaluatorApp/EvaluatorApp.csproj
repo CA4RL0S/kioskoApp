@@ -59,10 +59,7 @@
 
   </PropertyGroup>
 
-  <PropertyGroup Condition="$(TargetFramework.Contains('-ios'))">
-    <CodesignKey>iPhone Developer</CodesignKey>
-    <CodesignProvision>Automatic</CodesignProvision>
-  </PropertyGroup>
+
 
   <!-- ========================= -->
   <!-- Recursos MAUI -->
@@ -85,8 +82,9 @@
   <!-- ========================= -->
   <ItemGroup>
     <PackageReference Include="CloudinaryDotNet" Version="1.28.0" />
+    <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="8.0.0" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.82.1" />
-    <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+    <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.30" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
     <PackageReference Include="MongoDB.Driver" Version="3.6.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.0" />
