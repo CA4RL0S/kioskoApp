@@ -26,7 +26,7 @@ export default function EditProject() {
 
     const fetchProject = async () => {
         try {
-            const response = await fetch(`http://localhost:5146/api/projects/${id}`);
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/${id}`);
             if (response.ok) {
                 const data = await response.json();
                 setFormData({
@@ -76,7 +76,7 @@ export default function EditProject() {
         const formData = new FormData();
         formData.append('file', file);
 
-        const response = await fetch('http://localhost:5146/api/upload', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
             method: 'POST',
             body: formData,
         });
@@ -124,7 +124,7 @@ export default function EditProject() {
                 videos: finalVideoUrl ? [{ url: finalVideoUrl, title: "Loop Video", description: "Main Project Video" }] : []
             };
 
-            const response = await fetch(`http://localhost:5146/api/projects/${id}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

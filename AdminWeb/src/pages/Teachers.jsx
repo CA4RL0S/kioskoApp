@@ -10,7 +10,7 @@ export default function Teachers() {
 
     const fetchUsers = async () => {
         try {
-            const response = await fetch('http://localhost:5146/api/users');
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users`);
             const data = await response.json();
             setUsers(data);
         } catch (error) {
@@ -26,7 +26,7 @@ export default function Teachers() {
 
     const handleVerify = async (userId) => {
         try {
-            const response = await fetch(`http://localhost:5146/api/users/${userId}/verify`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${userId}/verify`, {
                 method: 'PUT'
             });
             if (response.ok) {
@@ -49,7 +49,7 @@ export default function Teachers() {
         if (!id) return;
 
         try {
-            const response = await fetch(`http://localhost:5146/api/users/${id}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${id}`, {
                 method: 'DELETE'
             });
             if (response.ok) {
@@ -149,8 +149,8 @@ export default function Teachers() {
                                                         onClick={() => handleVerify(user.id)}
                                                         title={user.isVerified ? "Desverificar Usuario" : "Verificar Usuario"}
                                                         className={`p-2 rounded-lg transition-colors ${user.isVerified
-                                                                ? 'bg-orange-50 text-orange-600 hover:bg-orange-100'
-                                                                : 'bg-green-50 text-green-600 hover:bg-green-100'
+                                                            ? 'bg-orange-50 text-orange-600 hover:bg-orange-100'
+                                                            : 'bg-green-50 text-green-600 hover:bg-green-100'
                                                             }`}
                                                     >
                                                         {user.isVerified ? <ShieldAlert size={18} /> : <CheckCircle size={18} />}

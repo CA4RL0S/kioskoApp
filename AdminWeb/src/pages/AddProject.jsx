@@ -49,7 +49,7 @@ export default function AddProject() {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await fetch('http://localhost:5146/api/upload', {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
       method: 'POST',
       body: formData,
     });
@@ -101,7 +101,7 @@ export default function AddProject() {
         documents: []
       };
 
-      const response = await fetch('http://localhost:5146/api/projects', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/projects`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

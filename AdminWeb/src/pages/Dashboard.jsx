@@ -12,7 +12,7 @@ export default function Dashboard() {
     const fetchProjects = async () => {
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:5146/api/projects');
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/projects`);
             if (response.ok) {
                 const data = await response.json();
                 setProjects(data);
@@ -39,7 +39,7 @@ export default function Dashboard() {
         if (!id) return;
 
         try {
-            const response = await fetch(`http://localhost:5146/api/projects/${id}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/${id}`, {
                 method: 'DELETE',
             });
             if (response.ok) {
