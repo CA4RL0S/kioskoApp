@@ -1,5 +1,6 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using System.Text.Json.Serialization;
 
 namespace EvaluatorApp.Models;
 
@@ -27,26 +28,20 @@ public class Project
     [BsonElement("statusText")]
 	public string? StatusText { get; set; }
 
-    [BsonIgnore] // Colors are UI concerns, not usually stored directly in DB unless mapped. Storing hex might be better but for now let's reconstruct or ignore.
-                 // Actually, to persist visual state we might want to store the hex string.
-                 // For simplicity, let's assume status text drives color in a real app, or store hex.
-                 // I will KEEP them as is to avoid breaking binding, but ignore them for DB to assume they are derived or non-persistent for this step, 
-                 // OR I will make them non-mapped. 
-                 // Wait, if I ignore them, they won't come back on reload.
-                 // Better strategy: Store 'StatusHex' and similar, or just map 'StatusText' to colors in the UI layer.
-                 // To minimize refactor risk: I will ignore Color properties for DB and rely on 'StatusText' to set them after load if possible, 
-                 // OR just don't persist them and accept they might be default.
-                 // Let's see... the hardcoded data set colors. 
-                 // I will add a method 'RestoreColors()' to set colors based on StatusText or Score after loading from DB.
+    [BsonIgnore]
+    [JsonIgnore]
 	public Color? StatusColor { get; set; }
 
     [BsonIgnore]
+    [JsonIgnore]
 	public Color? StatusTextColor { get; set; }
 
     [BsonIgnore]
+    [JsonIgnore]
 	public Color? StatusBackgroundColor { get; set; }
 	
     [BsonElement("isPending")]
+    // ... rest of the file
 	public bool IsPending { get; set; }
 
     [BsonElement("isEvaluated")]
@@ -56,16 +51,31 @@ public class Project
 	public string? Score { get; set; }
 
     // Evaluation break down (persisting these is good for the details page)
+    // Evaluation break down (persisting these is good for the details page)
+    [BsonElement("problemScore")]
+    public double ProblemScore { get; set; }
+
     [BsonElement("innovationScore")]
     public double InnovationScore { get; set; }
 
     [BsonElement("techScore")]
     public double TechScore { get; set; }
 
+    [BsonElement("impactScore")]
+    public double ImpactScore { get; set; }
+
     [BsonElement("presentationScore")]
-    public int PresentationScore { get; set; }
+    public double PresentationScore { get; set; }
+
+    [BsonElement("knowledgeScore")]
+    public double KnowledgeScore { get; set; }
+
+    [BsonElement("resultsScore")]
+    public double ResultsScore { get; set; }
 
     // Helper for ranking to parse Score safely
+    [BsonIgnore]
+    [JsonIgnore]
     public double ScoreValue 
     {
         get 
@@ -147,14 +157,26 @@ public class Evaluation
     [BsonElement("evaluatorName")]
     public string EvaluatorName { get; set; }
 
+    [BsonElement("problemScore")]
+    public double ProblemScore { get; set; }
+
     [BsonElement("innovationScore")]
     public double InnovationScore { get; set; }
 
     [BsonElement("techScore")]
     public double TechScore { get; set; }
 
+    [BsonElement("impactScore")]
+    public double ImpactScore { get; set; }
+
     [BsonElement("presentationScore")]
-    public int PresentationScore { get; set; }
+    public double PresentationScore { get; set; }
+
+    [BsonElement("knowledgeScore")]
+    public double KnowledgeScore { get; set; }
+
+    [BsonElement("resultsScore")]
+    public double ResultsScore { get; set; }
 
     [BsonElement("totalScore")]
     public double TotalScore { get; set; }

@@ -36,14 +36,26 @@ public class Project
     [BsonElement("score")]
     public string? Score { get; set; }
 
+    [BsonElement("problemScore")]
+    public double ProblemScore { get; set; }
+
     [BsonElement("innovationScore")]
     public double InnovationScore { get; set; }
 
     [BsonElement("techScore")]
     public double TechScore { get; set; }
 
+    [BsonElement("impactScore")]
+    public double ImpactScore { get; set; }
+
     [BsonElement("presentationScore")]
-    public int PresentationScore { get; set; }
+    public double PresentationScore { get; set; }
+    
+    [BsonElement("knowledgeScore")]
+    public double KnowledgeScore { get; set; }
+
+    [BsonElement("resultsScore")]
+    public double ResultsScore { get; set; }
 
     [BsonElement("evaluations")]
     public List<Evaluation> Evaluations { get; set; } = new List<Evaluation>();
@@ -63,14 +75,26 @@ public class Evaluation
     [BsonElement("evaluatorName")]
     public string? EvaluatorName { get; set; }
 
+    [BsonElement("problemScore")]
+    public double ProblemScore { get; set; }
+
     [BsonElement("innovationScore")]
     public double InnovationScore { get; set; }
 
     [BsonElement("techScore")]
     public double TechScore { get; set; }
 
+    [BsonElement("impactScore")]
+    public double ImpactScore { get; set; }
+
     [BsonElement("presentationScore")]
-    public int PresentationScore { get; set; }
+    public double PresentationScore { get; set; }
+
+    [BsonElement("knowledgeScore")]
+    public double KnowledgeScore { get; set; }
+
+    [BsonElement("resultsScore")]
+    public double ResultsScore { get; set; }
 
     [BsonElement("totalScore")]
     public double TotalScore { get; set; }

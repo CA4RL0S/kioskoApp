@@ -40,131 +40,113 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
                  if (myEval != null)
                  {
                      // Load existing evaluation
+                     ProblemScore = myEval.ProblemScore;
                      InnovationScore = myEval.InnovationScore;
                      TechScore = myEval.TechScore;
+                     ImpactScore = myEval.ImpactScore;
+                     PresentationScore = myEval.PresentationScore;
+                     KnowledgeScore = myEval.KnowledgeScore;
+                     ResultsScore = myEval.ResultsScore;
+                     
                      Comments = myEval.Comments;
-
-                     int presentationScore = myEval.PresentationScore;
-                     int index = presentationScore switch
-                     {
-                         2 => 1,
-                         5 => 2,
-                         8 => 3,
-                         10 => 4,
-                         _ => 3
-                     };
-                     UpdatePresentationSelection(index);
                  }
                  else
                  {
-                     // Default values for new evaluation
-                     InnovationScore = 8;
-                     TechScore = 6;
+                     // Default values for new evaluation (middle ground)
+                     ProblemScore = 5;
+                     InnovationScore = 5;
+                     TechScore = 5;
+                     ImpactScore = 5;
+                     PresentationScore = 5;
+                     KnowledgeScore = 5;
+                     ResultsScore = 5;
+                     
                      Comments = string.Empty;
-                     UpdatePresentationSelection(3); // Good
                  }
             }
         }
     }
 
-    private double _innovationScore = 8;
-    private double _techScore = 6;
-    private int _presentationScore = 7; // Default "Good" mapped value
-    private int _selectedPresentationIndex = 3; 
+    // 1. Planteamiento del Problema
+    private double _problemScore;
+    public double ProblemScore
+    {
+        get => _problemScore;
+        set { if (_problemScore != value) { _problemScore = Math.Round(value); OnPropertyChanged(); OnPropertyChanged(nameof(TotalScore)); } }
+    }
 
+    // 2. Innovacion
+    private double _innovationScore;
     public double InnovationScore
     {
         get => _innovationScore;
-        set
-        {
-            if (_innovationScore != value)
-            {
-                _innovationScore = Math.Round(value);
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(TotalScore));
-            }
-        }
+        set { if (_innovationScore != value) { _innovationScore = Math.Round(value); OnPropertyChanged(); OnPropertyChanged(nameof(TotalScore)); } }
     }
 
+    // 3. Viabilidad Tecnica
+    private double _techScore;
     public double TechScore
     {
         get => _techScore;
-        set
-        {
-            if (_techScore != value)
-            {
-                _techScore = Math.Round(value);
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(TotalScore));
-            }
-        }
+        set { if (_techScore != value) { _techScore = Math.Round(value); OnPropertyChanged(); OnPropertyChanged(nameof(TotalScore)); } }
     }
 
-    public double TotalScore => InnovationScore + TechScore + _presentationScore;
+    // 4. Impacto
+    private double _impactScore;
+    public double ImpactScore
+    {
+        get => _impactScore;
+        set { if (_impactScore != value) { _impactScore = Math.Round(value); OnPropertyChanged(); OnPropertyChanged(nameof(TotalScore)); } }
+    }
 
-    public System.Windows.Input.ICommand SelectPresentationCommand { get; private set; }
+    // 5. Presentacion
+    private double _presentationScore;
+    public double PresentationScore
+    {
+        get => _presentationScore;
+        set { if (_presentationScore != value) { _presentationScore = Math.Round(value); OnPropertyChanged(); OnPropertyChanged(nameof(TotalScore)); } }
+    }
+
+    // 6. Conocimiento
+    private double _knowledgeScore;
+    public double KnowledgeScore
+    {
+        get => _knowledgeScore;
+        set { if (_knowledgeScore != value) { _knowledgeScore = Math.Round(value); OnPropertyChanged(); OnPropertyChanged(nameof(TotalScore)); } }
+    }
+
+    // 7. Resultados
+    private double _resultsScore;
+    public double ResultsScore
+    {
+        get => _resultsScore;
+        set { if (_resultsScore != value) { _resultsScore = Math.Round(value); OnPropertyChanged(); OnPropertyChanged(nameof(TotalScore)); } }
+    }
+
+
+    public double TotalScore => ProblemScore + InnovationScore + TechScore + ImpactScore + PresentationScore + KnowledgeScore + ResultsScore;
+
+    // public System.Windows.Input.ICommand SelectPresentationCommand { get; private set; } // No longer needed
 
     public ProjectDetailsPage(IMongoDBService mongoDBService)
     {
         InitializeComponent();
         _mongoDBService = mongoDBService;
         
-        SelectPresentationCommand = new Command<string>((param) =>
-        {
-             if (int.TryParse(param, out int index))
-             {
-                 UpdatePresentationSelection(index);
-             }
-        });
+        // Remove command init
+        // SelectPresentationCommand = ...
 
         BindingContext = this;
     }
-
-
-
 
     private async void OnBackClicked(object sender, EventArgs e)
     {
         await Shell.Current.GoToAsync("..");
     }
 
-    private void UpdatePresentationSelection(int index)
-    {
-        _selectedPresentationIndex = index;
-
-        _presentationScore = index switch
-        {
-            1 => 2,   // Poor
-            2 => 5,   // Fair
-            3 => 8,   // Good
-            4 => 10,  // Great
-            _ => 0
-        };
-
-        OnPropertyChanged(nameof(TotalScore));
-
-        UpdateOptionVisualState(OptionPoor, LabelPoor, index == 1);
-        UpdateOptionVisualState(OptionFair, LabelFair, index == 2);
-        UpdateOptionVisualState(OptionGood, LabelGood, index == 3, ShadowGood);
-        UpdateOptionVisualState(OptionGreat, LabelGreat, index == 4);
-    }
-
-    private void UpdateOptionVisualState(Border border, Label label, bool isSelected, Shadow? shadow = null)
-    {
-        if (isSelected)
-        {
-            border.BackgroundColor = Colors.White;
-            border.StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 6 };
-            label.TextColor = (Color)Application.Current.Resources["Primary"];
-            if (shadow != null) shadow.Opacity = 0.05f;
-        }
-        else
-        {
-            border.BackgroundColor = Colors.Transparent;
-            label.TextColor = (Color)Application.Current.Resources["Gray500"];
-            if (shadow != null) shadow.Opacity = 0;
-        }
-    }
+    // UpdatePresentationSelection removed - no longer needed
+    
+    // UpdateOptionVisualState removed - no longer needed
     
     private async void OnSubmitClicked(object sender, EventArgs e)
     {
@@ -185,9 +167,13 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
         {
             EvaluatorId = userId,
             EvaluatorName = userName,
+            ProblemScore = ProblemScore,
             InnovationScore = InnovationScore,
             TechScore = TechScore,
-            PresentationScore = _presentationScore,
+            ImpactScore = ImpactScore,
+            PresentationScore = PresentationScore,
+            KnowledgeScore = KnowledgeScore,
+            ResultsScore = ResultsScore,
             TotalScore = TotalScore,
             Comments = Comments,
             Timestamp = DateTime.UtcNow
@@ -206,20 +192,27 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
         // Recalculate Project Averages
         if (Project.Evaluations.Any())
         {
+            Project.ProblemScore = Math.Round(Project.Evaluations.Average(ev => ev.ProblemScore), 1);
             Project.InnovationScore = Math.Round(Project.Evaluations.Average(ev => ev.InnovationScore), 1);
             Project.TechScore = Math.Round(Project.Evaluations.Average(ev => ev.TechScore), 1);
-            
-            // For presentation score (int), we can round to nearest int
-            Project.PresentationScore = (int)Math.Round(Project.Evaluations.Average(ev => ev.PresentationScore));
+            Project.ImpactScore = Math.Round(Project.Evaluations.Average(ev => ev.ImpactScore), 1);
+            Project.PresentationScore = Math.Round(Project.Evaluations.Average(ev => ev.PresentationScore), 1);
+            Project.KnowledgeScore = Math.Round(Project.Evaluations.Average(ev => ev.KnowledgeScore), 1);
+            Project.ResultsScore = Math.Round(Project.Evaluations.Average(ev => ev.ResultsScore), 1);
             
             Project.Score = Math.Round(Project.Evaluations.Average(ev => ev.TotalScore), 1).ToString();
         }
         else
         {
              // Fallback (shouldn't happen directly after add)
+            Project.ProblemScore = ProblemScore;
             Project.InnovationScore = InnovationScore;
             Project.TechScore = TechScore;
-            Project.PresentationScore = _presentationScore;
+            Project.ImpactScore = ImpactScore;
+            Project.PresentationScore = PresentationScore;
+            Project.KnowledgeScore = KnowledgeScore;
+            Project.ResultsScore = ResultsScore;
+            
             Project.Score = TotalScore.ToString();
         }
 
@@ -244,7 +237,7 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
                     ProjectTitle = Project.Title,
                     Description = existingEvaluation != null
                         ? $"Actualizaste la evaluación de {Project.Title}"
-                        : $"Evaluaste {Project.Title}",
+                        : $"Evaluaste {Project.Title} ({TotalScore}/70)",
                     Timestamp = DateTime.UtcNow,
                     Icon = "check_circle",
                     IconColor = "#10B981"
@@ -258,12 +251,11 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
             {
                 { "ProjectTitle", Project.Title },
                 { "ProjectImageUrl", Project.ImageUrl },
-                { "InnovationScore", Project.InnovationScore.ToString() }, // Show AVERAGE
-                { "TechScore", Project.TechScore.ToString() }, // Show AVERAGE
-                { "PresentationScore", Project.PresentationScore.ToString() }, // Show AVERAGE
-                { "TotalScore", Project.Score } // Show AVERAGE
+                { "TotalScore", Project.Score } 
+                // We could pass breakdown if the result page supports it, but for now Total is key
             };
-
+            
+            // Note: EvaluationResultPage might need updates to show new score breakdown if it was detailed
             await Shell.Current.GoToAsync(nameof(EvaluationResultPage), navigationParameter);
         }
         catch (Exception ex)

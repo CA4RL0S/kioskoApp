@@ -19,7 +19,7 @@
                     <Label Text="Total Score" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSubDark}}" FontSize="14" FontAttributes="Bold" VerticalOptions="Center"/>
                     <HorizontalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
                         <Label Text="{Binding TotalScore}" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" FontSize="20" FontAttributes="Bold"/>
-                        <Label Text="/ 30" TextColor="{StaticResource Gray400}" FontSize="16" VerticalOptions="End" Margin="0,0,0,2"/>
+                        <Label Text="/ 70" TextColor="{StaticResource Gray400}" FontSize="16" VerticalOptions="End" Margin="0,0,0,2"/>
                     </HorizontalStackLayout>
                 </Grid>
                 <Button Text="Submit Evaluation" 
@@ -138,85 +138,105 @@
                 
                 <BoxView HeightRequest="8" Color="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}"/>
 
-                <!-- Rubric Section -->
-                <VerticalStackLayout Padding="16,24" Spacing="32">
-                    <Grid ColumnDefinitions="*, Auto">
-                        <Label Text="Evaluation Rubric" FontSize="18" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"/>
-                        <Border Grid.Column="1" StrokeThickness="0" BackgroundColor="#E0F2FE" StrokeShape="RoundRectangle 12" Padding="12,4">
-                            <Label Text="Pending" TextColor="{StaticResource Primary}" FontSize="12" FontAttributes="Bold"/>
-                        </Border>
-                    </Grid>
+                    <!-- Rubric Section -->
+                    <VerticalStackLayout Padding="16,24" Spacing="24">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <Label Text="Rúbrica de Evaluación" FontSize="18" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"/>
+                            <Border Grid.Column="1" StrokeThickness="0" BackgroundColor="#E0F2FE" StrokeShape="RoundRectangle 12" Padding="12,4">
+                                <Label Text="0 - 10 Puntos c/u" TextColor="{StaticResource Primary}" FontSize="12" FontAttributes="Bold"/>
+                            </Border>
+                        </Grid>
 
-                    <!-- Innovation -->
-                    <VerticalStackLayout Spacing="12">
-                         <Grid ColumnDefinitions="*, Auto">
-                            <Label Text="Innovation" FontSize="16" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"/>
-                            <HorizontalStackLayout Grid.Column="1" Spacing="2">
-                                <Label Text="{Binding InnovationScore}" TextColor="{StaticResource Primary}" FontSize="18" FontAttributes="Bold"/>
-                                <Label Text="/10" TextColor="{StaticResource Gray400}" FontSize="14" VerticalOptions="End" Margin="0,0,0,2"/>
-                            </HorizontalStackLayout>
-                        </Grid>
-                        <Label Text="Originality of the solution and use of resources." TextColor="{StaticResource TextSecondary}" FontSize="14"/>
-                        <Slider Minimum="0" Maximum="10" Value="{Binding InnovationScore}" MinimumTrackColor="{StaticResource Primary}" MaximumTrackColor="{StaticResource Gray200}" ThumbColor="{StaticResource Primary}"/>
-                        <Grid ColumnDefinitions="*, *">
-                            <Label Text="Poor" TextColor="{StaticResource Gray400}" FontSize="12"/>
-                            <Label Grid.Column="1" Text="Excellent" TextColor="{StaticResource Gray400}" FontSize="12" HorizontalOptions="End"/>
-                        </Grid>
-                    </VerticalStackLayout>
+                        <!-- 1. Planteamiento del Problema -->
+                        <VerticalStackLayout Spacing="8">
+                            <Grid ColumnDefinitions="*, Auto">
+                                <Label Text="1. Planteamiento del Problema" FontSize="16" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"/>
+                                <HorizontalStackLayout Grid.Column="1" Spacing="2">
+                                    <Label Text="{Binding ProblemScore, StringFormat='{0:F0}'}" TextColor="{StaticResource Primary}" FontSize="16" FontAttributes="Bold"/>
+                                    <Label Text="/10" TextColor="{StaticResource Gray400}" FontSize="14" VerticalOptions="End" Margin="0,0,0,2"/>
+                                </HorizontalStackLayout>
+                            </Grid>
+                            <Label Text="¿Identifica claramente una necesidad real y propone una solución viable?" TextColor="{StaticResource TextSecondary}" FontSize="13"/>
+                            <Slider Minimum="0" Maximum="10" Value="{Binding ProblemScore}" MinimumTrackColor="{StaticResource Primary}" MaximumTrackColor="{StaticResource Gray200}" ThumbColor="{StaticResource Primary}"/>
+                        </VerticalStackLayout>
 
-                     <!-- Presentation -->
-                    <VerticalStackLayout Spacing="12">
-                         <Grid ColumnDefinitions="*, Auto">
-                            <Label Text="Presentation" FontSize="16" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}"/>
-                            <Label Grid.Column="1" Text="Clarity &amp; Visuals" TextColor="{StaticResource Gray400}" FontSize="14"/>
-                        </Grid>
-                        <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8" BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource SurfaceDark}}" Padding="6" >
-                             <Border x:Name="OptionPoor" StrokeThickness="0" BackgroundColor="Transparent" Padding="0,10">
-                                 <Border.GestureRecognizers>
-                                     <TapGestureRecognizer Command="{Binding SelectPresentationCommand}" CommandParameter="1"/>
-                                 </Border.GestureRecognizers>
-                                <Label x:Name="LabelPoor" Text="Poor" HorizontalOptions="Center" TextColor="{StaticResource Gray500}" FontSize="12" FontAttributes="Bold"/>
-                            </Border>
-                            <Border x:Name="OptionFair" StrokeThickness="0" BackgroundColor="Transparent" Padding="0,10">
-                                <Border.GestureRecognizers>
-                                     <TapGestureRecognizer Command="{Binding SelectPresentationCommand}" CommandParameter="2"/>
-                                 </Border.GestureRecognizers>
-                                <Label x:Name="LabelFair" Text="Fair" HorizontalOptions="Center" TextColor="{StaticResource Gray500}" FontSize="12" FontAttributes="Bold"/>
-                            </Border>
-                            <Border x:Name="OptionGood" StrokeThickness="0" BackgroundColor="White" Padding="0,10" StrokeShape="RoundRectangle 6">
-                                <Border.Shadow>
-                                    <Shadow x:Name="ShadowGood" Brush="Black" Opacity="0.05" Radius="2" Offset="0,1"/>
-                                </Border.Shadow>
-                                <Border.GestureRecognizers>
-                                     <TapGestureRecognizer Command="{Binding SelectPresentationCommand}" CommandParameter="3"/>
-                                 </Border.GestureRecognizers>
-                                <Label x:Name="LabelGood" Text="Good" HorizontalOptions="Center" TextColor="{StaticResource Primary}" FontSize="12" FontAttributes="Bold"/>
-                            </Border>
-                             <Border x:Name="OptionGreat" StrokeThickness="0" BackgroundColor="Transparent" Padding="0,10">
-                                 <Border.GestureRecognizers>
-                                     <TapGestureRecognizer Command="{Binding SelectPresentationCommand}" CommandParameter="4"/>
-                                 </Border.GestureRecognizers>
-                                <Label x:Name="LabelGreat" Text="Great" HorizontalOptions="Center" TextColor="{StaticResource Gray500}" FontSize="12" FontAttributes="Bold"/>
-                            </Border>
-                        </Grid>
-                    </VerticalStackLayout>
+                        <!-- 2. Innovación y Creatividad -->
+                        <VerticalStackLayout Spacing="8">
+                            <Grid ColumnDefinitions="*, Auto">
+                                <Label Text="2. Innovación y Creatividad" FontSize="16" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"/>
+                                <HorizontalStackLayout Grid.Column="1" Spacing="2">
+                                    <Label Text="{Binding InnovationScore, StringFormat='{0:F0}'}" TextColor="{StaticResource Primary}" FontSize="16" FontAttributes="Bold"/>
+                                    <Label Text="/10" TextColor="{StaticResource Gray400}" FontSize="14" VerticalOptions="End" Margin="0,0,0,2"/>
+                                </HorizontalStackLayout>
+                            </Grid>
+                            <Label Text="¿Ofrece un enfoque original o una mejora significativa?" TextColor="{StaticResource TextSecondary}" FontSize="13"/>
+                            <Slider Minimum="0" Maximum="10" Value="{Binding InnovationScore}" MinimumTrackColor="{StaticResource Primary}" MaximumTrackColor="{StaticResource Gray200}" ThumbColor="{StaticResource Primary}"/>
+                        </VerticalStackLayout>
 
-                    <!-- Technical Execution -->
-                    <VerticalStackLayout Spacing="12">
-                         <Grid ColumnDefinitions="*, Auto">
-                            <Label Text="Technical Execution" FontSize="16" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"/>
-                            <HorizontalStackLayout Grid.Column="1" Spacing="2">
-                                <Label Text="{Binding TechScore}" TextColor="{StaticResource Primary}" FontSize="18" FontAttributes="Bold"/>
-                                <Label Text="/10" TextColor="{StaticResource Gray400}" FontSize="14" VerticalOptions="End" Margin="0,0,0,2"/>
-                            </HorizontalStackLayout>
-                        </Grid>
-                        <Label Text="Functionality and prototype robustness." TextColor="{StaticResource TextSecondary}" FontSize="14"/>
-                         <Slider Minimum="0" Maximum="10" Value="{Binding TechScore}" MinimumTrackColor="{StaticResource Primary}" MaximumTrackColor="{StaticResource Gray200}" ThumbColor="{StaticResource Primary}"/>
-                        <Grid ColumnDefinitions="*, *">
-                            <Label Text="Unstable" TextColor="{StaticResource Gray400}" FontSize="12"/>
-                            <Label Grid.Column="1" Text="Robust" TextColor="{StaticResource Gray400}" FontSize="12" HorizontalOptions="End"/>
-                        </Grid>
-                    </VerticalStackLayout>
+                        <!-- 3. Viabilidad Técnica -->
+                        <VerticalStackLayout Spacing="8">
+                            <Grid ColumnDefinitions="*, Auto">
+                                <Label Text="3. Viabilidad Técnica" FontSize="16" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"/>
+                                <HorizontalStackLayout Grid.Column="1" Spacing="2">
+                                    <Label Text="{Binding TechScore, StringFormat='{0:F0}'}" TextColor="{StaticResource Primary}" FontSize="16" FontAttributes="Bold"/>
+                                    <Label Text="/10" TextColor="{StaticResource Gray400}" FontSize="14" VerticalOptions="End" Margin="0,0,0,2"/>
+                                </HorizontalStackLayout>
+                            </Grid>
+                            <Label Text="¿Es técnicamente factible y realista de implementar?" TextColor="{StaticResource TextSecondary}" FontSize="13"/>
+                            <Slider Minimum="0" Maximum="10" Value="{Binding TechScore}" MinimumTrackColor="{StaticResource Primary}" MaximumTrackColor="{StaticResource Gray200}" ThumbColor="{StaticResource Primary}"/>
+                        </VerticalStackLayout>
+
+                        <!-- 4. Impacto Social y Económico -->
+                        <VerticalStackLayout Spacing="8">
+                            <Grid ColumnDefinitions="*, Auto">
+                                <Label Text="4. Impacto Social/Económico" FontSize="16" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"/>
+                                <HorizontalStackLayout Grid.Column="1" Spacing="2">
+                                    <Label Text="{Binding ImpactScore, StringFormat='{0:F0}'}" TextColor="{StaticResource Primary}" FontSize="16" FontAttributes="Bold"/>
+                                    <Label Text="/10" TextColor="{StaticResource Gray400}" FontSize="14" VerticalOptions="End" Margin="0,0,0,2"/>
+                                </HorizontalStackLayout>
+                            </Grid>
+                            <Label Text="¿Demuestra potencial impacto positivo en su entorno?" TextColor="{StaticResource TextSecondary}" FontSize="13"/>
+                            <Slider Minimum="0" Maximum="10" Value="{Binding ImpactScore}" MinimumTrackColor="{StaticResource Primary}" MaximumTrackColor="{StaticResource Gray200}" ThumbColor="{StaticResource Primary}"/>
+                        </VerticalStackLayout>
+
+                        <!-- 5. Calidad de la Presentación -->
+                        <VerticalStackLayout Spacing="8">
+                            <Grid ColumnDefinitions="*, Auto">
+                                <Label Text="5. Calidad de Presentación" FontSize="16" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"/>
+                                <HorizontalStackLayout Grid.Column="1" Spacing="2">
+                                    <Label Text="{Binding PresentationScore, StringFormat='{0:F0}'}" TextColor="{StaticResource Primary}" FontSize="16" FontAttributes="Bold"/>
+                                    <Label Text="/10" TextColor="{StaticResource Gray400}" FontSize="14" VerticalOptions="End" Margin="0,0,0,2"/>
+                                </HorizontalStackLayout>
+                            </Grid>
+                            <Label Text="¿Es clara, estructurada y comunica efectivamente?" TextColor="{StaticResource TextSecondary}" FontSize="13"/>
+                            <Slider Minimum="0" Maximum="10" Value="{Binding PresentationScore}" MinimumTrackColor="{StaticResource Primary}" MaximumTrackColor="{StaticResource Gray200}" ThumbColor="{StaticResource Primary}"/>
+                        </VerticalStackLayout>
+
+                        <!-- 6. Dominio del Tema -->
+                        <VerticalStackLayout Spacing="8">
+                            <Grid ColumnDefinitions="*, Auto">
+                                <Label Text="6. Dominio del Tema" FontSize="16" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"/>
+                                <HorizontalStackLayout Grid.Column="1" Spacing="2">
+                                    <Label Text="{Binding KnowledgeScore, StringFormat='{0:F0}'}" TextColor="{StaticResource Primary}" FontSize="16" FontAttributes="Bold"/>
+                                    <Label Text="/10" TextColor="{StaticResource Gray400}" FontSize="14" VerticalOptions="End" Margin="0,0,0,2"/>
+                                </HorizontalStackLayout>
+                            </Grid>
+                            <Label Text="¿Demuestra conocimiento sólido y seguridad?" TextColor="{StaticResource TextSecondary}" FontSize="13"/>
+                            <Slider Minimum="0" Maximum="10" Value="{Binding KnowledgeScore}" MinimumTrackColor="{StaticResource Primary}" MaximumTrackColor="{StaticResource Gray200}" ThumbColor="{StaticResource Primary}"/>
+                        </VerticalStackLayout>
+
+                        <!-- 7. Avance y Resultados -->
+                        <VerticalStackLayout Spacing="8">
+                            <Grid ColumnDefinitions="*, Auto">
+                                <Label Text="7. Avance y Resultados" FontSize="16" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}"/>
+                                <HorizontalStackLayout Grid.Column="1" Spacing="2">
+                                    <Label Text="{Binding ResultsScore, StringFormat='{0:F0}'}" TextColor="{StaticResource Primary}" FontSize="16" FontAttributes="Bold"/>
+                                    <Label Text="/10" TextColor="{StaticResource Gray400}" FontSize="14" VerticalOptions="End" Margin="0,0,0,2"/>
+                                </HorizontalStackLayout>
+                            </Grid>
+                            <Label Text="¿Muestra resultados concretos y avance esperado?" TextColor="{StaticResource TextSecondary}" FontSize="13"/>
+                            <Slider Minimum="0" Maximum="10" Value="{Binding ResultsScore}" MinimumTrackColor="{StaticResource Primary}" MaximumTrackColor="{StaticResource Gray200}" ThumbColor="{StaticResource Primary}"/>
+                        </VerticalStackLayout>
                     
                     <!-- Comments -->
                      <VerticalStackLayout Spacing="12">

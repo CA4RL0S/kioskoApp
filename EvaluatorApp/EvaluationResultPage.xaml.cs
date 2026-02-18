@@ -2,9 +2,6 @@ namespace EvaluatorApp;
 
 [QueryProperty(nameof(ProjectTitle), "ProjectTitle")]
 [QueryProperty(nameof(ProjectImageUrl), "ProjectImageUrl")]
-[QueryProperty(nameof(InnovationScore), "InnovationScore")]
-[QueryProperty(nameof(TechScore), "TechScore")]
-[QueryProperty(nameof(PresentationScore), "PresentationScore")]
 [QueryProperty(nameof(TotalScore), "TotalScore")]
 public partial class EvaluationResultPage : ContentPage
 {
@@ -30,27 +27,6 @@ public partial class EvaluationResultPage : ContentPage
         }
     }
 
-    private string? innovationScore;
-    public string? InnovationScore
-    {
-        get => innovationScore;
-        set { innovationScore = value; if (value != null) InnovationScoreLabel.Text = value; }
-    }
-
-    private string? techScore;
-    public string? TechScore
-    {
-        get => techScore;
-        set { techScore = value; if (value != null) ExecutionScoreLabel.Text = value; }
-    }
-
-    private string? presentationScore;
-    public string? PresentationScore
-    {
-        get => presentationScore;
-        set { presentationScore = value; if (value != null) PresentationScoreLabel.Text = value; }
-    }
-
     private string? totalScore;
     public string? TotalScore
     {
@@ -59,7 +35,7 @@ public partial class EvaluationResultPage : ContentPage
         { 
             totalScore = value; 
             if (value != null) {
-                TotalScoreLabel.Text = $"{value}/30";
+                TotalScoreLabel.Text = $"{value}/70";
                 TotalScoreSubLabel.Text = value;
             }
         }

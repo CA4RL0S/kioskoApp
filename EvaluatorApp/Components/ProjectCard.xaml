@@ -71,9 +71,9 @@
                         StrokeShape="RoundRectangle 8"
                         Padding="8,2">
                         <HorizontalStackLayout Spacing="4">
-                        <Label Text="⭐" FontSize="13" VerticalOptions="Center"/>
-                        <Label Text="{Binding Score}" FontAttributes="Bold" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" VerticalOptions="Center"/>
-                        <Label Text="/20" FontSize="11" TextColor="{StaticResource Gray400}" VerticalOptions="Center"/>
+                            <Label Text="⭐" FontSize="13" VerticalOptions="Center"/>
+                            <Label Text="{Binding Score}" FontAttributes="Bold" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" VerticalOptions="Center"/>
+                            <Label Text="/70" FontSize="11" TextColor="{StaticResource Gray400}" VerticalOptions="Center"/>
                         </HorizontalStackLayout>
                 </Border>
                 
