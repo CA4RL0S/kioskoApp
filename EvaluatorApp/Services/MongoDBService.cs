@@ -72,7 +72,7 @@ public class MongoDBService : IMongoDBService
         await Init();
         await _activitiesCollection.InsertOneAsync(activity);
     }
-}
+
 
     private async Task SeedData()
     {
