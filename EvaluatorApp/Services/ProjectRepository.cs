@@ -123,9 +123,8 @@ public class ProjectRepository
                 // Keep in queue or mark as failed? For now keep trying.
             }
         }
-            }
         }
-    }
+
 
     public async Task<List<Activity>> GetActivities(string userId)
     {

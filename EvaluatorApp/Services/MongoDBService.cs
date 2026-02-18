@@ -231,17 +231,5 @@ public class MongoDBService : IMongoDBService
         await _usersCollection.UpdateOneAsync(filter, update);
     }
 
-    public async Task<List<Activity>> GetActivities(string userId)
-    {
-        await Init();
-        return await _activitiesCollection.Find(a => a.UserId == userId)
-                                          .SortByDescending(a => a.Timestamp)
-                                          .ToListAsync();
-    }
 
-    public async Task CreateActivity(Activity activity)
-    {
-        await Init();
-        await _activitiesCollection.InsertOneAsync(activity);
-    }
 }

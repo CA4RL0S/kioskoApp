@@ -8,8 +8,7 @@ namespace EvaluatorApp;
 
 public partial class MainPage : ContentPage, INotifyPropertyChanged
 {
-public partial class MainPage : ContentPage, INotifyPropertyChanged
-{
+
     private readonly ProjectRepository _repository;
     private List<Project> _allProjects = new();
     private string _userId = string.Empty;
