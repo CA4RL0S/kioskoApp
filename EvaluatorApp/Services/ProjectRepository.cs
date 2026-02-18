@@ -128,6 +128,7 @@ public class ProjectRepository
 
     public async Task<List<Activity>> GetActivities(string userId)
     {
+        Console.WriteLine($"[REPO] GetActivities for User: {userId}");
         if (Connectivity.Current.NetworkAccess == NetworkAccess.Internet)
         {
             try
@@ -135,6 +136,7 @@ public class ProjectRepository
                 var activities = await _apiService.GetActivities(userId);
                 if (activities != null)
                 {
+                    Console.WriteLine($"[REPO] API returned {activities.Count} activities.");
                     // 1. Clear old synced activities to avoid duplicates
                     await _localService.DeleteSyncedActivities();
                     
@@ -142,20 +144,24 @@ public class ProjectRepository
                     foreach (var act in activities)
                     {
                         act.IsSynced = true;
+                        // Log ID to verify
+                        // Console.WriteLine($"[REPO] Saving synced activity: {act.Id}, User: {act.UserId}");
                     }
 
                     // 3. Save new batch
                     await _localService.SaveActivities(activities);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // Ignore API error, fall back to local
+                Console.WriteLine($"[REPO] API GetActivities Error: {ex.Message}");
             }
         }
         
         // Always return from Local DB (Merged View: Offline Pending + Online Synced)
-        return await _localService.GetActivities(userId);
+        var localStats = await _localService.GetActivities(userId);
+        Console.WriteLine($"[REPO] Returning {localStats.Count} local activities for user {userId}.");
+        return localStats;
     }
 
     public async Task AddActivity(Activity activity)

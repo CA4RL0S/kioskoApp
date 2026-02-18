@@ -383,7 +383,9 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
                 return;
             }
 
+            Console.WriteLine($"[MAIN] Calling GetActivities for {_userId}...");
             var activities = await _repository.GetActivities(_userId);
+            Console.WriteLine($"[MAIN] Received {activities?.Count ?? 0} activities.");
 
             ActivityTimelineLayout.Children.Clear();
 
@@ -397,6 +399,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
 
             foreach (var activity in activities.Take(10))
             {
+                Console.WriteLine($"[MAIN] Displaying activity: {activity.Description} ({activity.TimeAgo})");
                 var item = CreateActivityItem(activity);
                 ActivityTimelineLayout.Children.Add(item);
             }
@@ -404,6 +407,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Error loading activities: {ex.Message}");
+            Console.WriteLine($"[MAIN] Error loading activities: {ex.Message}");
             EmptyActivityView.IsVisible = true;
         }
     }

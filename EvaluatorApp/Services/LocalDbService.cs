@@ -96,10 +96,15 @@ public class LocalDbService
     public async Task<List<Activity>> GetActivities(string userId)
     {
         // Return all activities for this user, sorted by date desc
-        return await _connection.Table<Activity>()
+        var count = await _connection.Table<Activity>().CountAsync();
+        Console.WriteLine($"[LOCAL] Total Activities in DB: {count}");
+        
+        var userActivities = await _connection.Table<Activity>()
                                 .Where(a => a.UserId == userId)
                                 .OrderByDescending(a => a.Timestamp)
                                 .ToListAsync();
+        Console.WriteLine($"[LOCAL] Found {userActivities.Count} activities for user '{userId}'");
+        return userActivities;
     }
 
     public async Task SaveActivity(Activity activity)
