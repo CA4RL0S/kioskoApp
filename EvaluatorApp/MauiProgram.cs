@@ -43,6 +43,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<Services.IMongoDBService, Services.ApiService>();
         builder.Services.AddSingleton<Services.LocalDbService>(); // Local DB Service
         builder.Services.AddSingleton<Services.ProjectRepository>(); // Repository
+        builder.Services.AddSingleton<Services.VideoService>(); // Video Downloader
         builder.Services.AddSingleton<Services.ICloudinaryService, Services.CloudinaryService>();
         builder.Services.AddSingleton<LoginPage>();
         builder.Services.AddSingleton<ProjectsPage>();

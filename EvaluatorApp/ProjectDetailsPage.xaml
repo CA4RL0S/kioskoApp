@@ -63,15 +63,38 @@
                             </Border.Triggers>
                             <Grid>
                                 <toolkit:MediaElement 
-                                    Source="{Binding Project.Videos[0].Url}"
+                                    x:Name="ProjectVideoPlayer"
+                                    Source="{Binding VideoSource}"
                                     Aspect="AspectFill"
                                     ShouldShowPlaybackControls="True"
-                                    ShouldAutoPlay="True"
+                                    ShouldAutoPlay="False"
                                     BackgroundColor="Black"/>
                                 
                                 <Border VerticalOptions="End" HorizontalOptions="Start" Margin="12" BackgroundColor="#33FFFFFF" StrokeThickness="1" Stroke="White" StrokeShape="RoundRectangle 4" Padding="8,4" InputTransparent="True">
                                     <Label Text="{Binding Project.Cycle}" TextColor="White" FontSize="12" FontAttributes="Bold"/>
                                 </Border>
+
+                                <!-- Download/Delete Button Overlay -->
+                                <Button Text="{Binding DownloadButtonText}"
+                                        Command="{Binding ToggleDownloadCommand}"
+                                        VerticalOptions="Start" 
+                                        HorizontalOptions="End" 
+                                        Margin="12"
+                                        FontSize="12"
+                                        HeightRequest="36"
+                                        CornerRadius="18"
+                                        BackgroundColor="#AA000000"
+                                        TextColor="White">
+                                    <Button.Triggers>
+                                         <DataTrigger TargetType="Button" Binding="{Binding IsDownloading}" Value="True">
+                                            <Setter Property="Text" Value="Descargando..."/>
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Button" Binding="{Binding IsDownloaded}" Value="True">
+                                            <Setter Property="BackgroundColor" Value="#AAEF4444"/> <!-- Red for delete -->
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
                             </Grid>
                         </Border>
 

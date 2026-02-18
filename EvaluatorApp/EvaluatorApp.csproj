@@ -83,6 +83,7 @@
   <ItemGroup>
     <PackageReference Include="CloudinaryDotNet" Version="1.28.0" />
     <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="8.0.0" />
+    <PackageReference Include="CommunityToolkit.Maui" Version="9.1.1" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.82.1" />
     <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.30" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />

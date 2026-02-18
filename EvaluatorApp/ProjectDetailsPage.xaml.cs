@@ -126,14 +126,131 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
 
     public double TotalScore => ProblemScore + InnovationScore + TechScore + ImpactScore + PresentationScore + KnowledgeScore + ResultsScore;
 
-    // public System.Windows.Input.ICommand SelectPresentationCommand { get; private set; } // No longer needed
+    private readonly ProjectRepository _repository;
+    private readonly VideoService _videoService;
 
-    public ProjectDetailsPage(ProjectRepository repository)
+    // --- Video Logic Properties ---
+    private CommunityToolkit.Maui.Views.MediaSource _videoSource;
+    public CommunityToolkit.Maui.Views.MediaSource VideoSource
+    {
+        get => _videoSource;
+        set { if (_videoSource != value) { _videoSource = value; OnPropertyChanged(); } }
+    }
+
+    private string _downloadButtonText = "Descargar Video";
+    public string DownloadButtonText
+    {
+        get => _downloadButtonText;
+        set { if (_downloadButtonText != value) { _downloadButtonText = value; OnPropertyChanged(); } }
+    }
+
+    private bool _isDownloaded;
+    public bool IsDownloaded
+    {
+        get => _isDownloaded;
+        set 
+        { 
+            if (_isDownloaded != value) 
+            { 
+                _isDownloaded = value; 
+                OnPropertyChanged();
+                DownloadButtonText = value ? "Borrar Video" : "Descargar Video";
+            } 
+        }
+    }
+
+    private bool _isDownloading;
+    public bool IsDownloading
+    {
+        get => _isDownloading;
+        set { if (_isDownloading != value) { _isDownloading = value; OnPropertyChanged(); } }
+    }
+
+    public Command ToggleDownloadCommand { get; private set; }
+
+    public ProjectDetailsPage(ProjectRepository repository, VideoService videoService)
     {
         InitializeComponent();
         _repository = repository;
+        _videoService = videoService;
+        
+        ToggleDownloadCommand = new Command(async () => await ToggleDownload());
         
         BindingContext = this;
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        CheckVideoStatus();
+    }
+
+    private void CheckVideoStatus()
+    {
+        if (Project != null && Project.HasVideo)
+        {
+            try 
+            {
+                var videoUrl = Project.Videos[0].Url;
+                IsDownloaded = _videoService.IsVideoDownloaded(videoUrl);
+                
+                if (IsDownloaded)
+                {
+                    var localPath = _videoService.GetLocalFilePath(videoUrl);
+                    VideoSource = CommunityToolkit.Maui.Views.MediaSource.FromFile(localPath);
+                }
+                else
+                {
+                    VideoSource = CommunityToolkit.Maui.Views.MediaSource.FromUri(new Uri(videoUrl));
+                }
+            }
+            catch { }
+        }
+    }
+
+    private async Task ToggleDownload()
+    {
+        if (Project == null || !Project.HasVideo) return;
+        var videoUrl = Project.Videos[0].Url;
+
+        if (IsDownloaded)
+        {
+            // DELETE
+            bool confirm = await DisplayAlert("Borrar Video", "¿Quieres borrar este video del dispositivo para liberar espacio?", "Sí, Borrar", "Cancelar");
+            if (confirm)
+            {
+                _videoService.DeleteVideo(videoUrl);
+                IsDownloaded = false;
+                VideoSource = CommunityToolkit.Maui.Views.MediaSource.FromUri(new Uri(videoUrl)); // Revert to URL
+            }
+        }
+        else
+        {
+            // DOWNLOAD
+            if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+            {
+                await DisplayAlert("Sin Conexión", "Necesitas internet para descargar el video.", "OK");
+                return;
+            }
+
+            IsDownloading = true;
+            try
+            {
+                 // We could show progress here if we bound a progress bar
+                 var localPath = await _videoService.DownloadVideoAsync(videoUrl);
+                 IsDownloaded = true;
+                 VideoSource = CommunityToolkit.Maui.Views.MediaSource.FromFile(localPath); // Switch to local
+                 await DisplayAlert("Éxito", "Video descargado. Ahora puedes verlo sin internet.", "OK");
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"No se pudo descargar: {ex.Message}", "OK");
+            }
+            finally
+            {
+                IsDownloading = false;
+            }
+        }
     }
 
     // ... [OnBackClicked remains same]
