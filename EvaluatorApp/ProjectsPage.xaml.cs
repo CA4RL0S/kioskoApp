@@ -30,6 +30,20 @@ public partial class ProjectsPage : ContentPage, INotifyPropertyChanged
 
     public ICommand RefreshCommand { get; private set; }
 
+    private bool _isOffline;
+    public bool IsOffline
+    {
+        get => _isOffline;
+        set
+        {
+            if (_isOffline != value)
+            {
+                _isOffline = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
 	public ProjectsPage(ProjectRepository repository)
 	{
 		InitializeComponent();
@@ -56,6 +70,10 @@ public partial class ProjectsPage : ContentPage, INotifyPropertyChanged
         base.OnAppearing();
         Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific.Page.SetUseSafeArea(this, false);
         
+        // Listen to connectivity changes
+        Connectivity.Current.ConnectivityChanged += OnConnectivityChanged;
+        CheckConnectivity();
+        
         await LoadProjects();
         
         // Auto-sync on appear if online
@@ -63,6 +81,22 @@ public partial class ProjectsPage : ContentPage, INotifyPropertyChanged
         {
              _ = _repository.SyncPendingEvaluations(); // Fire and forget
         }
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        Connectivity.Current.ConnectivityChanged -= OnConnectivityChanged;
+    }
+
+    private void OnConnectivityChanged(object sender, ConnectivityChangedEventArgs e)
+    {
+        CheckConnectivity();
+    }
+
+    private void CheckConnectivity()
+    {
+        IsOffline = Connectivity.Current.NetworkAccess != NetworkAccess.Internet;
     }
 
     private List<Project> _allProjects = new();
@@ -85,11 +119,10 @@ public partial class ProjectsPage : ContentPage, INotifyPropertyChanged
             _allProjects = projects; // Store full list
             ApplyFilter(_currentFilter); // Apply current filter to update view
             
-            if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
-            {
-                // Optional: Show toast "Modo Offline"
-                 await Toast.Make("Modo Offline: Mostrando datos guardados", CommunityToolkit.Maui.Alerts.ToastDuration.Short).Show();
-            }
+            _allProjects = projects; // Store full list
+            ApplyFilter(_currentFilter); // Apply current filter to update view
+            
+            // Toast removed in favor of persistent banner
         }
         catch (Exception ex)
         {

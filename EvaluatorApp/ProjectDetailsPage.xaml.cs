@@ -126,7 +126,6 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
 
     public double TotalScore => ProblemScore + InnovationScore + TechScore + ImpactScore + PresentationScore + KnowledgeScore + ResultsScore;
 
-    private readonly ProjectRepository _repository;
     private readonly VideoService _videoService;
 
     // --- Video Logic Properties ---
