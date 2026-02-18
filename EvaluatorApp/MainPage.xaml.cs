@@ -8,7 +8,9 @@ namespace EvaluatorApp;
 
 public partial class MainPage : ContentPage, INotifyPropertyChanged
 {
-    private readonly IMongoDBService _dbService;
+public partial class MainPage : ContentPage, INotifyPropertyChanged
+{
+    private readonly ProjectRepository _repository;
     private List<Project> _allProjects = new();
     private string _userId = string.Empty;
 
@@ -28,17 +30,22 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
 
     public ICommand RefreshCommand { get; private set; }
 
-    public MainPage()
+    public MainPage(ProjectRepository repository)
     {
         InitializeComponent();
-        _dbService = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions
-            .GetRequiredService<IMongoDBService>(
-                IPlatformApplication.Current!.Services);
+        _repository = repository;
         
         RefreshCommand = new Command(async () =>
         {
             IsRefreshing = true;
             await LoadDataAsync();
+            
+            // Sync if online
+            if (Connectivity.Current.NetworkAccess == NetworkAccess.Internet)
+            {
+                await _repository.SyncPending();
+            }
+            
             IsRefreshing = false;
         });
 
@@ -73,7 +80,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
         try
         {
             // Load projects
-            _allProjects = await _dbService.GetProjects();
+            _allProjects = await _repository.GetProjects();
 
             // Personalize statuses for this evaluator
             foreach (var p in _allProjects)
@@ -377,7 +384,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
                 return;
             }
 
-            var activities = await _dbService.GetActivities(_userId);
+            var activities = await _repository.GetActivities(_userId);
 
             ActivityTimelineLayout.Children.Clear();
 

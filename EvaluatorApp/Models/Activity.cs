@@ -1,11 +1,19 @@
 using System.Text.Json.Serialization;
+using SQLite;
 
 namespace EvaluatorApp.Models;
 
 public class Activity
 {
+    [PrimaryKey, AutoIncrement]
+    [JsonIgnore]
+    public int LocalId { get; set; }
+
     [JsonPropertyName("id")]
     public string? Id { get; set; }
+
+    [JsonIgnore]
+    public bool IsSynced { get; set; }
 
     [JsonPropertyName("userId")]
     public string? UserId { get; set; }

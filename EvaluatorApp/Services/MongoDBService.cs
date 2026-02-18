@@ -25,9 +25,11 @@ public class MongoDBService : IMongoDBService
     private const string DatabaseName = "kioskoAppDB";
     private const string UserCollectionName = "maestros";
     private const string ProjectCollectionName = "proyectos";
+    private const string ActivityCollectionName = "activities";
 
     private IMongoCollection<User> _usersCollection;
     private IMongoCollection<Project> _projectsCollection;
+    private IMongoCollection<Activity> _activitiesCollection;
     private bool _isInitialized;
     private readonly IConfiguration _configuration;
 
@@ -49,10 +51,28 @@ public class MongoDBService : IMongoDBService
 
         _usersCollection = database.GetCollection<User>(UserCollectionName);
         _projectsCollection = database.GetCollection<Project>(ProjectCollectionName);
+        _activitiesCollection = database.GetCollection<Activity>(ActivityCollectionName);
 
         _isInitialized = true;
         await SeedData();
     }
+
+    // ... (SeedData and other methods remain unchanged)
+
+    public async Task<List<Activity>> GetActivities(string userId)
+    {
+        await Init();
+        return await _activitiesCollection.Find(a => a.UserId == userId)
+                                          .SortByDescending(a => a.Timestamp)
+                                          .ToListAsync();
+    }
+
+    public async Task CreateActivity(Activity activity)
+    {
+        await Init();
+        await _activitiesCollection.InsertOneAsync(activity);
+    }
+}
 
     private async Task SeedData()
     {
@@ -211,15 +231,17 @@ public class MongoDBService : IMongoDBService
         await _usersCollection.UpdateOneAsync(filter, update);
     }
 
-    public Task<List<Activity>> GetActivities(string userId)
+    public async Task<List<Activity>> GetActivities(string userId)
     {
-        // Not implemented for local MongoDB — activities go through API
-        return Task.FromResult(new List<Activity>());
+        await Init();
+        return await _activitiesCollection.Find(a => a.UserId == userId)
+                                          .SortByDescending(a => a.Timestamp)
+                                          .ToListAsync();
     }
 
-    public Task CreateActivity(Activity activity)
+    public async Task CreateActivity(Activity activity)
     {
-        // Not implemented for local MongoDB — activities go through API
-        return Task.CompletedTask;
+        await Init();
+        await _activitiesCollection.InsertOneAsync(activity);
     }
 }

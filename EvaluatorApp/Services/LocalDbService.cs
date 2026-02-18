@@ -17,6 +17,7 @@ public class LocalDbService
         // Initialize Tables
         _connection.CreateTableAsync<Project>().Wait();
         _connection.CreateTableAsync<PendingEvaluation>().Wait();
+        _connection.CreateTableAsync<Activity>().Wait();
     }
 
     // --- Projects ---
@@ -89,5 +90,30 @@ public class LocalDbService
     public async Task DeletePendingEvaluation(int id)
     {
         await _connection.DeleteAsync<PendingEvaluation>(id);
+    }
+
+    // --- Activities ---
+    public async Task<List<Activity>> GetActivities(string userId)
+    {
+        // Return all activities for this user, sorted by date desc
+        return await _connection.Table<Activity>()
+                                .Where(a => a.UserId == userId)
+                                .OrderByDescending(a => a.Timestamp)
+                                .ToListAsync();
+    }
+
+    public async Task SaveActivity(Activity activity)
+    {
+        await _connection.InsertAsync(activity);
+    }
+
+    public async Task<List<Activity>> GetPendingActivities()
+    {
+        return await _connection.Table<Activity>().Where(a => !a.IsSynced).ToListAsync();
+    }
+
+    public async Task UpdateActivity(Activity activity)
+    {
+        await _connection.UpdateAsync(activity);
     }
 }

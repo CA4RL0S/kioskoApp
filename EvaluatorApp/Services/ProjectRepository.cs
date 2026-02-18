@@ -123,5 +123,84 @@ public class ProjectRepository
                 // Keep in queue or mark as failed? For now keep trying.
             }
         }
+            }
+        }
+    }
+
+    public async Task<List<Activity>> GetActivities(string userId)
+    {
+        if (Connectivity.Current.NetworkAccess == NetworkAccess.Internet)
+        {
+            try
+            {
+                var activities = await _apiService.GetActivities(userId);
+                if (activities != null)
+                {
+                    // Update local cache
+                    foreach (var act in activities)
+                    {
+                        act.IsSynced = true;
+                        // Avoid duplicates? For simplicity, we might just insert/update
+                        // SQLite doesn't have "InsertOrUpdate" easily without ID match.
+                        // We rely on Mongo ID string.
+                        // But local activities might have null ID.
+                        // For now, let's just save.
+                        await _localService.SaveActivity(act); 
+                    }
+                }
+                return activities;
+            }
+            catch
+            {
+                return await _localService.GetActivities(userId);
+            }
+        }
+        else
+        {
+            return await _localService.GetActivities(userId);
+        }
+    }
+
+    public async Task AddActivity(Activity activity)
+    {
+        if (Connectivity.Current.NetworkAccess == NetworkAccess.Internet)
+        {
+            try
+            {
+                await _apiService.CreateActivity(activity);
+                activity.IsSynced = true;
+            }
+            catch
+            {
+                activity.IsSynced = false;
+            }
+        }
+        else
+        {
+            activity.IsSynced = false;
+        }
+        
+        await _localService.SaveActivity(activity);
+    }
+
+    public async Task SyncPending()
+    {
+        await SyncPendingEvaluations();
+        await SyncPendingActivities();
+    }
+
+    private async Task SyncPendingActivities()
+    {
+        var pending = await _localService.GetPendingActivities();
+        foreach (var act in pending)
+        {
+            try
+            {
+                await _apiService.CreateActivity(act);
+                act.IsSynced = true;
+                await _localService.UpdateActivity(act);
+            }
+            catch { }
+        }
     }
 }
