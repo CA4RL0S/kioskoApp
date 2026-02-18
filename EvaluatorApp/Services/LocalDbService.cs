@@ -116,4 +116,14 @@ public class LocalDbService
     {
         await _connection.UpdateAsync(activity);
     }
+
+    public async Task DeleteSyncedActivities()
+    {
+        await _connection.Table<Activity>().DeleteAsync(a => a.IsSynced);
+    }
+
+    public async Task SaveActivities(List<Activity> activities)
+    {
+        await _connection.InsertAllAsync(activities);
+    }
 }

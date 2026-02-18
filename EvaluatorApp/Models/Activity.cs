@@ -1,3 +1,5 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using System.Text.Json.Serialization;
 using SQLite;
 
@@ -10,12 +12,15 @@ public class Activity
     public int LocalId { get; set; }
 
     [JsonPropertyName("id")]
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
     public string? Id { get; set; }
 
     [JsonIgnore]
     public bool IsSynced { get; set; }
 
     [JsonPropertyName("userId")]
+    [BsonElement("userId")]
     public string? UserId { get; set; }
 
     [JsonPropertyName("type")]

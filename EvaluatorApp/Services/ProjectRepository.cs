@@ -135,29 +135,27 @@ public class ProjectRepository
                 var activities = await _apiService.GetActivities(userId);
                 if (activities != null)
                 {
-                    // Update local cache
+                    // 1. Clear old synced activities to avoid duplicates
+                    await _localService.DeleteSyncedActivities();
+                    
+                    // 2. Mark new ones as synced
                     foreach (var act in activities)
                     {
                         act.IsSynced = true;
-                        // Avoid duplicates? For simplicity, we might just insert/update
-                        // SQLite doesn't have "InsertOrUpdate" easily without ID match.
-                        // We rely on Mongo ID string.
-                        // But local activities might have null ID.
-                        // For now, let's just save.
-                        await _localService.SaveActivity(act); 
                     }
+
+                    // 3. Save new batch
+                    await _localService.SaveActivities(activities);
                 }
-                return activities;
             }
             catch
             {
-                return await _localService.GetActivities(userId);
+                // Ignore API error, fall back to local
             }
         }
-        else
-        {
-            return await _localService.GetActivities(userId);
-        }
+        
+        // Always return from Local DB (Merged View: Offline Pending + Online Synced)
+        return await _localService.GetActivities(userId);
     }
 
     public async Task AddActivity(Activity activity)
