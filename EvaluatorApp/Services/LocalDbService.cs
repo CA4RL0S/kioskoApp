@@ -37,6 +37,11 @@ public class LocalDbService
                 try { p.Members = JsonSerializer.Deserialize<List<string>>(p.MembersJson) ?? new List<string>(); }
                 catch { p.Members = new List<string>(); }
             }
+            if (!string.IsNullOrEmpty(p.VideosJson))
+            {
+                try { p.Videos = JsonSerializer.Deserialize<List<Video>>(p.VideosJson) ?? new List<Video>(); }
+                catch { p.Videos = new List<Video>(); }
+            }
             
             p.RestoreVisuals();
         }
@@ -56,6 +61,7 @@ public class LocalDbService
         {
             p.EvaluationsJson = JsonSerializer.Serialize(p.Evaluations);
             p.MembersJson = JsonSerializer.Serialize(p.Members);
+            p.VideosJson = JsonSerializer.Serialize(p.Videos);
         }
         
         await _connection.InsertAllAsync(projects, "OR REPLACE");
@@ -65,6 +71,7 @@ public class LocalDbService
     {
          p.EvaluationsJson = JsonSerializer.Serialize(p.Evaluations);
          p.MembersJson = JsonSerializer.Serialize(p.Members);
+         p.VideosJson = JsonSerializer.Serialize(p.Videos);
          await _connection.UpdateAsync(p);
     }
 

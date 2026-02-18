@@ -100,7 +100,11 @@ public class Project
     // In a real app we'd use a One-to-Many generic solution or TextBlob
     public string MembersJson { get; set; }
     
+    public string MembersJson { get; set; }
+    
     public string EvaluationsJson { get; set; }
+
+    public string VideosJson { get; set; }
 
     [BsonElement("videos")]
     [Ignore]

@@ -172,5 +172,15 @@
                 <Shadow Brush="{StaticResource Primary}" Opacity="0.4" Radius="14" Offset="0,4"/>
             </Button.Shadow>
         </Button>
+
+        <!-- Offline Banner (Spotify Style - Primary Color) -->
+        <Grid VerticalOptions="End" BackgroundColor="{StaticResource Primary}" HeightRequest="40" IsVisible="{Binding IsOffline}" InputTransparent="True" ZIndex="100">
+            <Label Text="No tienes conexión a Internet" 
+                   TextColor="White" 
+                   FontSize="12" 
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" 
+                   VerticalOptions="Center"/>
+        </Grid>
     </Grid>
 </ContentPage>
