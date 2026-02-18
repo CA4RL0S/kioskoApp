@@ -252,7 +252,10 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
         }
     }
 
-    // ... [OnBackClicked remains same]
+    private async void OnBackClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("..");
+    }
     
     private async void OnSubmitClicked(object sender, EventArgs e)
     {

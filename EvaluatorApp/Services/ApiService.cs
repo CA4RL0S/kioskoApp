@@ -102,9 +102,17 @@ public class ApiService : IMongoDBService
 
     public async Task<List<Activity>> GetActivities(string userId)
     {
-        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-        var activities = await _httpClient.GetFromJsonAsync<List<Activity>>($"/api/activities/{userId}", options);
-        return activities ?? new List<Activity>();
+        try 
+        {
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var activities = await _httpClient.GetFromJsonAsync<List<Activity>>($"/api/activities/{userId}", options);
+            return activities ?? new List<Activity>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[API] Error getting activities: {ex.Message}");
+            return new List<Activity>();
+        }
     }
 
     public async Task CreateActivity(Activity activity)
