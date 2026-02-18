@@ -1,6 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System.Text.Json.Serialization;
+using SQLite;
 
 namespace EvaluatorApp.Models;
 
@@ -8,6 +9,7 @@ public class Project
 {
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
+    [PrimaryKey]
     public string Id { get; set; }
 
     [BsonElement("nombre")] // Renamed from "title" as per request
@@ -23,6 +25,7 @@ public class Project
 	public string? ImageUrl { get; set; }
 
     [BsonElement("integrantes")] // New field for matriculas
+    [Ignore]
     public List<string> Members { get; set; } = new List<string>();
 	
     [BsonElement("statusText")]
@@ -30,14 +33,17 @@ public class Project
 
     [BsonIgnore]
     [JsonIgnore]
+    [Ignore]
 	public Color? StatusColor { get; set; }
 
     [BsonIgnore]
     [JsonIgnore]
+    [Ignore]
 	public Color? StatusTextColor { get; set; }
 
     [BsonIgnore]
     [JsonIgnore]
+    [Ignore]
 	public Color? StatusBackgroundColor { get; set; }
 	
     [BsonElement("isPending")]
@@ -87,7 +93,22 @@ public class Project
     }
 
     [BsonElement("evaluations")]
+    [Ignore]
     public List<Evaluation> Evaluations { get; set; } = new List<Evaluation>();
+
+    // Quick Hack for persistence: JSON strings
+    // In a real app we'd use a One-to-Many generic solution or TextBlob
+    public string MembersJson { get; set; }
+    
+    public string EvaluationsJson { get; set; }
+
+    [BsonElement("videos")]
+    [Ignore]
+    public List<Video> Videos { get; set; } = new List<Video>();
+
+    [BsonElement("documentos")]
+    [Ignore]
+    public List<Document> Documents { get; set; } = new List<Document>();
 
     public void RestoreVisuals()
     {
@@ -95,15 +116,15 @@ public class Project
         {
             StatusText = "Evaluado";
             StatusColor = Colors.Green;
-            StatusTextColor = Color.FromRgb(21, 128, 61);
-            StatusBackgroundColor = Color.FromRgba(240, 253, 244, 255);
+            StatusTextColor = Colors.Green;
+            StatusBackgroundColor = Color.FromRgba("#E6F4EA"); // Light Green
         }
         else
         {
             StatusText = "Pendiente de Evaluación";
-            StatusColor = Color.FromArgb("#F59E0B");
-            StatusTextColor = Color.FromRgb(180, 83, 9);
-            StatusBackgroundColor = Color.FromRgba(255, 251, 235, 255);
+            StatusColor = Color.FromRgba("#CA8A04"); // Dark Yellow
+            StatusTextColor = Color.FromRgba("#CA8A04");
+            StatusBackgroundColor = Color.FromRgba("#FEFce8"); // Light Yellow
         }
     }
 

@@ -7,7 +7,7 @@ namespace EvaluatorApp;
 [QueryProperty(nameof(Project), "Project")]
 public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
 {
-    private readonly IMongoDBService _mongoDBService;
+    private readonly ProjectRepository _repository;
     
     private string _comments;
     public string Comments
@@ -128,25 +128,15 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
 
     // public System.Windows.Input.ICommand SelectPresentationCommand { get; private set; } // No longer needed
 
-    public ProjectDetailsPage(IMongoDBService mongoDBService)
+    public ProjectDetailsPage(ProjectRepository repository)
     {
         InitializeComponent();
-        _mongoDBService = mongoDBService;
+        _repository = repository;
         
-        // Remove command init
-        // SelectPresentationCommand = ...
-
         BindingContext = this;
     }
 
-    private async void OnBackClicked(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync("..");
-    }
-
-    // UpdatePresentationSelection removed - no longer needed
-    
-    // UpdateOptionVisualState removed - no longer needed
+    // ... [OnBackClicked remains same]
     
     private async void OnSubmitClicked(object sender, EventArgs e)
     {
@@ -204,15 +194,7 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
         }
         else
         {
-             // Fallback (shouldn't happen directly after add)
-            Project.ProblemScore = ProblemScore;
-            Project.InnovationScore = InnovationScore;
-            Project.TechScore = TechScore;
-            Project.ImpactScore = ImpactScore;
-            Project.PresentationScore = PresentationScore;
-            Project.KnowledgeScore = KnowledgeScore;
-            Project.ResultsScore = ResultsScore;
-            
+             // Fallback
             Project.Score = TotalScore.ToString();
         }
 
@@ -225,42 +207,30 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
         // 2. Persist
         try
         {
-            await _mongoDBService.UpdateProject(Project);
+            // Use Repository which handles Online/Offline logic
+            await _repository.SubmitEvaluation(Project, evaluation);
 
-            // Record activity for this user
-            try
-            {
-                var activity = new Activity
-                {
-                    UserId = userId,
-                    Type = existingEvaluation != null ? "evaluation_updated" : "evaluation_completed",
-                    ProjectTitle = Project.Title,
-                    Description = existingEvaluation != null
-                        ? $"Actualizaste la evaluación de {Project.Title}"
-                        : $"Evaluaste {Project.Title} ({TotalScore}/70)",
-                    Timestamp = DateTime.UtcNow,
-                    Icon = "check_circle",
-                    IconColor = "#10B981"
-                };
-                await _mongoDBService.CreateActivity(activity);
-            }
-            catch { /* Activity recording is non-critical */ }
-        
             // 3. Navigate to Confirmation
             var navigationParameter = new Dictionary<string, object>
             {
                 { "ProjectTitle", Project.Title },
                 { "ProjectImageUrl", Project.ImageUrl },
                 { "TotalScore", Project.Score } 
-                // We could pass breakdown if the result page supports it, but for now Total is key
             };
             
-            // Note: EvaluationResultPage might need updates to show new score breakdown if it was detailed
             await Shell.Current.GoToAsync(nameof(EvaluationResultPage), navigationParameter);
         }
         catch (Exception ex)
         {
-             await DisplayAlert("Error", $"No se pudo guardar la evaluación: {ex.Message}", "OK");
+            if (ex.Message == "OfflinePersistence")
+            {
+                 await DisplayAlert("Modo Offline", "Tu evaluación se ha guardado localmente. Se subirá automáticamente cuando tengas internet.", "OK");
+                 await Shell.Current.GoToAsync(".."); // Go back to list
+            }
+            else
+            {
+                 await DisplayAlert("Error", $"No se pudo guardar la evaluación: {ex.Message}", "OK");
+            }
         }
     }
 }

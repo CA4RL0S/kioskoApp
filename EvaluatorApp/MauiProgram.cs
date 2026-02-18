@@ -41,7 +41,8 @@ public static class MauiProgram
 
         // Register API Service instead of direct MongoDB
         builder.Services.AddSingleton<Services.IMongoDBService, Services.ApiService>();
-        // builder.Services.AddSingleton<Services.IMongoDBService, Services.MongoDBService>();
+        builder.Services.AddSingleton<Services.LocalDbService>(); // Local DB Service
+        builder.Services.AddSingleton<Services.ProjectRepository>(); // Repository
         builder.Services.AddSingleton<Services.ICloudinaryService, Services.CloudinaryService>();
         builder.Services.AddSingleton<LoginPage>();
         builder.Services.AddSingleton<ProjectsPage>();

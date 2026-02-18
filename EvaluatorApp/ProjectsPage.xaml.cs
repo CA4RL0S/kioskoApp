@@ -4,13 +4,14 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using EvaluatorApp.Models;
 using EvaluatorApp.Services;
+using CommunityToolkit.Maui.Alerts;
 
 
 namespace EvaluatorApp;
 
 public partial class ProjectsPage : ContentPage, INotifyPropertyChanged
 {
-    private readonly IMongoDBService _mongoDBService;
+    private readonly ProjectRepository _repository;
 	public ObservableCollection<Project> Projects { get; set; }
 
     private bool _isRefreshing;
@@ -29,16 +30,21 @@ public partial class ProjectsPage : ContentPage, INotifyPropertyChanged
 
     public ICommand RefreshCommand { get; private set; }
 
-	public ProjectsPage(IMongoDBService mongoDBService)
+	public ProjectsPage(ProjectRepository repository)
 	{
 		InitializeComponent();
-        _mongoDBService = mongoDBService;
+        _repository = repository;
 		Projects = new ObservableCollection<Project>();
         
         RefreshCommand = new Command(async () =>
         {
             IsRefreshing = true;
             await LoadProjects();
+            // Try to sync if online
+            if (Connectivity.Current.NetworkAccess == NetworkAccess.Internet)
+            {
+                await _repository.SyncPendingEvaluations();
+            }
             IsRefreshing = false;
         });
 
@@ -50,10 +56,13 @@ public partial class ProjectsPage : ContentPage, INotifyPropertyChanged
         base.OnAppearing();
         Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific.Page.SetUseSafeArea(this, false);
         
-        // Only load if empty to act as initial load, otherwise refresh command handles it
-        // Or we can just load silently. Let's load silently to ensure up to date.
-        // We do NOT set IsRefreshing here to avoid spinner on every tab switch
         await LoadProjects();
+        
+        // Auto-sync on appear if online
+        if (Connectivity.Current.NetworkAccess == NetworkAccess.Internet)
+        {
+             _ = _repository.SyncPendingEvaluations(); // Fire and forget
+        }
     }
 
     private List<Project> _allProjects = new();
@@ -64,7 +73,7 @@ public partial class ProjectsPage : ContentPage, INotifyPropertyChanged
     {
         try 
         {
-            var projects = await _mongoDBService.GetProjects();
+            var projects = await _repository.GetProjects();
             
             // Personalize status for current user
             string userId = Preferences.Get("UserId", string.Empty);
@@ -75,6 +84,12 @@ public partial class ProjectsPage : ContentPage, INotifyPropertyChanged
 
             _allProjects = projects; // Store full list
             ApplyFilter(_currentFilter); // Apply current filter to update view
+            
+            if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+            {
+                // Optional: Show toast "Modo Offline"
+                 await Toast.Make("Modo Offline: Mostrando datos guardados", CommunityToolkit.Maui.Alerts.ToastDuration.Short).Show();
+            }
         }
         catch (Exception ex)
         {

@@ -13,7 +13,7 @@ public class ApiService : IMongoDBService
     public ApiService()
     {
         _httpClient = new HttpClient();
-        _httpClient.Timeout = TimeSpan.FromSeconds(10); // Prevent infinite loading
+        _httpClient.Timeout = TimeSpan.FromSeconds(60); // Increased timeout for cold starts/slow network
         
         // Production API URL
         _baseUrl = "https://kioskoapp.onrender.com";
