@@ -23,18 +23,34 @@ public static class MauiProgram
                 fonts.AddFont("MaterialSymbolsOutlined.ttf", "MaterialIcons");
 			});
 
-        var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-        using var stream = assembly.GetManifestResourceStream("EvaluatorApp.Resources.Raw.appsettings.json");
+        var configBuilder = new ConfigurationBuilder();
 
-        var configBuilder = new ConfigurationBuilder()
-            .AddJsonStream(stream);
+        try
+        {
+            using var stream = FileSystem.OpenAppPackageFileAsync("appsettings.json").GetAwaiter().GetResult();
+            if (stream != null)
+            {
+                var ms = new MemoryStream();
+                stream.CopyTo(ms);
+                ms.Position = 0;
+                configBuilder.AddJsonStream(ms);
+            }
+        }
+        catch { /* archivo no encontrado, continuar sin config base */ }
 
 #if DEBUG
-        using var devStream = assembly.GetManifestResourceStream("EvaluatorApp.Resources.Raw.appsettings.Development.json");
-        if (devStream != null)
+        try
         {
-            configBuilder.AddJsonStream(devStream);
+            using var devStream = FileSystem.OpenAppPackageFileAsync("appsettings.Development.json").GetAwaiter().GetResult();
+            if (devStream != null)
+            {
+                var ms = new MemoryStream();
+                devStream.CopyTo(ms);
+                ms.Position = 0;
+                configBuilder.AddJsonStream(ms);
+            }
         }
+        catch { /* archivo de desarrollo no encontrado */ }
 #endif
 
         var config = configBuilder.Build();
@@ -47,11 +63,12 @@ public static class MauiProgram
         builder.Services.AddSingleton<Services.VideoService>(); // Video Downloader
         builder.Services.AddSingleton<Services.ICloudinaryService, Services.CloudinaryService>();
         builder.Services.AddSingleton<LoginPage>();
+        builder.Services.AddSingleton<MainPage>();
         builder.Services.AddSingleton<ProjectsPage>();
         builder.Services.AddSingleton<RankingPage>();
+        builder.Services.AddSingleton<ProfilePage>();
         builder.Services.AddTransient<ProjectDetailsPage>();
         builder.Services.AddTransient<SignUpPage>();
-        builder.Services.AddTransient<ProfilePage>();
         builder.Services.AddTransient<EditProfilePage>();
         builder.Services.AddSingleton<Services.IMsalAuthService, Services.MsalAuthService>();
 

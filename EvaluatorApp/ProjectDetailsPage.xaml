@@ -67,7 +67,7 @@
                                     Source="{Binding VideoSource}"
                                     Aspect="AspectFill"
                                     ShouldShowPlaybackControls="True"
-                                    ShouldAutoPlay="True"
+                                    ShouldAutoPlay="False"
                                     BackgroundColor="Black"/>
                                 
                                 <Border VerticalOptions="End" HorizontalOptions="Start" Margin="12" BackgroundColor="#33FFFFFF" StrokeThickness="1" Stroke="White" StrokeShape="RoundRectangle 4" Padding="8,4" InputTransparent="True">

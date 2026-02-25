@@ -1,4 +1,4 @@
-@KioskoAPI_HostAddress = http://localhost:5146
+@KioskoAPI_HostAddress = https://kioskoapp.onrender.com
 
 ### ---------------- AUTH ----------------
 
@@ -7,8 +7,8 @@ POST {{KioskoAPI_HostAddress}}/api/Auth/login
 Content-Type: application/json
 
 {
-  "username": "evaluator1",
-  "password": "password123"
+  "username": "carlosrivas@gmail.com",
+  "password": "123"
 }
 
 ### Register

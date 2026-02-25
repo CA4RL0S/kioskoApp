@@ -33,9 +33,13 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
             OnPropertyChanged();
             if (_project != null)
             {
+                 // Ensure Evaluations is never null (SQLite deserialization may not run initializer)
+                 if (_project.Evaluations == null)
+                     _project.Evaluations = new List<Evaluation>();
+
                  // Check if current user has already evaluated
                  string userId = Preferences.Get("UserId", string.Empty);
-                 var myEval = _project.Evaluations?.FirstOrDefault(e => e.EvaluatorId == userId);
+                 var myEval = _project.Evaluations.FirstOrDefault(e => e.EvaluatorId == userId);
 
                  if (myEval != null)
                  {
@@ -190,7 +194,11 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
         {
             try 
             {
-                var videoUrl = Project.Videos[0].Url;
+                var videoUrl = Project.Videos[0]?.Url;
+                
+                // Guard: don't try to load a null or empty URL
+                if (string.IsNullOrEmpty(videoUrl)) return;
+
                 IsDownloaded = _videoService.IsVideoDownloaded(videoUrl);
                 
                 if (IsDownloaded)
@@ -200,10 +208,14 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
                 }
                 else
                 {
-                    VideoSource = CommunityToolkit.Maui.Views.MediaSource.FromUri(new Uri(videoUrl));
+                    if (Uri.TryCreate(videoUrl, UriKind.Absolute, out var uri))
+                        VideoSource = CommunityToolkit.Maui.Views.MediaSource.FromUri(uri);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[VideoStatus] Error: {ex.Message}");
+            }
         }
     }
 
@@ -329,6 +341,19 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
             // Use Repository which handles Online/Offline logic
             await _repository.SubmitEvaluation(Project, evaluation);
 
+            // Record Activity (Online)
+            var activity = new Activity
+            {
+                UserId = userId,
+                Type = "evaluation_completed",
+                ProjectTitle = Project.Title,
+                Description = $"Evaluaste {Project.Title}",
+                Timestamp = DateTime.UtcNow,
+                Icon = "check_circle",
+                IconColor = "#10B981"
+            };
+            await _repository.AddActivity(activity);
+
             // 3. Navigate to Confirmation
             var navigationParameter = new Dictionary<string, object>
             {
@@ -343,6 +368,19 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
         {
             if (ex.Message == "OfflinePersistence")
             {
+                 // Record Activity (Offline)
+                var activity = new Activity
+                {
+                    UserId = userId,
+                    Type = "evaluation_completed",
+                    ProjectTitle = Project.Title,
+                    Description = $"Evaluaste {Project.Title}",
+                    Timestamp = DateTime.UtcNow,
+                    Icon = "cloud_off",
+                    IconColor = "#F59E0B"
+                };
+                await _repository.AddActivity(activity);
+
                  await DisplayAlert("Modo Offline", "Tu evaluación se ha guardado localmente. Se subirá automáticamente cuando tengas internet.", "OK");
                  await Shell.Current.GoToAsync(".."); // Go back to list
             }
