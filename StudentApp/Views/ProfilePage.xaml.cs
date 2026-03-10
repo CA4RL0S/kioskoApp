@@ -14,30 +14,37 @@ public partial class ProfilePage : ContentPage
     {
         base.OnAppearing();
 
-        // Load profile image
-        string profileImage = Preferences.Get("StudentProfileImage", string.Empty);
-        if (!string.IsNullOrEmpty(profileImage))
-            ProfileImage.Source = profileImage;
-
-        // Load name and email from session
-        if (!string.IsNullOrEmpty(StudentApp.MainPage.CurrentStudentName))
-            NameLabel.Text = StudentApp.MainPage.CurrentStudentName;
-            
-        if (!string.IsNullOrEmpty(StudentApp.MainPage.CurrentStudentEmail))
-            EmailLabel.Text = StudentApp.MainPage.CurrentStudentEmail;
-
-        // Fetch student for matrícula
-        if (!string.IsNullOrEmpty(StudentApp.MainPage.CurrentStudentEmail))
+        try
         {
-            var student = await _mongoDBService.GetOrCreateStudent(
-                StudentApp.MainPage.CurrentStudentEmail, 
-                StudentApp.MainPage.CurrentStudentName);
-            
-            if (student != null)
+            // Load profile image
+            string profileImage = Preferences.Get("StudentProfileImage", string.Empty);
+            if (!string.IsNullOrEmpty(profileImage))
+                ProfileImage.Source = profileImage;
+
+            // Load name and email from session
+            if (!string.IsNullOrEmpty(StudentApp.MainPage.CurrentStudentName))
+                NameLabel.Text = StudentApp.MainPage.CurrentStudentName;
+                
+            if (!string.IsNullOrEmpty(StudentApp.MainPage.CurrentStudentEmail))
+                EmailLabel.Text = StudentApp.MainPage.CurrentStudentEmail;
+
+            // Fetch student for matrícula
+            if (!string.IsNullOrEmpty(StudentApp.MainPage.CurrentStudentEmail))
             {
-                MatriculaLabel.Text = $"Matrícula: {student.Matricula}";
-                MatriculaDetailLabel.Text = student.Matricula;
+                var student = await _mongoDBService.GetOrCreateStudent(
+                    StudentApp.MainPage.CurrentStudentEmail, 
+                    StudentApp.MainPage.CurrentStudentName);
+                
+                if (student != null)
+                {
+                    MatriculaLabel.Text = $"Matrícula: {student.Matricula}";
+                    MatriculaDetailLabel.Text = student.Matricula;
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"ProfilePage error: {ex}");
         }
     }
 

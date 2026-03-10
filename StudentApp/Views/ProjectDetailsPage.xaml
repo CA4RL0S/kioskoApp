@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="StudentApp.Views.ProjectDetailsPage"
+             BackgroundColor="#f6f7f8"
+             Title="Evaluaciones"
+             Shell.NavBarIsVisible="True">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,10,20,100" Spacing="16">
+            
+            <!-- Project Header -->
+            <Border StrokeShape="RoundRectangle 16" BackgroundColor="White" Stroke="#e5e7eb" StrokeThickness="1" Padding="16">
+                <Border.Shadow>
+                    <Shadow Brush="Black" Opacity="0.03" Offset="0,2" Radius="10" />
+                </Border.Shadow>
+                <HorizontalStackLayout Spacing="12">
+                    <Border StrokeShape="RoundRectangle 12" StrokeThickness="0" HeightRequest="64" WidthRequest="64">
+                        <Image x:Name="ProjectImage" Aspect="AspectFill" />
+                    </Border>
+                    <VerticalStackLayout VerticalOptions="Center" Spacing="4">
+                        <Label x:Name="ProjectTitle" FontSize="18" FontAttributes="Bold" TextColor="#111827" />
+                        <HorizontalStackLayout Spacing="8">
+                            <Border x:Name="StatusBadge" StrokeThickness="1" StrokeShape="RoundRectangle 8" Padding="8,2" VerticalOptions="Center">
+                                <Label x:Name="StatusLabel" FontSize="9" FontAttributes="Bold" />
+                            </Border>
+                            <Label x:Name="ScoreOverview" FontSize="13" TextColor="#6b7280" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+            </Border>
+
+            <!-- Evaluators Title -->
+            <Label x:Name="EvaluatorsTitle" Text="Evaluaciones Recibidas" FontSize="18" FontAttributes="Bold" TextColor="#111827" />
+
+            <!-- Evaluator Cards List -->
+            <VerticalStackLayout x:Name="EvaluatorsList" Spacing="16" />
+
+            <!-- No Evaluations -->
+            <VerticalStackLayout x:Name="NoEvalSection" IsVisible="False" HorizontalOptions="Center" Spacing="12" Padding="0,30">
+                <Label Text="⏳" FontSize="60" HorizontalOptions="Center" />
+                <Label Text="Este proyecto aún no ha sido evaluado" FontSize="16" TextColor="#6b7280" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+                <Label Text="Cuando un evaluador califique tu proyecto, aparecerá aquí" FontSize="13" TextColor="#9ca3af" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

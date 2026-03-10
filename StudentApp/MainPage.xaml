@@ -11,19 +11,17 @@
         <Color x:Key="BackgroundLight">#f6f7f8</Color>
         <Color x:Key="SurfaceLight">#ffffff</Color>
         <Color x:Key="Success">#22c55e</Color>
-        <Color x:Key="SuccessBg">#dcfce7</Color>
-        <Color x:Key="SuccessText">#15803d</Color>
         <Color x:Key="Warning">#eab308</Color>
         <Color x:Key="PendingBg">#fefce8</Color>
         <Color x:Key="PendingText">#854d0e</Color>
     </ContentPage.Resources>
 
-    <RefreshView x:Name="MainRefreshView" Refreshing="OnRefreshing">
-        <ScrollView>
-            <VerticalStackLayout Padding="20,0,20,100" Spacing="20">
+    <RefreshView x:Name="MainRefreshView" Refreshing="OnRefreshing" BackgroundColor="{StaticResource BackgroundLight}">
+        <ScrollView BackgroundColor="{StaticResource BackgroundLight}">
+            <VerticalStackLayout Padding="20,0,20,100" Spacing="16" BackgroundColor="{StaticResource BackgroundLight}">
                 
                 <!-- Header -->
-                <Grid ColumnDefinitions="Auto, *" Margin="0,20,0,10">
+                <Grid ColumnDefinitions="Auto, *" Margin="0,20,0,5">
                     <HorizontalStackLayout Grid.Column="0" Spacing="12">
                         <Border StrokeShape="RoundRectangle 25" Stroke="White" StrokeThickness="2" HeightRequest="48" WidthRequest="48">
                             <Image x:Name="ProfileImage" Source="https://res.cloudinary.com/djwpi6z29/image/upload/v1770699551/avatar-default-user-profile-icon-social-media-vector-57234208_y8gtgs.jpg" Aspect="AspectFill" />
@@ -35,72 +33,19 @@
                     </HorizontalStackLayout>
                 </Grid>
 
-                <!-- Active Project Section -->
-                <Label Text="Mi Proyecto" FontSize="18" FontAttributes="Bold" TextColor="{StaticResource Gray800}" />
+                <!-- Section Title -->
+                <Label Text="Mis Proyectos" FontSize="20" FontAttributes="Bold" TextColor="{StaticResource Gray800}" />
 
-                <Border StrokeShape="RoundRectangle 16" BackgroundColor="{StaticResource SurfaceLight}" Stroke="{StaticResource Gray100}" StrokeThickness="1">
-                    <Border.Shadow>
-                        <Shadow Brush="Black" Opacity="0.05" Offset="0,4" Radius="20" />
-                    </Border.Shadow>
-                    <VerticalStackLayout Padding="20">
-                        <Border x:Name="StatusBadge" BackgroundColor="{StaticResource PendingBg}" Stroke="{StaticResource Warning}" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,4" HorizontalOptions="Start">
-                            <Label x:Name="StatusLabel" Text="" FontSize="10" FontAttributes="Bold" TextColor="{StaticResource PendingText}" />
-                        </Border>
-
-                        <Label x:Name="ProjectTitleLabel" Text="" FontSize="22" FontAttributes="Bold" TextColor="{StaticResource Gray900}" Margin="0,10,0,5" />
-                        <Label x:Name="ProjectDescLabel" Text="" FontSize="13" TextColor="{StaticResource Gray500}" Margin="0,0,0,10" />
-                        
-                        <!-- Project details row (only visible when project exists) -->
-                        <VerticalStackLayout x:Name="ProjectDetailsRow" IsVisible="False">
-                            <BoxView HeightRequest="1" Color="{StaticResource Gray100}" Margin="0,5,0,15" />
-                            <HorizontalStackLayout Spacing="6">
-                                <Label Text="📋" FontSize="16" TextColor="{StaticResource Gray400}" />
-                                <Label x:Name="ProjectCycleLabel" Text="" FontSize="13" TextColor="{StaticResource Gray600}" />
-                            </HorizontalStackLayout>
-                        </VerticalStackLayout>
-                    </VerticalStackLayout>
-                </Border>
-
-                <!-- Grade Section (only visible when project exists) -->
-                <VerticalStackLayout x:Name="GradeSection" IsVisible="False" Spacing="15">
-                    <Label Text="Calificación" FontSize="18" FontAttributes="Bold" TextColor="{StaticResource Gray800}" />
-                    
-                    <Border BackgroundColor="{StaticResource SurfaceLight}" Stroke="{StaticResource Gray100}" StrokeThickness="1" StrokeShape="RoundRectangle 16" Padding="20">
-                        <Border.Shadow>
-                            <Shadow Brush="Black" Opacity="0.03" Offset="0,2" Radius="10" />
-                        </Border.Shadow>
-                        <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
-                            <Border HeightRequest="80" WidthRequest="80" StrokeShape="RoundRectangle 40" Stroke="{StaticResource Gray100}" StrokeThickness="4" HorizontalOptions="Center">
-                                <Label x:Name="ScoreLabel" Text="⏳" FontSize="32" HorizontalOptions="Center" VerticalOptions="Center" TextColor="{StaticResource Gray300}" />
-                            </Border>
-                            
-                            <Label x:Name="GradeStatusLabel" Text="Esperando calificación" FontSize="16" FontAttributes="Bold" TextColor="{StaticResource Gray700}" HorizontalOptions="Center" />
-                        </VerticalStackLayout>
-                    </Border>
-                    
-                    <!-- Score Breakdown (visible only when evaluated) -->
-                    <VerticalStackLayout x:Name="ScoreBreakdown" IsVisible="False" Spacing="10">
-                        <Grid ColumnDefinitions="*, *, *" ColumnSpacing="10">
-                            <Border BackgroundColor="{StaticResource SurfaceLight}" Stroke="{StaticResource Gray100}" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12">
-                                <VerticalStackLayout HorizontalOptions="Center" Spacing="4">
-                                    <Label Text="Innovación" FontSize="10" TextColor="{StaticResource Gray500}" HorizontalOptions="Center" />
-                                    <Label x:Name="InnovationScoreLabel" Text="-" FontSize="18" FontAttributes="Bold" TextColor="{StaticResource Primary}" HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="1" BackgroundColor="{StaticResource SurfaceLight}" Stroke="{StaticResource Gray100}" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12">
-                                <VerticalStackLayout HorizontalOptions="Center" Spacing="4">
-                                    <Label Text="Técnico" FontSize="10" TextColor="{StaticResource Gray500}" HorizontalOptions="Center" />
-                                    <Label x:Name="TechScoreLabel" Text="-" FontSize="18" FontAttributes="Bold" TextColor="{StaticResource Primary}" HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="2" BackgroundColor="{StaticResource SurfaceLight}" Stroke="{StaticResource Gray100}" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12">
-                                <VerticalStackLayout HorizontalOptions="Center" Spacing="4">
-                                    <Label Text="Presentación" FontSize="10" TextColor="{StaticResource Gray500}" HorizontalOptions="Center" />
-                                    <Label x:Name="PresentationScoreLabel" Text="-" FontSize="18" FontAttributes="Bold" TextColor="{StaticResource Primary}" HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-                            </Border>
-                        </Grid>
-                    </VerticalStackLayout>
+                <!-- Project List -->
+                <StackLayout x:Name="ProjectListView" Spacing="16">
+                    <!-- Populated dynamically from code-behind -->
+                </StackLayout>
+                
+                <!-- Empty State -->
+                <VerticalStackLayout x:Name="EmptyState" IsVisible="False" HorizontalOptions="Center" Spacing="12" Padding="0,40">
+                    <Label Text="📭" FontSize="60" HorizontalOptions="Center"/>
+                    <Label Text="No tienes proyectos asignados" FontSize="16" TextColor="{StaticResource Gray500}" HorizontalOptions="Center"/>
+                    <Label Text="Desliza hacia abajo para actualizar" FontSize="12" TextColor="{StaticResource Gray400}" HorizontalOptions="Center"/>
                 </VerticalStackLayout>
 
             </VerticalStackLayout>

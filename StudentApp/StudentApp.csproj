@@ -22,7 +22,7 @@
 		<ApplicationTitle>Kiosko Alumnos</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.carlos.kiosko.studentapp</ApplicationId>
+		<ApplicationId>com.carlos.kiosko.StudentApp</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -44,15 +44,16 @@
         <UseInterpreter>true</UseInterpreter>
 	</PropertyGroup>
 
-	<!-- iOS signing: skip for simulator (Debug), sign for device (Release) -->
-	<PropertyGroup Condition="$(TargetFramework.Contains('-ios')) And '$(Configuration)' == 'Debug'">
+	<!-- iOS signing: skip for simulator, auto-sign for device -->
+	<PropertyGroup Condition="$(TargetFramework.Contains('-ios')) And $(RuntimeIdentifier.Contains('simulator'))">
 		<CodesignKey>-</CodesignKey>
 		<CodesignProvision></CodesignProvision>
 		<CodesignRequireProvisioningProfile>false</CodesignRequireProvisioningProfile>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="$(TargetFramework.Contains('-ios')) And '$(Configuration)' == 'Release'">
-		<CodesignKey>iPhone Developer</CodesignKey>
+	<PropertyGroup Condition="$(TargetFramework.Contains('-ios')) And !$(RuntimeIdentifier.Contains('simulator'))">
+		<CodesignKey>Apple Development: carlosriv082@gmail.com (P8MBP2N372)</CodesignKey>
+		<AutomaticProvisioning>true</AutomaticProvisioning>
 	</PropertyGroup>
 
 

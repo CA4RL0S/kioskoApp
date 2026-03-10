@@ -46,6 +46,8 @@ public static class MauiProgram
         builder.Services.AddTransient<Views.TasksPage>();
         builder.Services.AddTransient<Views.MessagesPage>();
         builder.Services.AddTransient<Views.ProfilePage>();
+        builder.Services.AddTransient<Views.ProjectDetailsPage>();
+        builder.Services.AddTransient<Views.EvaluationDetailPage>();
 
 #if DEBUG
 		builder.Logging.AddDebug();

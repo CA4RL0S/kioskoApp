@@ -27,12 +27,28 @@ public class MsalAuthService : IMsalAuthService
 
     private void InitializeMsal()
     {
-        _pca = PublicClientApplicationBuilder
+        var builder = PublicClientApplicationBuilder
             .Create(ClientId)
             .WithAuthority(Authority)
-            .WithRedirectUri("msauth.com.carlos.kiosko.studentapp://auth")
-            .WithIosKeychainSecurityGroup("com.microsoft.adalcache")
-            .Build();
+            .WithRedirectUri("msauth.com.carlos.kiosko.studentapp://auth");
+
+#if IOS
+        // En un dispositivo físico (sin cuenta de pago de Apple), no podemos usar el llavero
+        // compartido "com.microsoft.adalcache" porque no tenemos el Entitlement.
+        // MSAL por defecto asume "com.microsoft.adalcache" si no se le pasa nada,
+        // por lo que DEBEMOS pasarle específicamente el Bundle ID de nuestra propia app.
+        // Toda app tiene permiso para usar su propio Bundle ID como grupo de Keychain sin pedir Entitlements.
+        if (DeviceInfo.DeviceType == DeviceType.Virtual)
+        {
+            builder = builder.WithIosKeychainSecurityGroup("com.microsoft.adalcache");
+        }
+        else
+        {
+            builder = builder.WithIosKeychainSecurityGroup("com.carlos.kiosko.StudentApp");
+        }
+#endif
+
+        _pca = builder.Build();
     }
 
     public async Task<AuthenticationResult> SignInAsync()

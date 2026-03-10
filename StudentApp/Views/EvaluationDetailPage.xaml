@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="StudentApp.Views.EvaluationDetailPage"
+             BackgroundColor="#f6f7f8"
+             Title="Detalle de Evaluación"
+             Shell.NavBarIsVisible="True">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,10,20,100" Spacing="16">
+            
+            <!-- Evaluator Header -->
+            <Border StrokeShape="RoundRectangle 16" BackgroundColor="White" Stroke="#e5e7eb" StrokeThickness="1" Padding="16">
+                <HorizontalStackLayout Spacing="12">
+                    <Border x:Name="AvatarBorder" StrokeShape="RoundRectangle 24" StrokeThickness="0" HeightRequest="48" WidthRequest="48" BackgroundColor="#197fe6">
+                        <Label x:Name="AvatarInitials" FontSize="18" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Border>
+                    <VerticalStackLayout VerticalOptions="Center" Spacing="2">
+                        <Label x:Name="EvaluatorName" FontSize="18" FontAttributes="Bold" TextColor="#111827" />
+                        <Label x:Name="EvaluationDate" FontSize="12" TextColor="#9ca3af" />
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+            </Border>
+
+            <!-- Total Score -->
+            <Border StrokeShape="RoundRectangle 16" BackgroundColor="White" Stroke="#e5e7eb" StrokeThickness="1" Padding="20">
+                <Border.Shadow>
+                    <Shadow Brush="Black" Opacity="0.03" Offset="0,2" Radius="10" />
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                    <Label Text="CALIFICACIÓN TOTAL" FontSize="10" FontAttributes="Bold" TextColor="#6b7280" HorizontalOptions="Center" />
+                    <Border HeightRequest="80" WidthRequest="80" StrokeShape="RoundRectangle 40" Stroke="#197fe6" StrokeThickness="4" HorizontalOptions="Center">
+                        <Label x:Name="TotalScoreLabel" FontSize="24" FontAttributes="Bold" TextColor="#197fe6" HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Border>
+                    <Label Text="de 70 puntos posibles" FontSize="12" TextColor="#9ca3af" HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Score Breakdown -->
+            <Label Text="Desglose por Criterio" FontSize="18" FontAttributes="Bold" TextColor="#111827" />
+            <VerticalStackLayout x:Name="ScoreItemsList" Spacing="8" />
+
+            <!-- Comment -->
+            <VerticalStackLayout x:Name="CommentSection" IsVisible="False" Spacing="8">
+                <Label Text="Comentarios" FontSize="18" FontAttributes="Bold" TextColor="#111827" />
+                <Border StrokeShape="RoundRectangle 12" BackgroundColor="White" Stroke="#e5e7eb" StrokeThickness="1" Padding="16">
+                    <Label x:Name="CommentText" FontSize="14" TextColor="#374151" LineBreakMode="WordWrap" />
+                </Border>
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

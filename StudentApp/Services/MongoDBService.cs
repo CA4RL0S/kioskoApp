@@ -13,7 +13,7 @@ public interface IMongoDBService
     Task Init();
     Task<Student> GetOrCreateStudent(string email, string name);
     Task<Project> GetProject(string projectId);
-    Task<Project> GetProjectByMatricula(string matricula);
+    Task<List<Project>> GetProjectsByMatricula(string matricula);
     Task<List<StudentTask>> GetTasksByProject(string projectId);
     Task UpdateStudentProfileImage(string studentId, string imageUrl);
 }
@@ -141,15 +141,15 @@ public class MongoDBService : IMongoDBService
         return await projectCollection.Find(p => p.Id == projectId).FirstOrDefaultAsync();
     }
 
-    public async Task<Project> GetProjectByMatricula(string matricula)
+    public async Task<List<Project>> GetProjectsByMatricula(string matricula)
     {
         await Init();
         var database = _studentCollection.Database;
         var projectCollection = database.GetCollection<Project>("proyectos");
         
-        // Search for project where integrantes array contains this matrícula
+        // Search for projects where integrantes array contains this matrícula
         var filter = Builders<Project>.Filter.AnyEq(p => p.Members, matricula);
-        return await projectCollection.Find(filter).FirstOrDefaultAsync();
+        return await projectCollection.Find(filter).ToListAsync();
     }
 
     public async Task<List<StudentTask>> GetTasksByProject(string projectId)

@@ -19,37 +19,48 @@ public partial class LoadingPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await CheckLogin();
+        try
+        {
+            await CheckLogin();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"LoadingPage error: {ex}");
+            // Fall back to login on any error
+            Application.Current.MainPage = new NavigationPage(_loginPage);
+        }
     }
 
     private async Task CheckLogin()
     {
-        await Task.Delay(500); // Slight delay for UI to stabilize/show loading
+        await Task.Delay(500);
 
         var result = await _authService.CheckCachedLoginAsync();
 
         if (result != null)
         {
-            // Valid session found
             string email = result.Account.Username;
             string name = result.ClaimsPrincipal?.FindFirst("name")?.Value ?? email;
 
-            // Fetch student data to ensure we have context (ProjectId etc.)
-             var student = await _mongoDBService.GetOrCreateStudent(email, name);
+            try
+            {
+                var student = await _mongoDBService.GetOrCreateStudent(email, name);
+                Preferences.Set("StudentProfileImage", student?.ProfileImageUrl ?? string.Empty);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"MongoDB fetch failed (non-critical): {ex.Message}");
+            }
 
-            // Set session
             StudentApp.MainPage.CurrentStudentEmail = email;
             StudentApp.MainPage.CurrentStudentName = name;
-            Preferences.Set("StudentProfileImage", student?.ProfileImageUrl ?? string.Empty);
             Preferences.Set("StudentName", name);
             Preferences.Set("StudentEmail", email);
 
-            // Go to AppShell
-             Application.Current.MainPage = new AppShell();
+            Application.Current.MainPage = new AppShell();
         }
         else
         {
-            // No valid session, go to Login
             Application.Current.MainPage = new NavigationPage(_loginPage);
         }
     }

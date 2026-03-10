@@ -20,111 +20,209 @@ public partial class MainPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await LoadData();
+        try
+        {
+            await LoadData();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"MainPage LoadData error: {ex}");
+        }
     }
 
     private async void OnRefreshing(object sender, EventArgs e)
     {
-        await LoadData();
-        MainRefreshView.IsRefreshing = false;
+        try
+        {
+            await LoadData();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"MainPage refresh error: {ex}");
+        }
+        finally
+        {
+            MainRefreshView.IsRefreshing = false;
+        }
     }
 
     private async Task LoadData()
     {
         if (string.IsNullOrEmpty(CurrentStudentEmail)) return;
 
-        UserNameLabel.Text = CurrentStudentName;
-
-        // Load profile image
-        string profileImage = Preferences.Get("StudentProfileImage", string.Empty);
-        if (!string.IsNullOrEmpty(profileImage))
-            ProfileImage.Source = profileImage;
+        if (string.IsNullOrEmpty(UserNameLabel.Text))
+        {
+            UserNameLabel.Text = CurrentStudentName;
+            string profileImage = Preferences.Get("StudentProfileImage", string.Empty);
+            if (!string.IsNullOrEmpty(profileImage))
+                ProfileImage.Source = profileImage;
+        }
         
-        // Fetch student
         var student = await _mongoDBService.GetOrCreateStudent(CurrentStudentEmail, CurrentStudentName);
         if (student == null) return;
 
-        // Search for project by matrícula (how admin assigns students)
-        var project = await _mongoDBService.GetProjectByMatricula(student.Matricula);
+        var projects = await _mongoDBService.GetProjectsByMatricula(student.Matricula);
 
-        // Also try by ProjectId as fallback
-        if (project == null && !string.IsNullOrEmpty(student.ProjectId))
+        ProjectListView.Children.Clear();
+
+        if (projects == null || projects.Count == 0)
         {
-            project = await _mongoDBService.GetProject(student.ProjectId);
+            EmptyState.IsVisible = true;
+            return;
         }
 
-        if (project != null)
+        EmptyState.IsVisible = false;
+
+        foreach (var project in projects)
         {
-            LoadProjectUI(project);
-        }
-        else
-        {
-            // No project assigned state
-            ProjectTitleLabel.Text = "Sin Proyecto Activo";
-            ProjectDescLabel.Text = "Aún no se te ha asignado un proyecto.";
-            StatusLabel.Text = "Sin asignar";
-            GradeSection.IsVisible = false;
-            ProjectDetailsRow.IsVisible = false;
+            var card = CreateProjectCard(project);
+            ProjectListView.Children.Add(card);
         }
     }
 
-    private void LoadProjectUI(Project project)
+    private View CreateProjectCard(Project project)
     {
-        ProjectTitleLabel.Text = project.Title ?? "Proyecto";
-        ProjectDescLabel.Text = project.Description ?? "";
-        
-        // Show cycle info if available
-        if (!string.IsNullOrEmpty(project.Cycle))
-        {
-            ProjectDetailsRow.IsVisible = true;
-            ProjectCycleLabel.Text = $"Ciclo: {project.Cycle}";
-        }
-        else
-        {
-            ProjectDetailsRow.IsVisible = false;
-        }
-
-        // Grade section is always visible when there's a project
-        GradeSection.IsVisible = true;
+        Color statusBg, statusStroke, statusText;
+        string statusLabel;
 
         if (project.IsEvaluated)
         {
-            // Project has been evaluated — show the grade
-            StatusLabel.Text = "Evaluado";
-            StatusBadge.BackgroundColor = Color.FromArgb("#dcfce7");
-            StatusBadge.Stroke = Color.FromArgb("#22c55e");
-            StatusLabel.TextColor = Color.FromArgb("#15803d");
-
-            GradeStatusLabel.Text = "Calificación Final";
-            ScoreLabel.Text = project.Score ?? "-";
-            ScoreLabel.TextColor = Color.FromArgb("#197fe6");
-            ScoreLabel.FontSize = 28;
-
-            // Show breakdown
-            ScoreBreakdown.IsVisible = true;
-            InnovationScoreLabel.Text = project.InnovationScore.ToString("0.#");
-            TechScoreLabel.Text = project.TechScore.ToString("0.#");
-            PresentationScoreLabel.Text = project.PresentationScore.ToString();
+            statusBg = Color.FromArgb("#dcfce7");
+            statusStroke = Color.FromArgb("#22c55e");
+            statusText = Color.FromArgb("#15803d");
+            statusLabel = "Evaluado";
         }
         else if (project.IsPending)
         {
-            StatusLabel.Text = "En revisión";
-            StatusBadge.BackgroundColor = Color.FromArgb("#fefce8");
-            StatusBadge.Stroke = Color.FromArgb("#eab308");
-            StatusLabel.TextColor = Color.FromArgb("#854d0e");
-            GradeStatusLabel.Text = "Esperando calificación";
-            ScoreLabel.Text = "⏳";
-            ScoreBreakdown.IsVisible = false;
+            statusBg = Color.FromArgb("#fefce8");
+            statusStroke = Color.FromArgb("#eab308");
+            statusText = Color.FromArgb("#854d0e");
+            statusLabel = "En revisión";
         }
         else
         {
-            StatusLabel.Text = "Activo";
-            StatusBadge.BackgroundColor = Color.FromArgb("#dbeafe");
-            StatusBadge.Stroke = Color.FromArgb("#197fe6");
-            StatusLabel.TextColor = Color.FromArgb("#1e40af");
-            GradeStatusLabel.Text = "Pendiente de evaluación";
-            ScoreLabel.Text = "—";
-            ScoreBreakdown.IsVisible = false;
+            statusBg = Color.FromArgb("#dbeafe");
+            statusStroke = Color.FromArgb("#197fe6");
+            statusText = Color.FromArgb("#1e40af");
+            statusLabel = "Activo";
         }
+
+        // Project image
+        var image = new Image 
+        { 
+            Source = project.DisplayImage,
+            Aspect = Aspect.AspectFill,
+            HeightRequest = 160
+        };
+
+        var imageBorder = new Border
+        {
+            StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = new CornerRadius(12, 12, 0, 0) },
+            StrokeThickness = 0,
+            Padding = 0,
+            Content = image
+        };
+
+        // Status badge
+        var badge = new Border
+        {
+            BackgroundColor = statusBg,
+            Stroke = statusStroke,
+            StrokeThickness = 1,
+            StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 12 },
+            Padding = new Thickness(12, 4),
+            HorizontalOptions = LayoutOptions.Start,
+            Content = new Label { Text = statusLabel, FontSize = 10, FontAttributes = FontAttributes.Bold, TextColor = statusText }
+        };
+
+        var title = new Label { Text = project.Title ?? "Proyecto", FontSize = 18, FontAttributes = FontAttributes.Bold, TextColor = Color.FromArgb("#111827") };
+
+        var scoreRow = new HorizontalStackLayout { Spacing = 16 };
+        
+        if (project.IsEvaluated)
+        {
+            scoreRow.Add(new HorizontalStackLayout
+            {
+                Spacing = 4,
+                Children =
+                {
+                    new Label { Text = "⭐", FontSize = 14 },
+                    new Label { Text = project.DisplayScore, FontSize = 13, FontAttributes = FontAttributes.Bold, TextColor = Color.FromArgb("#197fe6"), VerticalOptions = LayoutOptions.Center }
+                }
+            });
+        }
+
+        if (!string.IsNullOrEmpty(project.EvaluationDate))
+        {
+            scoreRow.Add(new HorizontalStackLayout
+            {
+                Spacing = 4,
+                Children =
+                {
+                    new Label { Text = "📅", FontSize = 14 },
+                    new Label { Text = project.EvaluationDate, FontSize = 13, TextColor = Color.FromArgb("#6b7280"), VerticalOptions = LayoutOptions.Center }
+                }
+            });
+        }
+
+        if (!string.IsNullOrEmpty(project.Cycle))
+        {
+            scoreRow.Add(new HorizontalStackLayout
+            {
+                Spacing = 4,
+                Children =
+                {
+                    new Label { Text = "📋", FontSize = 14 },
+                    new Label { Text = project.Cycle, FontSize = 13, TextColor = Color.FromArgb("#6b7280"), VerticalOptions = LayoutOptions.Center }
+                }
+            });
+        }
+
+        var content = new VerticalStackLayout
+        {
+            Spacing = 8,
+            Children = { badge, title }
+        };
+
+        if (scoreRow.Children.Count > 0)
+        {
+            content.Add(new BoxView { HeightRequest = 1, Color = Color.FromArgb("#f3f4f6"), Margin = new Thickness(0, 4) });
+            content.Add(scoreRow);
+        }
+
+        var cardBody = new VerticalStackLayout
+        {
+            Padding = new Thickness(16),
+            Children = { content }
+        };
+
+        var cardStack = new VerticalStackLayout
+        {
+            Children = { imageBorder, cardBody }
+        };
+
+        var card = new Border
+        {
+            StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 16 },
+            BackgroundColor = Colors.White,
+            Stroke = Color.FromArgb("#e5e7eb"),
+            StrokeThickness = 1,
+            Padding = 0,
+            Content = cardStack,
+            Shadow = new Shadow { Brush = Colors.Black, Opacity = 0.05f, Offset = new Point(0, 4), Radius = 20 }
+        };
+
+        // Tap the whole card to navigate
+        var tapGesture = new TapGestureRecognizer();
+        tapGesture.Tapped += async (s, e) =>
+        {
+            await Shell.Current.GoToAsync(nameof(ProjectDetailsPage), new Dictionary<string, object>
+            {
+                { "Project", project }
+            });
+        };
+        card.GestureRecognizers.Add(tapGesture);
+
+        return card;
     }
 }
