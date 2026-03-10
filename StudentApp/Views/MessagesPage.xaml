@@ -1,14 +1,135 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:StudentApp.Models"
+             xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
              x:Class="StudentApp.Views.MessagesPage"
-             Title="Messages"
+             Title="Notificaciones"
              Shell.NavBarIsVisible="False"
-             BackgroundColor="{StaticResource White}">
-    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
-        <Label 
-            Text="Messages Page"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             ios:Page.UseSafeArea="False"
+             BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
+
+    <Grid BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
+        <RefreshView x:Name="NotifRefreshView" Refreshing="OnRefreshing">
+            <ScrollView VerticalScrollBarVisibility="Never">
+                <VerticalStackLayout Spacing="0" BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
+                    
+                    <!-- Header -->
+                    <Grid Padding="24,20,24,16" ColumnDefinitions="*,Auto"
+                          BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
+                        <Label Text="Notificaciones" 
+                               FontSize="24" 
+                               FontAttributes="Bold" 
+                               TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" 
+                               VerticalOptions="Center"/>
+                        <Border Grid.Column="1" 
+                                x:Name="UnreadBadge"
+                                IsVisible="False"
+                                StrokeThickness="0" 
+                                BackgroundColor="{StaticResource Primary}" 
+                                StrokeShape="RoundRectangle 12" 
+                                HeightRequest="24" 
+                                Padding="8,0"
+                                VerticalOptions="Center">
+                            <Label x:Name="UnreadCountLabel" 
+                                   Text="0" 
+                                   FontSize="12" 
+                                   FontAttributes="Bold" 
+                                   TextColor="White" 
+                                   HorizontalOptions="Center" 
+                                   VerticalOptions="Center"/>
+                        </Border>
+                    </Grid>
+
+                    <!-- Notification List -->
+                    <StackLayout x:Name="NotificationListView" Spacing="0" Padding="0">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:Notification">
+                                <Grid Padding="0">
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="OnNotificationTapped" CommandParameter="{Binding .}" NumberOfTapsRequired="1"/>
+                                    </Grid.GestureRecognizers>
+                                    
+                                    <Border StrokeThickness="0"
+                                            BackgroundColor="{Binding CardBackgroundColor}"
+                                            StrokeShape="RoundRectangle 0"
+                                            Padding="24,16">
+                                        <Grid ColumnDefinitions="40, *, Auto" ColumnSpacing="16">
+                                            
+                                            <!-- Icon -->
+                                            <Border Grid.Column="0" 
+                                                    StrokeThickness="0" 
+                                                    BackgroundColor="{AppThemeBinding Light=#E8F0FE, Dark=#1a2430}" 
+                                                    StrokeShape="RoundRectangle 20" 
+                                                    HeightRequest="40" 
+                                                    WidthRequest="40">
+                                                <Label Text="🎓" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                            </Border>
+
+                                            <!-- Content -->
+                                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="4">
+                                                <Label Text="{Binding Title}" 
+                                                       FontAttributes="Bold" 
+                                                       FontSize="14"
+                                                       Opacity="{Binding ReadOpacity}"
+                                                       TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" 
+                                                       LineBreakMode="TailTruncation" 
+                                                       MaxLines="1"/>
+                                                <Label Text="{Binding Message}" 
+                                                       FontSize="13"
+                                                       Opacity="{Binding ReadOpacity}"
+                                                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" 
+                                                       LineBreakMode="TailTruncation" 
+                                                       MaxLines="2"/>
+                                            </VerticalStackLayout>
+
+                                            <!-- Time -->
+                                            <VerticalStackLayout Grid.Column="2" VerticalOptions="Start" HorizontalOptions="End" Spacing="6">
+                                                <Label Text="{Binding TimeAgo}" 
+                                                       FontSize="11" 
+                                                       TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                                       HorizontalOptions="End"/>
+                                                <!-- Unread dot -->
+                                                <BoxView IsVisible="{Binding IsRead, Converter={StaticResource InvertBoolConverter}}"
+                                                         Color="{StaticResource Primary}" 
+                                                         HeightRequest="8" 
+                                                         WidthRequest="8" 
+                                                         CornerRadius="4" 
+                                                         HorizontalOptions="End"/>
+                                            </VerticalStackLayout>
+                                        </Grid>
+                                    </Border>
+                                    
+                                    <!-- Divider -->
+                                    <BoxView HeightRequest="0.5" 
+                                             Color="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray600}}" 
+                                             VerticalOptions="End"
+                                             Margin="24,0"/>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+
+                    <!-- Empty State -->
+                    <VerticalStackLayout x:Name="EmptyState" IsVisible="False" HorizontalOptions="Center" Spacing="12" Padding="24,80">
+                        <Label Text="🔔" FontSize="60" HorizontalOptions="Center"/>
+                        <Label Text="Sin notificaciones" 
+                               FontSize="18" 
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" 
+                               HorizontalOptions="Center"/>
+                        <Label Text="Cuando un maestro evalúe tu proyecto, te avisaremos aquí" 
+                               FontSize="14" 
+                               TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" 
+                               HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center"/>
+                    </VerticalStackLayout>
+
+                    <!-- Bottom safe area -->
+                    <BoxView HeightRequest="120" Color="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}"/>
+
+                </VerticalStackLayout>
+            </ScrollView>
+        </RefreshView>
+    </Grid>
 </ContentPage>

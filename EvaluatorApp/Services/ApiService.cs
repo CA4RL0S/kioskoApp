@@ -120,4 +120,30 @@ public class ApiService : IMongoDBService
         var response = await _httpClient.PostAsJsonAsync("/api/activities", activity);
         response.EnsureSuccessStatusCode();
     }
+
+    public async Task CreateNotification(string studentMatricula, string title, string message, string? projectId, string? projectTitle, string? score, string? evaluatorName)
+    {
+        try
+        {
+            var notification = new
+            {
+                studentMatricula,
+                title,
+                message,
+                projectId,
+                projectTitle,
+                score,
+                evaluatorName,
+                isRead = false,
+                createdAt = DateTime.UtcNow
+            };
+            var response = await _httpClient.PostAsJsonAsync("/api/notifications", notification);
+            response.EnsureSuccessStatusCode();
+        }
+        catch (Exception ex)
+        {
+            // Don't crash evaluation if notification fails
+            System.Diagnostics.Debug.WriteLine($"[API] Notification error: {ex.Message}");
+        }
+    }
 }

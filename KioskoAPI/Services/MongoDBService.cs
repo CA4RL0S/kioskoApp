@@ -16,6 +16,7 @@ public class MongoDBService
     private IMongoCollection<User>? _usersCollection;
     private IMongoCollection<Project>? _projectsCollection;
     private IMongoCollection<Activity>? _activitiesCollection;
+    private IMongoCollection<Notification>? _notificationsCollection;
     private bool _isInitialized;
     private readonly IConfiguration _configuration;
 
@@ -41,6 +42,7 @@ public class MongoDBService
         _usersCollection = database.GetCollection<User>(UserCollectionName);
         _projectsCollection = database.GetCollection<Project>(ProjectCollectionName);
         _activitiesCollection = database.GetCollection<Activity>(ActivityCollectionName);
+        _notificationsCollection = database.GetCollection<Notification>("notificaciones");
 
         _isInitialized = true;
 
@@ -252,5 +254,31 @@ public class MongoDBService
         await Init();
         if (_activitiesCollection == null) return;
         await _activitiesCollection.InsertOneAsync(activity);
+    }
+
+    // --- Notifications ---
+
+    public async Task<List<Notification>> GetNotificationsByMatricula(string matricula)
+    {
+        await Init();
+        if (_notificationsCollection == null) return new List<Notification>();
+        var sort = Builders<Notification>.Sort.Descending(n => n.CreatedAt);
+        return await _notificationsCollection.Find(n => n.StudentMatricula == matricula).Sort(sort).Limit(50).ToListAsync();
+    }
+
+    public async Task CreateNotification(Notification notification)
+    {
+        await Init();
+        if (_notificationsCollection == null) return;
+        await _notificationsCollection.InsertOneAsync(notification);
+    }
+
+    public async Task MarkNotificationAsRead(string id)
+    {
+        await Init();
+        if (_notificationsCollection == null) return;
+        var filter = Builders<Notification>.Filter.Eq(n => n.Id, id);
+        var update = Builders<Notification>.Update.Set(n => n.IsRead, true);
+        await _notificationsCollection.UpdateOneAsync(filter, update);
     }
 }

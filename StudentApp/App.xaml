@@ -10,6 +10,7 @@
             <converters:BoolToStatusTextConverter x:Key="BoolToStatusTextConverter" />
             <converters:BoolToStatusTextColorConverter x:Key="BoolToStatusTextColorConverter" />
             <converters:BoolToStatusDotConverter x:Key="BoolToStatusDotConverter" />
+            <converters:InvertBoolConverter x:Key="InvertBoolConverter" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />

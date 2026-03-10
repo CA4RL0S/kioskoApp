@@ -16,6 +16,8 @@ public interface IMongoDBService
     Task<List<Project>> GetProjectsByMatricula(string matricula);
     Task<List<StudentTask>> GetTasksByProject(string projectId);
     Task UpdateStudentProfileImage(string studentId, string imageUrl);
+    Task<List<Notification>> GetNotifications(string matricula);
+    Task MarkNotificationAsRead(string id);
 }
 
 public class MongoDBService : IMongoDBService
@@ -167,5 +169,24 @@ public class MongoDBService : IMongoDBService
         var filter = Builders<Student>.Filter.Eq(s => s.Id, studentId);
         var update = Builders<Student>.Update.Set(s => s.ProfileImageUrl, imageUrl);
         await _studentCollection.UpdateOneAsync(filter, update);
+    }
+
+    public async Task<List<Notification>> GetNotifications(string matricula)
+    {
+        await Init();
+        var database = _studentCollection.Database;
+        var notifCollection = database.GetCollection<Notification>("notificaciones");
+        var sort = Builders<Notification>.Sort.Descending(n => n.CreatedAt);
+        return await notifCollection.Find(n => n.StudentMatricula == matricula).Sort(sort).Limit(50).ToListAsync();
+    }
+
+    public async Task MarkNotificationAsRead(string id)
+    {
+        await Init();
+        var database = _studentCollection.Database;
+        var notifCollection = database.GetCollection<Notification>("notificaciones");
+        var filter = Builders<Notification>.Filter.Eq(n => n.Id, id);
+        var update = Builders<Notification>.Update.Set(n => n.IsRead, true);
+        await notifCollection.UpdateOneAsync(filter, update);
     }
 }

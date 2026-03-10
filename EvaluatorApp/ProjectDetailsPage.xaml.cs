@@ -8,6 +8,7 @@ namespace EvaluatorApp;
 public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
 {
     private readonly ProjectRepository _repository;
+    private readonly ApiService _apiService;
     
     private string _comments;
     public string Comments
@@ -171,11 +172,12 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
 
     public Command ToggleDownloadCommand { get; private set; }
 
-    public ProjectDetailsPage(ProjectRepository repository, VideoService videoService)
+    public ProjectDetailsPage(ProjectRepository repository, VideoService videoService, IMongoDBService mongoService)
     {
         InitializeComponent();
         _repository = repository;
         _videoService = videoService;
+        _apiService = mongoService as ApiService;
         
         ToggleDownloadCommand = new Command(async () => await ToggleDownload());
         
@@ -366,6 +368,33 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
             };
             
             await Shell.Current.GoToAsync(nameof(EvaluationResultPage), navigationParameter);
+
+            // Send notifications to all student members (fire-and-forget)
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    if (_apiService != null && Project.Members != null)
+                    {
+                        foreach (var matricula in Project.Members)
+                        {
+                            await _apiService.CreateNotification(
+                                studentMatricula: matricula,
+                                title: "🎓 ¡Tu proyecto fue evaluado!",
+                                message: $"\"{Project.Title}\" recibió una calificación de {Project.Score}/70 por {userName}.",
+                                projectId: Project.Id,
+                                projectTitle: Project.Title,
+                                score: Project.Score,
+                                evaluatorName: userName
+                            );
+                        }
+                    }
+                }
+                catch (Exception notifEx)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[Notification] Error: {notifEx.Message}");
+                }
+            });
         }
         catch (Exception ex)
         {
