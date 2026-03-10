@@ -8,7 +8,6 @@ public partial class MainPage : ContentPage
 {
     private readonly IMongoDBService _mongoDBService;
     
-    // In a real app we'd use a robust session manager
     public static string CurrentStudentEmail { get; set; }
     public static string CurrentStudentName { get; set; }
 
@@ -21,54 +20,86 @@ public partial class MainPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-
-        // Check if we have a student logged in (this basic session handling assumes LoginPage set these or we passed them)
-        // Since we are using DI, we might need a SessionService. For now, we will rely on a basic check 
-        // or just fetch a hardcoded/last login if this was a fresh start, but typically auth flow happens first.
         
         if (!string.IsNullOrEmpty(CurrentStudentEmail)) 
         {
             UserNameLabel.Text = CurrentStudentName;
+
+            // Load profile image
+            string profileImage = Preferences.Get("StudentProfileImage", string.Empty);
+            if (!string.IsNullOrEmpty(profileImage))
+                ProfileImage.Source = profileImage;
             
             // Fetch student to get ProjectId
             var student = await _mongoDBService.GetOrCreateStudent(CurrentStudentEmail, CurrentStudentName);
             
             if (student != null && !string.IsNullOrEmpty(student.ProjectId))
             {
-                LoadProjectData(student.ProjectId);
+                await LoadProjectData(student.ProjectId);
             }
             else
             {
                 // No project assigned state
-                ProjectTitleLabel.Text = "No Active Project";
-                ProjectDescLabel.Text = "You have not been assigned to a project yet.";
-                StatusLabel.Text = "Inactive";
+                ProjectTitleLabel.Text = "Sin Proyecto Activo";
+                ProjectDescLabel.Text = "Aún no se te ha asignado un proyecto.";
+                StatusLabel.Text = "Sin asignar";
+                GradeSection.IsVisible = false;
+                ProjectDetailsRow.IsVisible = false;
             }
         }
     }
 
-    private async void LoadProjectData(string projectId)
+    private async Task LoadProjectData(string projectId)
     {
         var project = await _mongoDBService.GetProject(projectId);
         if (project != null)
         {
-            ProjectTitleLabel.Text = project.Title;
-            ProjectDescLabel.Text = project.Description; // Or Cycle/Info if you mapped differently
+            ProjectTitleLabel.Text = project.Title ?? "Proyecto";
+            ProjectDescLabel.Text = project.Description ?? "";
+            
+            // Show cycle info if available
+            if (!string.IsNullOrEmpty(project.Cycle))
+            {
+                ProjectDetailsRow.IsVisible = true;
+                ProjectCycleLabel.Text = $"Ciclo: {project.Cycle}";
+            }
 
-            // Status Logic
+            // Grade section is always visible when there's a project
+            GradeSection.IsVisible = true;
+
             if (project.IsEvaluated)
             {
-                StatusLabel.Text = "Evaluated";
-                StatusLabel.TextColor = Colors.Green;
-                // Update badge colors if using dynamic resources or binding
-                GradeStatusLabel.Text = "Grade Available";
+                // Project has been evaluated — show the grade
+                StatusLabel.Text = "Evaluado";
+                StatusBadge.BackgroundColor = Color.FromArgb("#dcfce7");
+                StatusBadge.Stroke = Color.FromArgb("#22c55e");
+                StatusLabel.TextColor = Color.FromArgb("#15803d");
+
+                GradeStatusLabel.Text = "Calificación Final";
                 ScoreLabel.Text = project.Score ?? "-";
+                ScoreLabel.TextColor = Color.FromArgb("#197fe6");
+                ScoreLabel.FontSize = 28;
+
+                // Show breakdown
+                ScoreBreakdown.IsVisible = true;
+                InnovationScoreLabel.Text = project.InnovationScore.ToString("0.#");
+                TechScoreLabel.Text = project.TechScore.ToString("0.#");
+                PresentationScoreLabel.Text = project.PresentationScore.ToString();
+            }
+            else if (project.IsPending)
+            {
+                StatusLabel.Text = "En revisión";
+                GradeStatusLabel.Text = "Esperando calificación";
+                ScoreLabel.Text = "⏳";
             }
             else
             {
-                StatusLabel.Text = "Pending Review";
-                GradeStatusLabel.Text = "Awaiting Grade";
-                ScoreLabel.Text = "⏳";
+                StatusLabel.Text = "Activo";
+                StatusBadge.BackgroundColor = Color.FromArgb("#dbeafe");
+                StatusBadge.Stroke = Color.FromArgb("#197fe6");
+                StatusLabel.TextColor = Color.FromArgb("#1e40af");
+                GradeStatusLabel.Text = "Pendiente de evaluación";
+                ScoreLabel.Text = "—";
             }
         }
     }

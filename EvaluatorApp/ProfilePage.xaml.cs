@@ -53,20 +53,15 @@ public partial class ProfilePage : ContentPage
             var photo = await MediaPicker.Default.PickPhotoAsync();
             if (photo != null)
             {
-                // Show loading state (optional, could add an activity indicator)
-                
                 using var stream = await photo.OpenReadAsync();
                 var imageUrl = await _cloudinaryService.UploadImage(stream, photo.FileName);
 
                 if (!string.IsNullOrEmpty(imageUrl))
                 {
-                    // Update UI
                     ProfileImage.Source = imageUrl;
 
-                    // Update Local Preferences
                     Preferences.Set("UserProfileImage", imageUrl);
 
-                    // Update Database
                     var userId = Preferences.Get("UserId", string.Empty);
                     if (!string.IsNullOrEmpty(userId))
                     {

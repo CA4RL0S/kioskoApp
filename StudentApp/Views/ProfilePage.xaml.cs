@@ -1,46 +1,53 @@
-using Microsoft.Identity.Client;
-
 namespace StudentApp.Views;
 
 public partial class ProfilePage : ContentPage
 {
+    private readonly Services.IMongoDBService _mongoDBService;
 
-    public ProfilePage()
+    public ProfilePage(Services.IMongoDBService mongoDBService)
     {
         InitializeComponent();
+        _mongoDBService = mongoDBService;
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
-        // Load data from session safely
-        if (StudentApp.MainPage.CurrentStudentName != null)
+
+        // Load profile image
+        string profileImage = Preferences.Get("StudentProfileImage", string.Empty);
+        if (!string.IsNullOrEmpty(profileImage))
+            ProfileImage.Source = profileImage;
+
+        // Load name and email from session
+        if (!string.IsNullOrEmpty(StudentApp.MainPage.CurrentStudentName))
             NameLabel.Text = StudentApp.MainPage.CurrentStudentName;
             
-        if (StudentApp.MainPage.CurrentStudentEmail != null)
+        if (!string.IsNullOrEmpty(StudentApp.MainPage.CurrentStudentEmail))
             EmailLabel.Text = StudentApp.MainPage.CurrentStudentEmail;
+
+        // Fetch student for matrícula
+        if (!string.IsNullOrEmpty(StudentApp.MainPage.CurrentStudentEmail))
+        {
+            var student = await _mongoDBService.GetOrCreateStudent(
+                StudentApp.MainPage.CurrentStudentEmail, 
+                StudentApp.MainPage.CurrentStudentName);
+            
+            if (student != null)
+            {
+                MatriculaLabel.Text = $"Matrícula: {student.Matricula}";
+                MatriculaDetailLabel.Text = student.Matricula;
+            }
+        }
     }
 
     private async void OnSignOutClicked(object sender, EventArgs e)
     {
-        bool confirm = await DisplayAlert("Sign Out", "Are you sure you want to sign out?", "Yes", "Cancel");
+        bool confirm = await DisplayAlert("Cerrar Sesión", "¿Estás seguro de que deseas cerrar sesión?", "Sí", "Cancelar");
         if (!confirm) return;
 
         try
         {
-            // Here we should ideally use the IPublicClientApplication from the service provider or pass it along.
-            // For checking purposes, we might need to reconstruct it or expose it from App/MauiProgram if singleton.
-            // A pattern common in simple MAUI apps is to clear the cache or just navigate back 
-            // if we assume we re-build the PCA on Login page anyway.
-            
-            // However, to do a proper MSAL signout (and clear cookie flow if desirable), 
-            // we would call RemoveAsync on the account.
-            
-            // For this iteration, we will just navigate back to the Login Page 
-            // effectively "logging out" of the UI session.
-            
-            // Resolve Services from the service provider
-            var mongoService = this.Handler?.MauiContext?.Services.GetService<Services.IMongoDBService>();
             var authService = this.Handler?.MauiContext?.Services.GetService<Services.IMsalAuthService>();
             
             if (authService != null)
@@ -48,19 +55,28 @@ public partial class ProfilePage : ContentPage
                 await authService.SignOutAsync();
             }
 
-            if (mongoService != null && authService != null)
+            // Clear preferences
+            Preferences.Remove("StudentProfileImage");
+            Preferences.Remove("StudentName");
+            Preferences.Remove("StudentEmail");
+
+            // Navigate back to login using DI
+            var mongoService = this.Handler?.MauiContext?.Services.GetService<Services.IMongoDBService>();
+            var cloudinaryService = this.Handler?.MauiContext?.Services.GetService<Services.ICloudinaryService>();
+            var graphService = this.Handler?.MauiContext?.Services.GetService<Services.IMicrosoftGraphService>();
+
+            if (mongoService != null && authService != null && cloudinaryService != null && graphService != null)
             {
-                 Application.Current.MainPage = new NavigationPage(new LoginPage(mongoService, authService)); 
+                 Application.Current.MainPage = new NavigationPage(new LoginPage(mongoService, authService, cloudinaryService, graphService)); 
             }
             else
             {
-                 // Fallback or error handling
-                 await DisplayAlert("Error", "Could not resolve services.", "OK");
+                 await DisplayAlert("Error", "No se pudieron resolver los servicios.", "OK");
             }
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", $"Could not sign out: {ex.Message}", "OK");
+            await DisplayAlert("Error", $"No se pudo cerrar sesión: {ex.Message}", "OK");
         }
     }
 }

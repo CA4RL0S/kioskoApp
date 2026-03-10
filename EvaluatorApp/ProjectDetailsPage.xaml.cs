@@ -211,6 +211,9 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
                     if (Uri.TryCreate(videoUrl, UriKind.Absolute, out var uri))
                         VideoSource = CommunityToolkit.Maui.Views.MediaSource.FromUri(uri);
                 }
+
+                // Auto-play seguro: source ya está asignado, no hay riesgo de crash
+                MainThread.BeginInvokeOnMainThread(() => ProjectVideoPlayer.Play());
             }
             catch (Exception ex)
             {

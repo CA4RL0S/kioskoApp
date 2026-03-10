@@ -14,6 +14,7 @@ public interface IMongoDBService
     Task<Student> GetOrCreateStudent(string email, string name);
     Task<Project> GetProject(string projectId);
     Task<List<StudentTask>> GetTasksByProject(string projectId);
+    Task UpdateStudentProfileImage(string studentId, string imageUrl);
 }
 
 public class MongoDBService : IMongoDBService
@@ -148,5 +149,13 @@ public class MongoDBService : IMongoDBService
         var tasksCollection = database.GetCollection<StudentTask>("tasks");
 
         return await tasksCollection.Find(t => t.ProjectId == projectId).ToListAsync();
+    }
+
+    public async Task UpdateStudentProfileImage(string studentId, string imageUrl)
+    {
+        await Init();
+        var filter = Builders<Student>.Filter.Eq(s => s.Id, studentId);
+        var update = Builders<Student>.Update.Set(s => s.ProfileImageUrl, imageUrl);
+        await _studentCollection.UpdateOneAsync(filter, update);
     }
 }

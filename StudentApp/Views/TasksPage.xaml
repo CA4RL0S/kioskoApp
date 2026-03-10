@@ -4,6 +4,7 @@
              xmlns:models="clr-namespace:StudentApp.Models"
              x:Class="StudentApp.Views.TasksPage"
              Title="Mis Tareas"
+             Shell.NavBarIsVisible="False"
              BackgroundColor="#0f172a">
 
     <ContentPage.Resources>

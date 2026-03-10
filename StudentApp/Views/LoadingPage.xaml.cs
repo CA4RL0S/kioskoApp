@@ -35,11 +35,14 @@ public partial class LoadingPage : ContentPage
             string name = result.ClaimsPrincipal?.FindFirst("name")?.Value ?? email;
 
             // Fetch student data to ensure we have context (ProjectId etc.)
-             var student = await _mongoDBService.GetOrCreateStudent(email, name); // Or a GetStudentByEmail if strictly checking
+             var student = await _mongoDBService.GetOrCreateStudent(email, name);
 
             // Set session
             StudentApp.MainPage.CurrentStudentEmail = email;
             StudentApp.MainPage.CurrentStudentName = name;
+            Preferences.Set("StudentProfileImage", student?.ProfileImageUrl ?? string.Empty);
+            Preferences.Set("StudentName", name);
+            Preferences.Set("StudentEmail", email);
 
             // Go to AppShell
              Application.Current.MainPage = new AppShell();

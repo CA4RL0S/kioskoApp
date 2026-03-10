@@ -14,6 +14,7 @@ public static class MauiProgram
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+				fonts.AddFont("MaterialSymbolsOutlined.ttf", "MaterialIcons");
 			});
 
         var assembly = System.Reflection.Assembly.GetExecutingAssembly();
@@ -35,6 +36,8 @@ public static class MauiProgram
 
         builder.Services.AddSingleton<Services.IMongoDBService, Services.MongoDBService>();
         builder.Services.AddSingleton<Services.IMsalAuthService, Services.MsalAuthService>();
+        builder.Services.AddSingleton<Services.ICloudinaryService, Services.CloudinaryService>();
+        builder.Services.AddSingleton<Services.IMicrosoftGraphService, Services.MicrosoftGraphService>();
         
         // Register Pages
         builder.Services.AddTransient<Views.LoadingPage>();

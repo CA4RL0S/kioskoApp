@@ -1,0 +1,46 @@
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.Extensions.Configuration;
+
+namespace StudentApp.Services;
+
+public interface ICloudinaryService
+{
+    Task<string> UploadImage(Stream imageStream, string fileName);
+}
+
+public class CloudinaryService : ICloudinaryService
+{
+    private readonly Cloudinary _cloudinary;
+
+    public CloudinaryService(IConfiguration configuration)
+    {
+        var cloudName = "djwpi6z29";
+        var apiKey = "181237231871119";
+        var apiSecret = "J6ZWFk-oWb4bzyAaBwrDaCaN-3U";
+
+        if (string.IsNullOrEmpty(cloudName) || string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(apiSecret))
+        {
+            return;
+        }
+
+        var account = new Account(cloudName, apiKey, apiSecret);
+        _cloudinary = new Cloudinary(account);
+        _cloudinary.Api.Secure = true;
+    }
+
+    public async Task<string> UploadImage(Stream imageStream, string fileName)
+    {
+        if (_cloudinary == null) throw new Exception("Cloudinary configuration is missing.");
+
+        var uploadParams = new ImageUploadParams()
+        {
+            File = new FileDescription(fileName, imageStream),
+            Transformation = new Transformation().Crop("fill").Gravity("face").Width(500).Height(500),
+            Folder = "kiosko/students"
+        };
+
+        var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+        return uploadResult.SecureUrl.ToString();
+    }
+}

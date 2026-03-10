@@ -24,4 +24,7 @@ public class Student
 
     [BsonElement("role")]
     public string Role { get; set; } = "Student";
+
+    [BsonElement("profileImageUrl")]
+    public string? ProfileImageUrl { get; set; }
 }

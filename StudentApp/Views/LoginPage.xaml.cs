@@ -8,19 +8,19 @@ public partial class LoginPage : ContentPage
 {
     private readonly IMongoDBService _mongoDBService;
     private readonly IMsalAuthService _authService;
+    private readonly ICloudinaryService _cloudinaryService;
+    private readonly IMicrosoftGraphService _graphService;
 
-    public LoginPage(IMongoDBService mongoDBService, IMsalAuthService authService)
+    private const string DefaultProfileImage = "https://res.cloudinary.com/djwpi6z29/image/upload/v1770699551/avatar-default-user-profile-icon-social-media-vector-57234208_y8gtgs.jpg";
+
+    public LoginPage(IMongoDBService mongoDBService, IMsalAuthService authService, 
+                     ICloudinaryService cloudinaryService, IMicrosoftGraphService graphService)
     {
         InitializeComponent();
         _mongoDBService = mongoDBService;
         _authService = authService;
-    }
-
-    // Constructor for when only MongoDBService is passed (backwards compatibility/navigation)
-    // Though ideally we should use DI for everything.
-    public LoginPage(IMongoDBService mongoDBService) : this(mongoDBService, new MsalAuthService()) 
-    {
-        // Fallback if instantiated manually without auth service
+        _cloudinaryService = cloudinaryService;
+        _graphService = graphService;
     }
 
     private async void OnMicrosoftLoginClicked(object sender, EventArgs e)
@@ -33,18 +33,27 @@ public partial class LoginPage : ContentPage
 
             if (result != null)
             {
-                // Login Success // ... rest of logic
                 string email = result.Account.Username;
                 string name = result.ClaimsPrincipal?.FindFirst("name")?.Value ?? email;
 
                 // Auto-register or get existing student
                 var student = await _mongoDBService.GetOrCreateStudent(email, name);
 
-                await DisplayAlert("Bienvenido", $"Has iniciado sesión como: {student.Name}\nMatrícula: {student.Matricula}", "OK");
-                
-                // Store session data (using MainPage statics for now as established in previous step)
+                // Fetch and upload Microsoft profile photo if student doesn't have one yet
+                string profileImageUrl = student.ProfileImageUrl ?? DefaultProfileImage;
+                if (string.IsNullOrEmpty(student.ProfileImageUrl))
+                {
+                    profileImageUrl = await FetchAndUploadProfilePhoto(result.AccessToken, student.Id);
+                }
+
+                // Store session data
                 StudentApp.MainPage.CurrentStudentEmail = email;
                 StudentApp.MainPage.CurrentStudentName = name;
+                Preferences.Set("StudentProfileImage", profileImageUrl);
+                Preferences.Set("StudentName", name);
+                Preferences.Set("StudentEmail", email);
+
+                await DisplayAlert("Bienvenido", $"Has iniciado sesión como: {student.Name}\nMatrícula: {student.Matricula}", "OK");
 
                 // Navigate to AppShell (which contains the TabBar)
                 Application.Current.MainPage = new AppShell();
@@ -60,5 +69,32 @@ public partial class LoginPage : ContentPage
         {
             LoadingIndicator.IsRunning = false;
         }
+    }
+
+    private async Task<string> FetchAndUploadProfilePhoto(string accessToken, string studentId)
+    {
+        try
+        {
+            var photoStream = await _graphService.GetProfilePhotoAsync(accessToken);
+            
+            if (photoStream != null)
+            {
+                // Upload to Cloudinary
+                var imageUrl = await _cloudinaryService.UploadImage(photoStream, $"student_{studentId}.jpg");
+                
+                if (!string.IsNullOrEmpty(imageUrl))
+                {
+                    // Save URL to MongoDB
+                    await _mongoDBService.UpdateStudentProfileImage(studentId, imageUrl);
+                    return imageUrl;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Profile photo upload failed (non-critical): {ex.Message}");
+        }
+
+        return DefaultProfileImage;
     }
 }

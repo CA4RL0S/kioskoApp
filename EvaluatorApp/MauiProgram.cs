@@ -70,6 +70,7 @@ public static class MauiProgram
         builder.Services.AddTransient<ProjectDetailsPage>();
         builder.Services.AddTransient<SignUpPage>();
         builder.Services.AddTransient<EditProfilePage>();
+        builder.Services.AddTransient<EvaluationResultPage>();
         builder.Services.AddSingleton<Services.IMsalAuthService, Services.MsalAuthService>();
 
 

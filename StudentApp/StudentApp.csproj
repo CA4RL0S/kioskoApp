@@ -42,7 +42,17 @@
 		<CodesignEntitlements>Platforms/iOS/Entitlements.plist</CodesignEntitlements>
         <MtouchLink>None</MtouchLink>
         <UseInterpreter>true</UseInterpreter>
-        <CodesignKey>iPhone Developer</CodesignKey>
+	</PropertyGroup>
+
+	<!-- iOS signing: skip for simulator (Debug), sign for device (Release) -->
+	<PropertyGroup Condition="$(TargetFramework.Contains('-ios')) And '$(Configuration)' == 'Debug'">
+		<CodesignKey>-</CodesignKey>
+		<CodesignProvision></CodesignProvision>
+		<CodesignRequireProvisioningProfile>false</CodesignRequireProvisioningProfile>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="$(TargetFramework.Contains('-ios')) And '$(Configuration)' == 'Release'">
+		<CodesignKey>iPhone Developer</CodesignKey>
 	</PropertyGroup>
 
 
@@ -65,6 +75,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CloudinaryDotNet" Version="1.28.0" />
 		<PackageReference Include="Microsoft.Identity.Client" Version="4.82.1" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />

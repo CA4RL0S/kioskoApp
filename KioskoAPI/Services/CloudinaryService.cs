@@ -28,7 +28,6 @@ public class CloudinaryService
         using var stream = file.OpenReadStream();
         
         // Determine if it's an image or video/raw based on content type or extension
-        // For simplicity, we'll try to detect.
         var fileType = file.ContentType.ToLower();
         
         if (fileType.StartsWith("image"))
@@ -36,7 +35,8 @@ public class CloudinaryService
             var uploadParams = new ImageUploadParams()
             {
                 File = new FileDescription(file.FileName, stream),
-                Transformation = new Transformation().Crop("limit").Width(1000)
+                Transformation = new Transformation().Crop("limit").Width(1000),
+                Folder = "kiosko/projects/images"
             };
             var uploadResult = await _cloudinary.UploadAsync(uploadParams);
             return uploadResult.SecureUrl.ToString();
@@ -46,6 +46,7 @@ public class CloudinaryService
             var uploadParams = new VideoUploadParams()
             {
                 File = new FileDescription(file.FileName, stream),
+                Folder = "kiosko/projects/videos"
             };
             var uploadResult = await _cloudinary.UploadAsync(uploadParams);
             return uploadResult.SecureUrl.ToString();
@@ -56,6 +57,7 @@ public class CloudinaryService
              var uploadParams = new RawUploadParams()
             {
                 File = new FileDescription(file.FileName, stream),
+                Folder = "kiosko/projects/documents"
             };
             var uploadResult = await _cloudinary.UploadAsync(uploadParams);
             return uploadResult.SecureUrl.ToString();
