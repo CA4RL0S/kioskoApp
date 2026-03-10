@@ -13,6 +13,7 @@ public interface IMongoDBService
     Task Init();
     Task<Student> GetOrCreateStudent(string email, string name);
     Task<Project> GetProject(string projectId);
+    Task<Project> GetProjectByMatricula(string matricula);
     Task<List<StudentTask>> GetTasksByProject(string projectId);
     Task UpdateStudentProfileImage(string studentId, string imageUrl);
 }
@@ -134,12 +135,21 @@ public class MongoDBService : IMongoDBService
     public async Task<Project> GetProject(string projectId)
     {
         await Init();
-        // Since we don't have a direct reference to the project collection in this file yet,
-        // we need to add it.
-        var database = new MongoClient(ConnectionString).GetDatabase(DatabaseName);
+        var database = _studentCollection.Database;
         var projectCollection = database.GetCollection<Project>("proyectos");
         
         return await projectCollection.Find(p => p.Id == projectId).FirstOrDefaultAsync();
+    }
+
+    public async Task<Project> GetProjectByMatricula(string matricula)
+    {
+        await Init();
+        var database = _studentCollection.Database;
+        var projectCollection = database.GetCollection<Project>("proyectos");
+        
+        // Search for project where integrantes array contains this matrícula
+        var filter = Builders<Project>.Filter.AnyEq(p => p.Members, matricula);
+        return await projectCollection.Find(filter).FirstOrDefaultAsync();
     }
 
     public async Task<List<StudentTask>> GetTasksByProject(string projectId)
