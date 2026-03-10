@@ -30,23 +30,8 @@ public class MsalAuthService : IMsalAuthService
         var builder = PublicClientApplicationBuilder
             .Create(ClientId)
             .WithAuthority(Authority)
-            .WithRedirectUri("msauth.com.carlos.kiosko.studentapp://auth");
-
-#if IOS
-        // En un dispositivo físico (sin cuenta de pago de Apple), no podemos usar el llavero
-        // compartido "com.microsoft.adalcache" porque no tenemos el Entitlement.
-        // MSAL por defecto asume "com.microsoft.adalcache" si no se le pasa nada,
-        // por lo que DEBEMOS pasarle específicamente el Bundle ID de nuestra propia app.
-        // Toda app tiene permiso para usar su propio Bundle ID como grupo de Keychain sin pedir Entitlements.
-        if (DeviceInfo.DeviceType == DeviceType.Virtual)
-        {
-            builder = builder.WithIosKeychainSecurityGroup("com.microsoft.adalcache");
-        }
-        else
-        {
-            builder = builder.WithIosKeychainSecurityGroup("com.carlos.kiosko.StudentApp");
-        }
-#endif
+            .WithRedirectUri("msauth.com.carlos.kiosko.studentapp://auth")
+            .WithIosKeychainSecurityGroup("com.microsoft.adalcache");
 
         _pca = builder.Build();
     }
@@ -78,9 +63,10 @@ public class MsalAuthService : IMsalAuthService
         catch (Exception ex)
         {
             Debug.WriteLine($"MSAL Error: {ex}");
-            // Return null instead of throwing to let caller decide (cleaner for silent checks)
-            // But for interactive login we might want to know.
-            // For now, returning null is safe for silent flow.
+            if (ex is not MsalUiRequiredException)
+            {
+                throw; // Rethrow to let the UI show the error
+            }
             return null;
         }
 

@@ -23,7 +23,8 @@ public partial class ProfilePage : ContentPage
 
             // Load name and email from session
             if (!string.IsNullOrEmpty(StudentApp.MainPage.CurrentStudentName))
-                NameLabel.Text = StudentApp.MainPage.CurrentStudentName;
+                NameLabel.Text = System.Globalization.CultureInfo.CurrentCulture.TextInfo
+                    .ToTitleCase(StudentApp.MainPage.CurrentStudentName.ToLower());
                 
             if (!string.IsNullOrEmpty(StudentApp.MainPage.CurrentStudentEmail))
                 EmailLabel.Text = StudentApp.MainPage.CurrentStudentEmail;
@@ -41,11 +42,21 @@ public partial class ProfilePage : ContentPage
                     MatriculaDetailLabel.Text = student.Matricula;
                 }
             }
+
+            // Set switch state without firing Toggled event
+            DarkModeSwitch.Toggled -= OnDarkModeToggled;
+            DarkModeSwitch.IsToggled = Services.ThemeService.IsDarkMode();
+            DarkModeSwitch.Toggled += OnDarkModeToggled;
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"ProfilePage error: {ex}");
         }
+    }
+
+    private void OnDarkModeToggled(object sender, ToggledEventArgs e)
+    {
+        Services.ThemeService.ApplyTheme(e.Value);
     }
 
     private async void OnSignOutClicked(object sender, EventArgs e)

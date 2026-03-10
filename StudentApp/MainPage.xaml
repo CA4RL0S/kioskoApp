@@ -1,54 +1,153 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:StudentApp.Models"
+             xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
              x:Class="StudentApp.MainPage"
-             BackgroundColor="{DynamicResource BackgroundLight}"
-             Title="Student Project Home"
-             Shell.NavBarIsVisible="False">
+             BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}"
+             Title="Mis Proyectos"
+             Shell.NavBarIsVisible="False"
+             ios:Page.UseSafeArea="False">
 
-    <ContentPage.Resources>
-        <Color x:Key="Primary">#197fe6</Color>
-        <Color x:Key="BackgroundLight">#f6f7f8</Color>
-        <Color x:Key="SurfaceLight">#ffffff</Color>
-        <Color x:Key="Success">#22c55e</Color>
-        <Color x:Key="Warning">#eab308</Color>
-        <Color x:Key="PendingBg">#fefce8</Color>
-        <Color x:Key="PendingText">#854d0e</Color>
-    </ContentPage.Resources>
-
-    <RefreshView x:Name="MainRefreshView" Refreshing="OnRefreshing" BackgroundColor="{StaticResource BackgroundLight}">
-        <ScrollView BackgroundColor="{StaticResource BackgroundLight}">
-            <VerticalStackLayout Padding="20,0,20,100" Spacing="16" BackgroundColor="{StaticResource BackgroundLight}">
+    <Grid BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
+        <RefreshView x:Name="MainRefreshView" Refreshing="OnRefreshing">
+            <ScrollView VerticalScrollBarVisibility="Never" BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
+                <VerticalStackLayout Spacing="0" BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
                 
-                <!-- Header -->
-                <Grid ColumnDefinitions="Auto, *" Margin="0,20,0,5">
-                    <HorizontalStackLayout Grid.Column="0" Spacing="12">
-                        <Border StrokeShape="RoundRectangle 25" Stroke="White" StrokeThickness="2" HeightRequest="48" WidthRequest="48">
-                            <Image x:Name="ProfileImage" Source="https://res.cloudinary.com/djwpi6z29/image/upload/v1770699551/avatar-default-user-profile-icon-social-media-vector-57234208_y8gtgs.jpg" Aspect="AspectFill" />
+                    <!-- Header Section -->
+                    <Grid Padding="24,20,24,16" ColumnDefinitions="Auto,*" ColumnSpacing="12"
+                          BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
+                        
+                        <!-- Profile Image -->
+                        <Border Grid.Column="0" StrokeThickness="2" Stroke="{StaticResource Primary}" 
+                                StrokeShape="RoundRectangle 24" HeightRequest="48" WidthRequest="48">
+                            <Image x:Name="ProfileImage" Source="https://res.cloudinary.com/djwpi6z29/image/upload/v1770699551/avatar-default-user-profile-icon-social-media-vector-57234208_y8gtgs.jpg" Aspect="AspectFill" HeightRequest="44" WidthRequest="44"/>
                         </Border>
-                        <VerticalStackLayout VerticalOptions="Center">
-                            <Label x:Name="UserNameLabel" Text="" FontSize="18" FontAttributes="Bold" TextColor="{StaticResource Gray900}" />
-                            <Label x:Name="UserRoleLabel" Text="Estudiante" FontSize="12" TextColor="{StaticResource Gray500}" />
+
+                        <!-- Welcome Text -->
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                            <Label x:Name="UserNameLabel" Text="" FontSize="18" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" />
+                            <Label x:Name="UserRoleLabel" Text="Estudiante" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray200}}" />
                         </VerticalStackLayout>
-                    </HorizontalStackLayout>
-                </Grid>
+                    </Grid>
 
-                <!-- Section Title -->
-                <Label Text="Mis Proyectos" FontSize="20" FontAttributes="Bold" TextColor="{StaticResource Gray800}" />
+                    <!-- Section Title -->
+                    <Label Text="Mis Proyectos" FontSize="24" FontAttributes="Bold" Padding="24,8,24,8" TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" />
 
-                <!-- Project List -->
-                <StackLayout x:Name="ProjectListView" Spacing="16">
-                    <!-- Populated dynamically from code-behind -->
+                    <!-- Project List via BindableLayout -->
+                    <StackLayout x:Name="ProjectListView" Spacing="16" Padding="24,0">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:Project">
+                            <Grid Padding="0">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnProjectTapped" CommandParameter="{Binding .}" NumberOfTapsRequired="1"/>
+                                </Grid.GestureRecognizers>
+                                
+                                <Border StrokeThickness="0" 
+                                        BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource SurfaceDark}}" 
+                                        StrokeShape="RoundRectangle 16">
+                                    <Border.Shadow>
+                                        <Shadow Brush="Black" Opacity="0.04" Radius="8" Offset="0,2"/>
+                                    </Border.Shadow>
+                                    <Grid RowDefinitions="Auto, Auto, Auto" Padding="16">
+                                        
+                                        <!-- Top Row: Image + Title/Date -->
+                                        <Grid Grid.Row="0" ColumnDefinitions="64, *" ColumnSpacing="16">
+                                            <Border Grid.Column="0" 
+                                                    HeightRequest="64" 
+                                                    WidthRequest="64" 
+                                                    StrokeShape="RoundRectangle 12" 
+                                                    StrokeThickness="0"
+                                                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
+                                                <Image Source="{Binding DisplayImage}" Aspect="AspectFill" HeightRequest="64" WidthRequest="64" />
+                                            </Border>
+                                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                                <Label Text="{Binding DisplayTitle}" 
+                                                       TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" 
+                                                       FontAttributes="Bold" 
+                                                       FontSize="16" 
+                                                       LineBreakMode="TailTruncation" 
+                                                       MaxLines="2"/>
+                                                <HorizontalStackLayout Spacing="4" Margin="0,6,0,0">
+                                                    <Label Text="📅" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"/>
+                                                    <Label Text="{Binding Cycle}" 
+                                                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" 
+                                                           FontSize="13" 
+                                                           FontAttributes="None" 
+                                                           TextTransform="Uppercase"/>
+                                                </HorizontalStackLayout>
+                                            </VerticalStackLayout>
+                                        </Grid>
+
+                                        <!-- Description/Summary placeholder (Student projects usually have Evaluators instead) -->
+                                        <Label Grid.Row="1" 
+                                               Text="Asesorado por varios docentes" 
+                                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" 
+                                               FontSize="14" 
+                                               Margin="0,12,0,16" 
+                                               LineBreakMode="TailTruncation" 
+                                               MaxLines="1"/>
+
+                                        <!-- Footer: Status and Action -->
+                                        <Grid Grid.Row="2" ColumnDefinitions="Auto, *">
+                                            
+                                            <Border Grid.Column="0" 
+                                                    StrokeThickness="0" 
+                                                    BackgroundColor="{Binding StatusBackgroundColor}" 
+                                                    StrokeShape="RoundRectangle 999" 
+                                                    Padding="10,4">
+                                                <HorizontalStackLayout Spacing="8">
+                                                    <BoxView Color="{Binding StatusDotColor}" HeightRequest="8" WidthRequest="8" CornerRadius="4" VerticalOptions="Center"/>
+                                                    <Label Text="{Binding DisplayStatus}" 
+                                                           TextColor="{Binding StatusTextColor}" 
+                                                           FontSize="13" 
+                                                           FontAttributes="Bold"/>
+                                                </HorizontalStackLayout>
+                                            </Border>
+                                            
+                                            <!-- Score if Evaluated -->
+                                            <Border Grid.Column="1" 
+                                                    IsVisible="{Binding IsEvaluated}"
+                                                    HorizontalOptions="End"
+                                                    StrokeThickness="0"
+                                                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}"
+                                                    StrokeShape="RoundRectangle 8"
+                                                    Padding="8,2">
+                                                    <HorizontalStackLayout Spacing="4">
+                                                        <Label Text="⭐" FontSize="13" VerticalOptions="Center"/>
+                                                        <Label Text="{Binding DisplayScore}" FontAttributes="Bold" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark=White}" VerticalOptions="Center"/>
+                                                        <Label Text="/70" FontSize="11" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" VerticalOptions="Center"/>
+                                                    </HorizontalStackLayout>
+                                            </Border>
+                                            
+                                            <!-- Arrow if Pending (matches EvaluatorApp) -->
+                                            <Label Grid.Column="1" 
+                                                    IsVisible="{Binding IsPending}"
+                                                    Text=">" 
+                                                    FontSize="20" 
+                                                    TextColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}" 
+                                                    HorizontalOptions="End" 
+                                                    VerticalOptions="Center"/>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
                 </StackLayout>
                 
                 <!-- Empty State -->
-                <VerticalStackLayout x:Name="EmptyState" IsVisible="False" HorizontalOptions="Center" Spacing="12" Padding="0,40">
+                <VerticalStackLayout x:Name="EmptyState" IsVisible="False" HorizontalOptions="Center" Spacing="12" Padding="24,40">
                     <Label Text="📭" FontSize="60" HorizontalOptions="Center"/>
-                    <Label Text="No tienes proyectos asignados" FontSize="16" TextColor="{StaticResource Gray500}" HorizontalOptions="Center"/>
-                    <Label Text="Desliza hacia abajo para actualizar" FontSize="12" TextColor="{StaticResource Gray400}" HorizontalOptions="Center"/>
+                    <Label Text="No tienes proyectos asignados" FontSize="16" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray200}}" HorizontalOptions="Center"/>
+                    <Label Text="Desliza hacia abajo para actualizar" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray300}}" HorizontalOptions="Center"/>
                 </VerticalStackLayout>
+
+                <!-- Bottom safe area spacing -->
+                <BoxView HeightRequest="120" Color="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}"/>
 
             </VerticalStackLayout>
         </ScrollView>
     </RefreshView>
+    </Grid>
 </ContentPage>

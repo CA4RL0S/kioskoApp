@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace StudentApp;
 
@@ -10,7 +10,8 @@ public partial class App : Application
 	{
 		InitializeComponent();
         _loginPage = loginPage;
-	}	
+        Services.ThemeService.LoadSavedTheme();
+	}
 
 	protected override Window CreateWindow(IActivationState? activationState)
 	{

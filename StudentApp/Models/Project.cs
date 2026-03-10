@@ -63,8 +63,43 @@ public class Project
 
     // Computed properties for UI
     public string DisplayScore => IsEvaluated ? $"{Score ?? "0"}/70" : "Sin calificar";
-    public string DisplayStatus => IsEvaluated ? "Evaluado" : (IsPending ? "En revisión" : "Activo");
     public string DisplayImage => !string.IsNullOrEmpty(ImageUrl) ? ImageUrl : "https://res.cloudinary.com/djwpi6z29/image/upload/v1770699551/avatar-default-user-profile-icon-social-media-vector-57234208_y8gtgs.jpg";
+    public string DisplayTitle => string.IsNullOrWhiteSpace(Title) ? "Proyecto" : Title;
+
+    [BsonIgnore]
+    public Color StatusBackgroundColor { get; set; }
+    [BsonIgnore]
+    public Color StatusTextColor { get; set; }
+    [BsonIgnore]
+    public Color StatusDotColor { get; set; }
+    [BsonIgnore]
+    public string DisplayStatus { get; set; }
+
+    public void RestoreVisuals()
+    {
+        if (IsEvaluated)
+        {
+            DisplayStatus = "Evaluado";
+            StatusBackgroundColor = Color.FromArgb("#E6F4EA");
+            StatusTextColor = Colors.Green;
+            StatusDotColor = Colors.Green;
+        }
+        else if (IsPending)
+        {
+            DisplayStatus = "En revisión";
+            StatusBackgroundColor = Color.FromArgb("#FEFce8");
+            StatusTextColor = Color.FromArgb("#B45309");
+            StatusDotColor = Color.FromArgb("#F59E0B");
+        }
+        else
+        {
+            DisplayStatus = "Activo";
+            StatusBackgroundColor = Color.FromArgb("#dbeafe");
+            StatusTextColor = Color.FromArgb("#1e40af");
+            StatusDotColor = Color.FromArgb("#197fe6");
+        }
+    }
+
     public string EvaluationDate
     {
         get

@@ -5,7 +5,7 @@
              x:Class="StudentApp.Views.TasksPage"
              Title="Mis Tareas"
              Shell.NavBarIsVisible="False"
-             BackgroundColor="#0f172a">
+             BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -19,7 +19,7 @@
             <Label Text="Tareas del Proyecto" 
                    FontSize="24" 
                    FontAttributes="Bold" 
-                   TextColor="White"/>
+                   TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}"/>
             <Label Text="Gestiona tus entregables" 
                    FontSize="14" 
                    TextColor="#94a3b8"/>
@@ -48,8 +48,8 @@
                     <DataTemplate x:DataType="models:StudentTask">
                         <Frame Margin="16,8" 
                                Padding="15" 
-                               BackgroundColor="#1e293b" 
-                               BorderColor="Transparent" 
+                               BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}" 
+                               BorderColor="Transparent"  
                                CornerRadius="10"
                                HasShadow="True">
                             <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto, Auto">
@@ -57,7 +57,7 @@
                                 <!-- Task Title -->
                                 <Label Grid.Row="0" Grid.Column="0" 
                                        Text="{Binding Title}" 
-                                       TextColor="White" 
+                                       TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" 
                                        FontSize="16" 
                                        FontAttributes="Bold"/>
 
@@ -84,7 +84,7 @@
                                 <!-- Description -->
                                 <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                                        Text="{Binding Description}" 
-                                       TextColor="#cbd5e1" 
+                                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark=#cbd5e1}" 
                                        FontSize="13" 
                                        MaxLines="2" 
                                        LineBreakMode="TailTruncation"

@@ -1,4 +1,4 @@
-﻿using StudentApp.Services;
+using StudentApp.Services;
 using StudentApp.Models;
 using StudentApp.Views;
 
@@ -52,7 +52,7 @@ public partial class MainPage : ContentPage
 
         if (string.IsNullOrEmpty(UserNameLabel.Text))
         {
-            UserNameLabel.Text = CurrentStudentName;
+            UserNameLabel.Text = GetShortName(CurrentStudentName);
             string profileImage = Preferences.Get("StudentProfileImage", string.Empty);
             if (!string.IsNullOrEmpty(profileImage))
                 ProfileImage.Source = profileImage;
@@ -63,166 +63,56 @@ public partial class MainPage : ContentPage
 
         var projects = await _mongoDBService.GetProjectsByMatricula(student.Matricula);
 
-        ProjectListView.Children.Clear();
-
         if (projects == null || projects.Count == 0)
         {
+            BindableLayout.SetItemsSource(ProjectListView, null);
             EmptyState.IsVisible = true;
             return;
         }
 
-        EmptyState.IsVisible = false;
-
-        foreach (var project in projects)
+        foreach(var p in projects)
         {
-            var card = CreateProjectCard(project);
-            ProjectListView.Children.Add(card);
+            p.RestoreVisuals();
         }
+
+        EmptyState.IsVisible = false;
+        BindableLayout.SetItemsSource(ProjectListView, projects);
     }
 
-    private View CreateProjectCard(Project project)
+    private async void OnProjectTapped(object sender, TappedEventArgs e)
     {
-        Color statusBg, statusStroke, statusText;
-        string statusLabel;
-
-        if (project.IsEvaluated)
-        {
-            statusBg = Color.FromArgb("#dcfce7");
-            statusStroke = Color.FromArgb("#22c55e");
-            statusText = Color.FromArgb("#15803d");
-            statusLabel = "Evaluado";
-        }
-        else if (project.IsPending)
-        {
-            statusBg = Color.FromArgb("#fefce8");
-            statusStroke = Color.FromArgb("#eab308");
-            statusText = Color.FromArgb("#854d0e");
-            statusLabel = "En revisión";
-        }
-        else
-        {
-            statusBg = Color.FromArgb("#dbeafe");
-            statusStroke = Color.FromArgb("#197fe6");
-            statusText = Color.FromArgb("#1e40af");
-            statusLabel = "Activo";
-        }
-
-        // Project image
-        var image = new Image 
-        { 
-            Source = project.DisplayImage,
-            Aspect = Aspect.AspectFill,
-            HeightRequest = 160
-        };
-
-        var imageBorder = new Border
-        {
-            StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = new CornerRadius(12, 12, 0, 0) },
-            StrokeThickness = 0,
-            Padding = 0,
-            Content = image
-        };
-
-        // Status badge
-        var badge = new Border
-        {
-            BackgroundColor = statusBg,
-            Stroke = statusStroke,
-            StrokeThickness = 1,
-            StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 12 },
-            Padding = new Thickness(12, 4),
-            HorizontalOptions = LayoutOptions.Start,
-            Content = new Label { Text = statusLabel, FontSize = 10, FontAttributes = FontAttributes.Bold, TextColor = statusText }
-        };
-
-        var title = new Label { Text = project.Title ?? "Proyecto", FontSize = 18, FontAttributes = FontAttributes.Bold, TextColor = Color.FromArgb("#111827") };
-
-        var scoreRow = new HorizontalStackLayout { Spacing = 16 };
-        
-        if (project.IsEvaluated)
-        {
-            scoreRow.Add(new HorizontalStackLayout
-            {
-                Spacing = 4,
-                Children =
-                {
-                    new Label { Text = "⭐", FontSize = 14 },
-                    new Label { Text = project.DisplayScore, FontSize = 13, FontAttributes = FontAttributes.Bold, TextColor = Color.FromArgb("#197fe6"), VerticalOptions = LayoutOptions.Center }
-                }
-            });
-        }
-
-        if (!string.IsNullOrEmpty(project.EvaluationDate))
-        {
-            scoreRow.Add(new HorizontalStackLayout
-            {
-                Spacing = 4,
-                Children =
-                {
-                    new Label { Text = "📅", FontSize = 14 },
-                    new Label { Text = project.EvaluationDate, FontSize = 13, TextColor = Color.FromArgb("#6b7280"), VerticalOptions = LayoutOptions.Center }
-                }
-            });
-        }
-
-        if (!string.IsNullOrEmpty(project.Cycle))
-        {
-            scoreRow.Add(new HorizontalStackLayout
-            {
-                Spacing = 4,
-                Children =
-                {
-                    new Label { Text = "📋", FontSize = 14 },
-                    new Label { Text = project.Cycle, FontSize = 13, TextColor = Color.FromArgb("#6b7280"), VerticalOptions = LayoutOptions.Center }
-                }
-            });
-        }
-
-        var content = new VerticalStackLayout
-        {
-            Spacing = 8,
-            Children = { badge, title }
-        };
-
-        if (scoreRow.Children.Count > 0)
-        {
-            content.Add(new BoxView { HeightRequest = 1, Color = Color.FromArgb("#f3f4f6"), Margin = new Thickness(0, 4) });
-            content.Add(scoreRow);
-        }
-
-        var cardBody = new VerticalStackLayout
-        {
-            Padding = new Thickness(16),
-            Children = { content }
-        };
-
-        var cardStack = new VerticalStackLayout
-        {
-            Children = { imageBorder, cardBody }
-        };
-
-        var card = new Border
-        {
-            StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 16 },
-            BackgroundColor = Colors.White,
-            Stroke = Color.FromArgb("#e5e7eb"),
-            StrokeThickness = 1,
-            Padding = 0,
-            Content = cardStack,
-            Shadow = new Shadow { Brush = Colors.Black, Opacity = 0.05f, Offset = new Point(0, 4), Radius = 20 }
-        };
-
-        // Tap the whole card to navigate
-        var tapGesture = new TapGestureRecognizer();
-        tapGesture.Tapped += async (s, e) =>
+        if (e.Parameter is Project selectedProject)
         {
             await Shell.Current.GoToAsync(nameof(ProjectDetailsPage), new Dictionary<string, object>
             {
-                { "Project", project }
+                { "Project", selectedProject }
             });
-        };
-        card.GestureRecognizers.Add(tapGesture);
+        }
+    }
 
-        return card;
+    /// <summary>
+    /// Takes a full name like "CARLOS MANUEL RIVAS ORDONEZ" and returns "Carlos Rivas"
+    /// (first name + first surname, title-cased).
+    /// </summary>
+    private static string GetShortName(string fullName)
+    {
+        if (string.IsNullOrWhiteSpace(fullName)) return "";
+        
+        var parts = fullName.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 0) return "";
+        
+        string ToTitleCase(string s) => 
+            char.ToUpper(s[0]) + s[1..].ToLower();
+        
+        if (parts.Length <= 2)
+            return string.Join(" ", parts.Select(ToTitleCase));
+        
+        // For "CARLOS MANUEL RIVAS ORDONEZ" → first name is parts[0], first surname is parts[^2]
+        // Typical Mexican name: [Nombre] [Segundo nombre] [Apellido paterno] [Apellido materno]
+        // We want: Nombre + Apellido paterno
+        string firstName = ToTitleCase(parts[0]);
+        string firstSurname = ToTitleCase(parts[^2]); // second to last = apellido paterno
+        
+        return $"{firstName} {firstSurname}";
     }
 }

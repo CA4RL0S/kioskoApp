@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:StudentApp"
              x:Class="StudentApp.Views.ProfilePage"
-             BackgroundColor="{StaticResource BackgroundLight}"
+             BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}"
              Title="Profile"
              Shell.NavBarIsVisible="False">
 
@@ -141,6 +141,50 @@
                             </VerticalStackLayout>
                         </Grid>
                     </VerticalStackLayout>
+                </Border>
+                <!-- General Section -->
+                <Label Text="GENERAL"
+                       FontSize="12"
+                       FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light=#4e7397, Dark=#94a3b8}"
+                       Margin="4, 0, 0, 8"/>
+
+                <Border BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark=#1a2633}"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 12"
+                        Margin="0, 0, 0, 24">
+                    <Grid Padding="16" ColumnDefinitions="Auto, *, Auto" RowDefinitions="Auto">
+                        <!-- Icon -->
+                        <Border Grid.Column="0"
+                                WidthRequest="40"
+                                HeightRequest="40"
+                                StrokeShape="RoundRectangle 20"
+                                StrokeThickness="0"
+                                BackgroundColor="{AppThemeBinding Light=#f0f4ff, Dark=#33312e81}"
+                                Margin="0, 0, 16, 0">
+                            <Label Text="&#xe51c;"
+                                   FontFamily="MaterialIcons"
+                                   FontSize="20"
+                                   TextColor="{AppThemeBinding Light=#6366f1, Dark=#818cf8}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"/>
+                        </Border>
+
+                        <!-- Text -->
+                        <Label Grid.Column="1"
+                               Text="Modo Oscuro"
+                               TextColor="{AppThemeBinding Light=#111921, Dark=White}"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               VerticalOptions="Center"/>
+                               
+                        <!-- Switch -->
+                        <Switch x:Name="DarkModeSwitch"
+                                Grid.Column="2"
+                                OnColor="{StaticResource Primary}"
+                                Toggled="OnDarkModeToggled"
+                                VerticalOptions="Center"/>
+                    </Grid>
                 </Border>
                 
                 <!-- Sign Out -->
