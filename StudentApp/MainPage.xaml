@@ -32,7 +32,7 @@
                     </Grid>
 
                     <!-- Section Title -->
-                    <Label Text="Mis Proyectos" FontSize="24" FontAttributes="Bold" Padding="24,8,24,8" TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" />
+                    <Label Text="Proyectos" FontSize="18" FontAttributes="Bold" Padding="24,8,24,12" TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" />
 
                     <!-- Project List via BindableLayout -->
                     <StackLayout x:Name="ProjectListView" Spacing="16" Padding="24,0">
