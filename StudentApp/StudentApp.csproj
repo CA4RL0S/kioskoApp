@@ -44,12 +44,26 @@
         <UseInterpreter>true</UseInterpreter>
 	</PropertyGroup>
 
-	<!-- iOS signing: skip for simulator, auto-sign for device -->
-	<PropertyGroup Condition="$(TargetFramework.Contains('-ios')) And $(RuntimeIdentifier.Contains('simulator'))">
-		<CodesignKey>-</CodesignKey>
-		<CodesignProvision></CodesignProvision>
-		<CodesignRequireProvisioningProfile>false</CodesignRequireProvisioningProfile>
-	</PropertyGroup>
+  <!-- ========================= -->
+  <!-- iOS Simulator (CRÍTICO) -->
+  <!-- ========================= -->
+  <PropertyGroup Condition="'$(TargetFramework)'=='net10.0-ios' And '$(RuntimeIdentifier)'=='iossimulator-arm64'">
+
+    <!-- iPhone 17 Pro Max -->
+    <_DeviceId>8F1D7FE8-4AED-4C72-9091-C2D9E98DC86E</_DeviceId>
+
+    <!-- Evita boots duplicados -->
+    <EnableHotReload>false</EnableHotReload>
+    <RunAOTCompilation>false</RunAOTCompilation>
+
+    <!-- 🔥 FIX linker / IL7000 -->
+    <MtouchLink>None</MtouchLink>
+
+    <!-- Keychain access for MSAL -->
+    <CodesignEntitlements>Platforms/iOS/Entitlements.plist</CodesignEntitlements>
+    <CodesignKey>iPhone Developer</CodesignKey>
+
+  </PropertyGroup>
 
 	<PropertyGroup Condition="$(TargetFramework.Contains('-ios')) And !$(RuntimeIdentifier.Contains('simulator'))">
 		<CodesignKey>Apple Development: carlosriv082@gmail.com (P8MBP2N372)</CodesignKey>

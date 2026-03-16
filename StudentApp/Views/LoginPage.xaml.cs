@@ -62,7 +62,17 @@ public partial class LoginPage : ContentPage
         catch (Exception ex)
         {
             var detail = ex.InnerException?.Message ?? ex.Message;
-            await DisplayAlert("Error de Conexión", $"No se pudo conectar a la base de datos.\n\nVerifique su conexión a Internet o Firewall.\n\nDetalle Técnico: {detail}", "OK");
+            string errorTitle = "Error de Inicio de Sesión";
+            string errorMessage = $"No se pudo completar el inicio de sesión.\n\nDetalle Técnico: {detail}";
+
+            if (ex.Message.Contains("database", StringComparison.OrdinalIgnoreCase) || detail.Contains("database", StringComparison.OrdinalIgnoreCase) || 
+                ex.Message.Contains("MongoDB", StringComparison.OrdinalIgnoreCase) || detail.Contains("MongoDB", StringComparison.OrdinalIgnoreCase))
+            {
+                errorTitle = "Error de Conexión";
+                errorMessage = $"No se pudo conectar a la base de datos.\n\nVerifique su conexión a Internet o Firewall.\n\nDetalle Técnico: {detail}";
+            }
+
+            await DisplayAlert(errorTitle, errorMessage, "OK");
             Debug.WriteLine($"Login Error: {ex}");
         }
         finally

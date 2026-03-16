@@ -20,20 +20,41 @@ public class MsalAuthService : IMsalAuthService
     private const string Authority = $"https://login.microsoftonline.com/{TenantId}";
     private readonly string[] Scopes = new string[] { "User.Read" };
 
+    private bool _initialized = false;
+
+    // DO NOT initialize MSAL in constructor — it crashes on iOS Simulator when TeamId is null
     public MsalAuthService()
     {
-        InitializeMsal();
     }
 
-    private void InitializeMsal()
+    private void EnsureInitialized()
     {
-        var builder = PublicClientApplicationBuilder
-            .Create(ClientId)
-            .WithAuthority(Authority)
-            .WithRedirectUri("msauth.com.carlos.kiosko.studentapp://auth")
-            .WithIosKeychainSecurityGroup("com.microsoft.adalcache");
+        if (_initialized) return;
 
-        _pca = builder.Build();
+        try
+        {
+            var builder = PublicClientApplicationBuilder
+                .Create(ClientId)
+                .WithAuthority(Authority)
+                .WithRedirectUri("msauth.com.carlos.kiosko.studentapp://auth");
+
+#if IOS
+            // Only use the Keychain Security Group on a Physical iOS Device where signing is present.
+            // Using it on the Simulator will cause a null TeamId crash in MSAL during acquire token.
+            if (DeviceInfo.DeviceType == DeviceType.Physical)
+            {
+                builder = builder.WithIosKeychainSecurityGroup("com.microsoft.adalcache");
+            }
+#endif
+
+            _pca = builder.Build();
+            _initialized = true;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error initializing MSAL: {ex.Message}");
+            throw;
+        }
     }
 
     public async Task<AuthenticationResult> SignInAsync()
@@ -41,6 +62,7 @@ public class MsalAuthService : IMsalAuthService
         AuthenticationResult result = null;
         try
         {
+            EnsureInitialized();
             // Attempt silent login first
             var accounts = await _pca.GetAccountsAsync();
             try
@@ -77,6 +99,7 @@ public class MsalAuthService : IMsalAuthService
     {
         try
         {
+            EnsureInitialized();
             var accounts = await _pca.GetAccountsAsync();
             var account = accounts.FirstOrDefault();
 
@@ -101,10 +124,18 @@ public class MsalAuthService : IMsalAuthService
 
     public async Task SignOutAsync()
     {
-        var accounts = await _pca.GetAccountsAsync();
-        foreach (var account in accounts)
+        try
         {
-            await _pca.RemoveAsync(account);
+            EnsureInitialized();
+            var accounts = await _pca.GetAccountsAsync();
+            foreach (var account in accounts)
+            {
+                await _pca.RemoveAsync(account);
+            }
+        }
+        catch(Exception ex)
+        {
+            Debug.WriteLine($"SignOut error: {ex.Message}");
         }
     }
 }

@@ -66,6 +66,9 @@
     <!-- 🔥 FIX linker / IL7000 -->
     <MtouchLink>None</MtouchLink>
 
+    <!-- Keychain access for MSAL -->
+    <CodesignEntitlements>Platforms/iOS/Entitlements.plist</CodesignEntitlements>
+
   </PropertyGroup>
 
 
