@@ -1,5 +1,10 @@
 # KioskoApp
 
+[![.NET MAUI](https://img.shields.io/badge/.NET_MAUI-512BD4?style=flat-square&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/en-us/apps/maui)
+[![React](https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-512BD4?style=flat-square&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/en-us/apps/aspnet)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+
 **KioskoApp** es un sistema integral diseñado para la gestión y evaluación de proyectos académicos o de innovación. La plataforma consta de un conjunto de aplicaciones que permiten a los administradores, estudiantes y evaluadores interactuar en un ecosistema robusto, respaldado por un backend potente y servicios en la nube.
 
 ---
