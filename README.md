@@ -1,7 +1,5 @@
 # KioskoApp
 
-![KioskoApp Logo](EvaluatorApp/Resources/AppIcon/appicon.svg)
-
 **KioskoApp** es un sistema integral diseñado para la gestión y evaluación de proyectos académicos o de innovación. La plataforma consta de un conjunto de aplicaciones que permiten a los administradores, estudiantes y evaluadores interactuar en un ecosistema robusto, respaldado por un backend potente y servicios en la nube.
 
 ---
