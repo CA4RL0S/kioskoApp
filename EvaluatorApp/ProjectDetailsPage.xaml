@@ -121,26 +121,31 @@
                  <!-- Team Section -->
                 <Grid ColumnDefinitions="*, Auto" Padding="16,12">
                      <HorizontalStackLayout Spacing="12" VerticalOptions="Center">
-                        <!-- Dynamic Avatars from Project.Members -->
+                        <!-- Dynamic Avatars from TeamMembers -->
                         <Grid>
                             <StackLayout x:Name="MemberAvatarsLayout"
-                                         BindableLayout.ItemsSource="{Binding Project.Members}"
+                                         BindableLayout.ItemsSource="{Binding TeamMembers}"
                                          Orientation="Horizontal"
                                          Spacing="-8">
                                 <BindableLayout.ItemTemplate>
                                     <DataTemplate>
                                         <Border StrokeShape="RoundRectangle 16"
-                                                HeightRequest="32" WidthRequest="32"
-                                                Stroke="White" StrokeThickness="2"
+                                                HeightRequest="36" WidthRequest="36"
+                                                Stroke="{AppThemeBinding Light=White, Dark=#1E293B}" StrokeThickness="2"
                                                 BackgroundColor="{StaticResource Primary}">
-                                            <Label Text="{Binding ., StringFormat='{0}'}"
-                                                   FontSize="10"
-                                                   FontAttributes="Bold"
-                                                   TextColor="White"
-                                                   HorizontalOptions="Center"
-                                                   VerticalOptions="Center"
-                                                   LineBreakMode="TailTruncation"
-                                                   MaxLines="1"/>
+                                            <Grid>
+                                                <!-- Profile image (if available) -->
+                                                <Image Source="{Binding ProfileImageUrl}"
+                                                       Aspect="AspectFill"
+                                                       IsVisible="{Binding HasImage}"/>
+                                                <!-- Initials fallback -->
+                                                <Label Text="{Binding Initials}"
+                                                       FontSize="12"
+                                                       FontAttributes="Bold"
+                                                       TextColor="White"
+                                                       HorizontalOptions="Center"
+                                                       VerticalOptions="Center"/>
+                                            </Grid>
                                         </Border>
                                     </DataTemplate>
                                 </BindableLayout.ItemTemplate>
@@ -148,7 +153,7 @@
                         </Grid>
                         <Label Text="Equipo Estudiantes" TextColor="{StaticResource TextSecondary}" FontSize="14" FontAttributes="Bold" VerticalOptions="Center"/>
                     </HorizontalStackLayout>
-                    <Label Grid.Column="1" Text="{Binding Project.Members.Count, StringFormat='{0} miembros'}" TextColor="{StaticResource Primary}" FontSize="14" FontAttributes="Bold" VerticalOptions="Center"/>
+                    <Label Grid.Column="1" Text="{Binding TeamMembers.Count, StringFormat='{0} miembros'}" TextColor="{StaticResource Primary}" FontSize="14" FontAttributes="Bold" VerticalOptions="Center"/>
                 </Grid>
 
                  <!-- Abstract -->

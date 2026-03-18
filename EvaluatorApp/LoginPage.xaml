@@ -8,148 +8,132 @@
              BackgroundColor="#0F172A">
 
     <ScrollView Orientation="Vertical" VerticalScrollBarVisibility="Never">
-        <Grid VerticalOptions="Center" Padding="24" MinimumHeightRequest="700">
+        <Grid VerticalOptions="Center" Padding="40,0" MinimumHeightRequest="700">
 
-            <VerticalStackLayout Spacing="32" MaximumWidthRequest="420" HorizontalOptions="Center" VerticalOptions="Center">
+            <VerticalStackLayout Spacing="36" HorizontalOptions="Fill" VerticalOptions="Center">
 
-                <!-- Logo Section -->
-                <VerticalStackLayout Spacing="12" HorizontalOptions="Center" Margin="0,0,0,8">
-                    <!-- Glowing Icon -->
-                    <Border StrokeThickness="0"
-                            BackgroundColor="#1E293B"
-                            StrokeShape="RoundRectangle 24"
-                            HeightRequest="80" WidthRequest="80"
-                            HorizontalOptions="Center">
-                        <Border.Shadow>
-                            <Shadow Brush="{StaticResource Primary}" Opacity="0.3" Radius="30" Offset="0,0"/>
-                        </Border.Shadow>
-                        <Label Text="school"
-                               FontFamily="MaterialIcons"
-                               FontSize="40"
-                               TextColor="{StaticResource Primary}"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center"/>
-                    </Border>
-
-                    <Label Text="Kiosko Evaluadores"
-                           FontSize="28"
+                <!-- Logo + Title -->
+                <VerticalStackLayout Spacing="8" HorizontalOptions="Center" Margin="0,0,0,12">
+                    <!-- App Logo -->
+                    <Image Source="appicon"
+                           HeightRequest="72"
+                           WidthRequest="72"
+                           HorizontalOptions="Center"
+                           Margin="0,0,0,4"/>
+                    <Label Text="Kiosko"
+                           FontSize="36"
                            FontAttributes="Bold"
                            TextColor="White"
                            HorizontalTextAlignment="Center"/>
                     <Label Text="Plataforma de evaluación académica"
-                           FontSize="14"
+                           FontSize="15"
                            TextColor="#94A3B8"
                            HorizontalTextAlignment="Center"/>
                 </VerticalStackLayout>
 
-                <!-- Form Card -->
-                <Border StrokeThickness="1"
-                        Stroke="#1E293B"
-                        BackgroundColor="#1E293B"
-                        StrokeShape="RoundRectangle 20"
-                        Padding="24,28">
-                    <Border.Shadow>
-                        <Shadow Brush="Black" Opacity="0.3" Radius="20" Offset="0,8"/>
-                    </Border.Shadow>
+                <!-- Form -->
+                <VerticalStackLayout Spacing="20" HorizontalOptions="Fill">
 
-                    <VerticalStackLayout Spacing="20">
-
-                        <!-- Email Field -->
-                        <VerticalStackLayout Spacing="8">
-                            <Label Text="Correo Institucional"
-                                   FontSize="13"
-                                   FontAttributes="Bold"
-                                   TextColor="#CBD5E1"/>
-                            <Border Stroke="#334155"
-                                    StrokeShape="RoundRectangle 12"
-                                    BackgroundColor="#0F172A"
-                                    Padding="4,0">
-                                <Grid ColumnDefinitions="44, *">
-                                    <Label Text="mail"
-                                           FontFamily="MaterialIcons"
-                                           FontSize="20"
-                                           TextColor="#64748B"
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center"/>
-                                    <Entry Grid.Column="1"
-                                           x:Name="EmailEntry"
-                                           Placeholder="usuario@institucion.edu"
-                                           Keyboard="Email"
-                                           HeightRequest="50"
-                                           TextColor="White"
-                                           PlaceholderColor="#475569"
-                                           BackgroundColor="Transparent"/>
-                                </Grid>
-                            </Border>
-                        </VerticalStackLayout>
-
-                        <!-- Password Field -->
-                        <VerticalStackLayout Spacing="8">
-                            <Label Text="Contraseña"
-                                   FontSize="13"
-                                   FontAttributes="Bold"
-                                   TextColor="#CBD5E1"/>
-                            <Border Stroke="#334155"
-                                    StrokeShape="RoundRectangle 12"
-                                    BackgroundColor="#0F172A"
-                                    Padding="4,0">
-                                <Grid ColumnDefinitions="44, *">
-                                    <Label Text="lock"
-                                           FontFamily="MaterialIcons"
-                                           FontSize="20"
-                                           TextColor="#64748B"
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center"/>
-                                    <Entry Grid.Column="1"
-                                           x:Name="PasswordEntry"
-                                           Placeholder="••••••••"
-                                           IsPassword="True"
-                                           HeightRequest="50"
-                                           TextColor="White"
-                                           PlaceholderColor="#475569"
-                                           BackgroundColor="Transparent"/>
-                                </Grid>
-                            </Border>
-                        </VerticalStackLayout>
-
-                        <!-- Login Button with Loading Spinner -->
-                        <Grid HeightRequest="56" Margin="0,4,0,0">
-                            <Button x:Name="LoginBtn"
-                                    Text="Iniciar Sesión"
-                                    Clicked="OnLoginClicked"
-                                    BackgroundColor="{StaticResource Primary}"
-                                    TextColor="White"
-                                    FontAttributes="Bold"
-                                    FontSize="16"
-                                    CornerRadius="12"
-                                    HeightRequest="56"/>
-
-                            <!-- Loading overlay (hidden by default) -->
-                            <Border x:Name="LoadingOverlay"
-                                    IsVisible="False"
-                                    StrokeThickness="0"
-                                    BackgroundColor="{StaticResource Primary}"
-                                    StrokeShape="RoundRectangle 12"
-                                    HeightRequest="56"
-                                    InputTransparent="False">
-                                <HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="12">
-                                    <ActivityIndicator IsRunning="True" Color="White" HeightRequest="24" WidthRequest="24"/>
-                                    <Label Text="Conectando..." TextColor="White" FontSize="16" FontAttributes="Bold" VerticalOptions="Center"/>
-                                </HorizontalStackLayout>
-                            </Border>
-                        </Grid>
-
+                    <!-- Email -->
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Correo Institucional"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#CBD5E1"/>
+                        <Border Stroke="#334155"
+                                StrokeShape="RoundRectangle 12"
+                                BackgroundColor="#1E293B"
+                                StrokeThickness="1"
+                                Padding="16,4"
+                                HeightRequest="52">
+                            <Entry x:Name="EmailEntry"
+                                   Placeholder="usuario@institucion.edu"
+                                   Keyboard="Email"
+                                   TextColor="White"
+                                   PlaceholderColor="#475569"
+                                   BackgroundColor="Transparent"
+                                   FontSize="16"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Fill"/>
+                        </Border>
                     </VerticalStackLayout>
-                </Border>
+
+                    <!-- Password -->
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Contraseña"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#CBD5E1"/>
+                        <Border Stroke="#334155"
+                                StrokeShape="RoundRectangle 12"
+                                BackgroundColor="#1E293B"
+                                StrokeThickness="1"
+                                Padding="16,4"
+                                HeightRequest="52">
+                            <Grid ColumnDefinitions="*, Auto" HorizontalOptions="Fill">
+                                <Entry x:Name="PasswordEntry"
+                                       Placeholder="Ingresa tu contraseña"
+                                       IsPassword="True"
+                                       TextColor="White"
+                                       PlaceholderColor="#475569"
+                                       BackgroundColor="Transparent"
+                                       FontSize="16"
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="Fill"/>
+                                <ImageButton Grid.Column="1"
+                                             x:Name="TogglePasswordBtn"
+                                             Clicked="OnTogglePassword"
+                                             BackgroundColor="Transparent"
+                                             HeightRequest="24"
+                                             WidthRequest="24"
+                                             VerticalOptions="Center"
+                                             Margin="0,0,8,0"
+                                             Opacity="0.7">
+                                    <ImageButton.Source>
+                                        <FontImageSource FontFamily="MaterialIcons"
+                                                         Glyph="visibility_off"
+                                                         Color="#94A3B8"
+                                                         Size="20"/>
+                                    </ImageButton.Source>
+                                </ImageButton>
+                            </Grid>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Login Button -->
+                    <Grid HeightRequest="52" Margin="0,8,0,0">
+                        <Button x:Name="LoginBtn"
+                                Text="Iniciar Sesión"
+                                Clicked="OnLoginClicked"
+                                BackgroundColor="{StaticResource Primary}"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                FontSize="17"
+                                CornerRadius="12"
+                                HeightRequest="52"/>
+
+                        <Border x:Name="LoadingOverlay"
+                                IsVisible="False"
+                                StrokeThickness="0"
+                                BackgroundColor="{StaticResource Primary}"
+                                StrokeShape="RoundRectangle 12"
+                                HeightRequest="52"
+                                InputTransparent="False">
+                            <HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="12">
+                                <ActivityIndicator IsRunning="True" Color="White" HeightRequest="22" WidthRequest="22"/>
+                                <Label Text="Conectando..." TextColor="White" FontSize="17" FontAttributes="Bold" VerticalOptions="Center"/>
+                            </HorizontalStackLayout>
+                        </Border>
+                    </Grid>
+                </VerticalStackLayout>
 
                 <!-- Footer -->
                 <VerticalStackLayout Spacing="16" HorizontalOptions="Center">
-                    <!-- Sign Up -->
-                    <Label HorizontalOptions="Center" FontSize="14" TextColor="#64748B">
+                    <Label HorizontalOptions="Center" FontSize="15" TextColor="#64748B">
                         <Label.FormattedText>
                             <FormattedString>
                                 <Span Text="¿No tienes cuenta? " />
-                                <Span Text="Regístrate aquí"
+                                <Span Text="Regístrate"
                                       TextColor="{StaticResource Primary}"
                                       FontAttributes="Bold">
                                     <Span.GestureRecognizers>
@@ -160,11 +144,7 @@
                         </Label.FormattedText>
                     </Label>
 
-                    <HorizontalStackLayout Spacing="8" HorizontalOptions="Center" Opacity="0.4">
-                        <BoxView Color="#475569" HeightRequest="4" WidthRequest="4" CornerRadius="2" VerticalOptions="Center"/>
-                        <Label Text="Versión 2.4.0" FontSize="11" TextColor="#475569"/>
-                        <BoxView Color="#475569" HeightRequest="4" WidthRequest="4" CornerRadius="2" VerticalOptions="Center"/>
-                    </HorizontalStackLayout>
+                    <Label Text="v2.4.0" FontSize="12" TextColor="#334155" HorizontalOptions="Center" Opacity="0.6"/>
                 </VerticalStackLayout>
             </VerticalStackLayout>
         </Grid>

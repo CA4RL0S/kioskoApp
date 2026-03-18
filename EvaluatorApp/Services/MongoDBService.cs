@@ -17,6 +17,7 @@ public interface IMongoDBService
     Task UpdateUserProfileImage(string userId, string imageUrl);
     Task<List<Activity>> GetActivities(string userId);
     Task CreateActivity(Activity activity);
+    Task<List<User>> GetUsers();
 }
 
 public class MongoDBService : IMongoDBService
@@ -232,4 +233,9 @@ public class MongoDBService : IMongoDBService
     }
 
 
+    public async Task<List<User>> GetUsers()
+    {
+        await Init();
+        return await _usersCollection.Find(_ => true).ToListAsync();
+    }
 }

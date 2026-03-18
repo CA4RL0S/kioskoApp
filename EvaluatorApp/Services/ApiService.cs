@@ -146,4 +146,18 @@ public class ApiService : IMongoDBService
             System.Diagnostics.Debug.WriteLine($"[API] Notification error: {ex.Message}");
         }
     }
+    public async Task<List<User>> GetUsers()
+    {
+        try
+        {
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var users = await _httpClient.GetFromJsonAsync<List<User>>("/api/users", options);
+            return users ?? new List<User>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[API] Error getting users: {ex.Message}");
+            return new List<User>();
+        }
+    }
 }

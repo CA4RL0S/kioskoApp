@@ -5,12 +5,43 @@ namespace EvaluatorApp;
 public partial class LoginPage : ContentPage
 {
     private readonly IMongoDBService _mongoDBService;
+    private bool _isPasswordVisible = false;
 
 	public LoginPage(IMongoDBService mongoDBService)
 	{
 		InitializeComponent();
         _mongoDBService = mongoDBService;
+
+        // Remove native iOS border from Entry controls
+        RemoveEntryBorders();
 	}
+
+    private void RemoveEntryBorders()
+    {
+        Microsoft.Maui.Handlers.EntryHandler.Mapper.AppendToMapping("NoBorder", (handler, view) =>
+        {
+#if IOS || MACCATALYST
+            handler.PlatformView.BorderStyle = UIKit.UITextBorderStyle.None;
+#elif ANDROID
+            handler.PlatformView.SetBackgroundColor(Android.Graphics.Color.Transparent);
+#endif
+        });
+    }
+
+    private void OnTogglePassword(object sender, EventArgs e)
+    {
+        _isPasswordVisible = !_isPasswordVisible;
+        PasswordEntry.IsPassword = !_isPasswordVisible;
+
+        // Update icon
+        TogglePasswordBtn.Source = new FontImageSource
+        {
+            FontFamily = "MaterialIcons",
+            Glyph = _isPasswordVisible ? "visibility" : "visibility_off",
+            Color = Color.FromArgb("#94A3B8"),
+            Size = 20
+        };
+    }
 
     private async void OnLoginClicked(object sender, EventArgs e)
     {
@@ -32,7 +63,6 @@ public partial class LoginPage : ContentPage
              var user = await _mongoDBService.Login(email, password);
              if (user != null)
              {
-                 // Store session data
                  Preferences.Set("UserFullName", user.FullName ?? user.Username);
                  Preferences.Set("UserEmail", user.Email);
                  Preferences.Set("UserRole", user.Role);
@@ -55,7 +85,6 @@ public partial class LoginPage : ContentPage
         }
         finally
         {
-            // Hide loading state
             LoadingOverlay.IsVisible = false;
             LoginBtn.IsVisible = true;
         }

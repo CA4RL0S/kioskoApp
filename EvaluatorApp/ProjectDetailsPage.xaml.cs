@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using EvaluatorApp.Models;
 using EvaluatorApp.Services;
@@ -9,6 +10,10 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
 {
     private readonly ProjectRepository _repository;
     private readonly ApiService _apiService;
+    private readonly IMongoDBService _mongoService;
+
+    // Team Members with profile photos
+    public ObservableCollection<TeamMemberInfo> TeamMembers { get; set; } = new();
     
     private string _comments;
     public string Comments
@@ -178,6 +183,7 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
         _repository = repository;
         _videoService = videoService;
         _apiService = mongoService as ApiService;
+        _mongoService = mongoService;
         
         ToggleDownloadCommand = new Command(async () => await ToggleDownload());
         
@@ -188,6 +194,36 @@ public partial class ProjectDetailsPage : ContentPage, INotifyPropertyChanged
     {
         base.OnAppearing();
         CheckVideoStatus();
+        _ = LoadTeamMembers();
+    }
+
+    private async Task LoadTeamMembers()
+    {
+        try
+        {
+            if (Project?.Members == null || Project.Members.Count == 0) return;
+
+            var allUsers = await _mongoService.GetUsers();
+            TeamMembers.Clear();
+
+            foreach (var matricula in Project.Members)
+            {
+                var user = allUsers.FirstOrDefault(u =>
+                    u.Username != null && u.Username.Equals(matricula, StringComparison.OrdinalIgnoreCase));
+
+                TeamMembers.Add(new TeamMemberInfo
+                {
+                    Matricula = matricula,
+                    Name = user?.FullName ?? matricula,
+                    ProfileImageUrl = user?.ProfileImageUrl ?? string.Empty,
+                    HasImage = !string.IsNullOrEmpty(user?.ProfileImageUrl)
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[TeamMembers] Error: {ex.Message}");
+        }
     }
 
     private void CheckVideoStatus()
