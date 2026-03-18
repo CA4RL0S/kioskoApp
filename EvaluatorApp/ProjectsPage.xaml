@@ -10,7 +10,7 @@
 
     <Grid BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
         <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
-            <ScrollView VerticalScrollBarVisibility="Never" BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
+            <ScrollView x:Name="ProjectsScrollView" VerticalScrollBarVisibility="Never" Scrolled="OnScrollViewScrolled" BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
                 <VerticalStackLayout BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
                     
                     <!-- Header Section -->

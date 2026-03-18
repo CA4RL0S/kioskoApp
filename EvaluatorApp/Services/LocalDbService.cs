@@ -26,26 +26,30 @@ public class LocalDbService
         var projects = await _connection.Table<Project>().ToListAsync();
         
         // Deserialize complex fields since SQLite doesn't store lists
-        foreach (var p in projects)
+        // Run on background thread to avoid blocking UI
+        await Task.Run(() =>
         {
-            if (!string.IsNullOrEmpty(p.EvaluationsJson))
+            foreach (var p in projects)
             {
-                try { p.Evaluations = JsonSerializer.Deserialize<List<Evaluation>>(p.EvaluationsJson) ?? new List<Evaluation>(); }
-                catch { p.Evaluations = new List<Evaluation>(); }
+                if (!string.IsNullOrEmpty(p.EvaluationsJson))
+                {
+                    try { p.Evaluations = JsonSerializer.Deserialize<List<Evaluation>>(p.EvaluationsJson) ?? new List<Evaluation>(); }
+                    catch { p.Evaluations = new List<Evaluation>(); }
+                }
+                if (!string.IsNullOrEmpty(p.MembersJson))
+                {
+                    try { p.Members = JsonSerializer.Deserialize<List<string>>(p.MembersJson) ?? new List<string>(); }
+                    catch { p.Members = new List<string>(); }
+                }
+                if (!string.IsNullOrEmpty(p.VideosJson))
+                {
+                    try { p.Videos = JsonSerializer.Deserialize<List<Video>>(p.VideosJson) ?? new List<Video>(); }
+                    catch { p.Videos = new List<Video>(); }
+                }
+                
+                p.RestoreVisuals();
             }
-            if (!string.IsNullOrEmpty(p.MembersJson))
-            {
-                try { p.Members = JsonSerializer.Deserialize<List<string>>(p.MembersJson) ?? new List<string>(); }
-                catch { p.Members = new List<string>(); }
-            }
-            if (!string.IsNullOrEmpty(p.VideosJson))
-            {
-                try { p.Videos = JsonSerializer.Deserialize<List<Video>>(p.VideosJson) ?? new List<Video>(); }
-                catch { p.Videos = new List<Video>(); }
-            }
-            
-            p.RestoreVisuals();
-        }
+        });
         
         return projects;
     }
@@ -58,12 +62,16 @@ public class LocalDbService
     public async Task SaveProjects(List<Project> projects)
     {
         // Serialize complex fields before saving
-        foreach (var p in projects)
+        // Run on background thread to avoid blocking UI
+        await Task.Run(() =>
         {
-            p.EvaluationsJson = JsonSerializer.Serialize(p.Evaluations);
-            p.MembersJson = JsonSerializer.Serialize(p.Members);
-            p.VideosJson = JsonSerializer.Serialize(p.Videos);
-        }
+            foreach (var p in projects)
+            {
+                p.EvaluationsJson = JsonSerializer.Serialize(p.Evaluations);
+                p.MembersJson = JsonSerializer.Serialize(p.Members);
+                p.VideosJson = JsonSerializer.Serialize(p.Videos);
+            }
+        });
         
         await _connection.InsertAllAsync(projects, "OR REPLACE");
     }

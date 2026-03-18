@@ -42,6 +42,11 @@
     </TargetPlatformMinVersion>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <RunAOTCompilation>true</RunAOTCompilation>
+    <PublishTrimmed>true</PublishTrimmed>
+  </PropertyGroup>
+
   <!-- ========================= -->
   <!-- iOS Dispositivo Físico   -->
   <!-- ========================= -->

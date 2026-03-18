@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using EvaluatorApp.Components;
 using EvaluatorApp.Models;
 using EvaluatorApp.Services;
 using CommunityToolkit.Maui.Alerts;
@@ -12,7 +13,19 @@ namespace EvaluatorApp;
 public partial class ProjectsPage : ContentPage, INotifyPropertyChanged
 {
     private readonly ProjectRepository _repository;
-	public ObservableCollection<Project> Projects { get; set; }
+    private ObservableCollection<Project> _projects = new();
+    public ObservableCollection<Project> Projects
+    {
+        get => _projects;
+        set
+        {
+            if (_projects != value)
+            {
+                _projects = value;
+                OnPropertyChanged();
+            }
+        }
+    }
 
     private bool _isRefreshing;
     public bool IsRefreshing
@@ -81,12 +94,17 @@ public partial class ProjectsPage : ContentPage, INotifyPropertyChanged
         {
              _ = _repository.SyncPendingEvaluations(); // Fire and forget
         }
+
+        // Trigger initial auto-play: play the first video in the list
+        _initialAutoPlayDone = false;
+        Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(800), () => TriggerInitialAutoPlay());
     }
 
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
         Connectivity.Current.ConnectivityChanged -= OnConnectivityChanged;
+        PauseAllVideos();
     }
 
     private void OnConnectivityChanged(object sender, ConnectivityChangedEventArgs e)
@@ -118,11 +136,6 @@ public partial class ProjectsPage : ContentPage, INotifyPropertyChanged
 
             _allProjects = projects; // Store full list
             ApplyFilter(_currentFilter); // Apply current filter to update view
-            
-            _allProjects = projects; // Store full list
-            ApplyFilter(_currentFilter); // Apply current filter to update view
-            
-            // Toast removed in favor of persistent banner
         }
         catch (Exception ex)
         {
@@ -168,7 +181,6 @@ public partial class ProjectsPage : ContentPage, INotifyPropertyChanged
 
     private void ApplyFilter(string filter)
     {
-        Projects.Clear();
         IEnumerable<Project> filtered = _allProjects;
 
         switch (filter)
@@ -196,6 +208,7 @@ public partial class ProjectsPage : ContentPage, INotifyPropertyChanged
                 break;
         }
 
+        var newProjects = new List<Project>();
         foreach (var p in filtered)
         {
             // Apply search text filter
@@ -207,8 +220,10 @@ public partial class ProjectsPage : ContentPage, INotifyPropertyChanged
                                (p.Members?.Any(m => m.ToLowerInvariant().Contains(search)) == true);
                 if (!matches) continue;
             }
-            Projects.Add(p);
+            newProjects.Add(p);
         }
+
+        Projects = new ObservableCollection<Project>(newProjects);
     }
 
     private void UpdateFilterVisuals(Button selectedBtn)
@@ -252,6 +267,136 @@ public partial class ProjectsPage : ContentPage, INotifyPropertyChanged
                 { "Project", selectedProject }
             };
             await Shell.Current.GoToAsync(nameof(ProjectDetailsPage), navigationParameter);
+        }
+    }
+
+    // --- Auto-Play on Scroll Logic ---
+    private ProjectCard _currentlyPlayingCard;
+    private bool _initialAutoPlayDone = false;
+
+    private void OnScrollViewScrolled(object sender, ScrolledEventArgs e)
+    {
+        UpdateAutoPlay();
+    }
+
+    private void TriggerInitialAutoPlay()
+    {
+        // On page load: play the first video in the list regardless of position
+        _initialAutoPlayDone = true;
+
+        foreach (var card in ProjectCard.ActiveCards)
+        {
+            if (!card.HasVideo) continue;
+            
+            card.PlayVideo();
+            _currentlyPlayingCard = card;
+            return; // Only play the first one
+        }
+    }
+
+    private void UpdateAutoPlay()
+    {
+        try
+        {
+            // Get the viewport's visible area in screen coordinates
+            var viewportHeight = ProjectsScrollView.Height;
+            if (viewportHeight <= 0) return;
+
+            // Find the 35% vertical mark of the screen (slightly above center)
+            var viewportCenter = viewportHeight * 0.35;
+            
+            // Only cards whose center is within this pixels distance of the 35% mark can play
+            // Shrunk from 0.35 to 0.20 to prevent videos from playing when they are completely out of the center area,
+            // even if they are the closest *video* available.
+            var maxDistanceAllowed = viewportHeight * 0.20;
+
+            ProjectCard bestCard = null;
+            double bestDistance = double.MaxValue;
+
+            foreach (var card in ProjectCard.ActiveCards)
+            {
+                if (!card.HasVideo) continue;
+
+                // Get card's position relative to the ScrollView (screen-relative)
+                var cardBounds = GetCardBoundsInScrollView(card);
+                if (cardBounds == null) continue;
+
+                // Calculate the exact center of this card
+                double cardCenter = cardBounds.Value.top + (card.CardHeight / 2.0);
+
+                // Calculate distance from card's center to screen's center
+                double distanceToCenter = Math.Abs(viewportCenter - cardCenter);
+
+                // The card MUST be near the middle, and it must be the closest one found so far
+                if (distanceToCenter < maxDistanceAllowed && distanceToCenter < bestDistance)
+                {
+                    bestDistance = distanceToCenter;
+                    bestCard = card;
+                }
+            }
+
+            if (bestCard != null && bestCard != _currentlyPlayingCard)
+            {
+                _currentlyPlayingCard?.PauseVideo();
+                bestCard.PlayVideo();
+                _currentlyPlayingCard = bestCard;
+            }
+            else if (bestCard == null && _currentlyPlayingCard != null)
+            {
+                _currentlyPlayingCard.PauseVideo();
+                _currentlyPlayingCard = null;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[AutoPlay] Error: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Gets the card's top/bottom position relative to the ScrollView's visible area.
+    /// </summary>
+    private (double top, double bottom)? GetCardBoundsInScrollView(ProjectCard card)
+    {
+        try
+        {
+            // Walk up from card to ScrollView, accumulating Y offset
+            double yInContent = 0;
+            var current = card as VisualElement;
+
+            while (current != null && current != ProjectsScrollView)
+            {
+                yInContent += current.Y;
+                current = current.Parent as VisualElement;
+            }
+
+            if (current == null) return null;
+
+            // Convert content-Y to viewport-Y by subtracting scroll offset
+            double topInViewport = yInContent - ProjectsScrollView.ScrollY;
+            double bottomInViewport = topInViewport + card.Height;
+
+            return (topInViewport, bottomInViewport);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private void PauseAllVideos()
+    {
+        try
+        {
+            foreach (var card in ProjectCard.ActiveCards)
+            {
+                card.PauseVideo();
+            }
+            _currentlyPlayingCard = null;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[AutoPlay] PauseAll error: {ex.Message}");
         }
     }
 

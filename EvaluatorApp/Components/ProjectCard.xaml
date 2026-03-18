@@ -1,90 +1,114 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="EvaluatorApp.Components.ProjectCard">
+
     <Border StrokeThickness="0" 
             BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource SurfaceDark}}" 
             StrokeShape="RoundRectangle 16">
         <Border.Shadow>
-            <Shadow Brush="Black" Opacity="0.04" Radius="8" Offset="0,2"/>
+            <Shadow Brush="Black" Opacity="0.06" Radius="10" Offset="0,3"/>
         </Border.Shadow>
-        <Grid RowDefinitions="Auto, Auto, Auto" Padding="16">
-            
-            <!-- Top Row: Image + Title/Date -->
-            <Grid Grid.Row="0" ColumnDefinitions="64, *" ColumnSpacing="16">
-                <Border Grid.Column="0" 
-                        HeightRequest="64" 
-                        WidthRequest="64" 
-                        StrokeShape="RoundRectangle 12" 
-                        StrokeThickness="0">
-                    <Image Source="{Binding ImageUrl}" Aspect="AspectFill" BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}"/>
+
+        <Grid RowDefinitions="200, Auto">
+
+            <!-- Video / Image Area (16:9 aspect, top rounded corners) -->
+            <Grid Grid.Row="0">
+                <!-- Fallback Image (always rendered behind) -->
+                <Image x:Name="ThumbnailImage"
+                       Source="{Binding ImageUrl}" 
+                       Aspect="AspectFill" 
+                       BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}"/>
+
+                <!-- Video Player (only visible if project has video) -->
+                <toolkit:MediaElement x:Name="VideoPlayer"
+                                      IsVisible="False"
+                                      ShouldAutoPlay="False"
+                                      ShouldShowPlaybackControls="False"
+                                      ShouldMute="True"
+                                      ShouldLoopPlayback="True"
+                                      Aspect="AspectFill"
+                                      BackgroundColor="Black"/>
+
+                <!-- Video duration badge (bottom right) -->
+                <Border x:Name="VideoBadge"
+                        IsVisible="False"
+                        StrokeThickness="0"
+                        BackgroundColor="#CC000000"
+                        StrokeShape="RoundRectangle 6"
+                        Padding="6,3"
+                        HorizontalOptions="End"
+                        VerticalOptions="End"
+                        Margin="0,0,8,8">
+                    <HorizontalStackLayout Spacing="4">
+                        <Label Text="videocam" 
+                               FontFamily="MaterialIcons" 
+                               FontSize="12" 
+                               TextColor="White" 
+                               VerticalOptions="Center"/>
+                        <Label Text="Video" 
+                               FontSize="10" 
+                               TextColor="White" 
+                               FontAttributes="Bold"
+                               VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
                 </Border>
-                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+            </Grid>
+
+            <!-- Info Area (below the video) -->
+            <Grid Grid.Row="1" 
+                  ColumnDefinitions="*, Auto" 
+                  Padding="12,10,12,12" 
+                  ColumnSpacing="8">
+
+                <!-- Left: Title + Status -->
+                <VerticalStackLayout Grid.Column="0" 
+                                     VerticalOptions="Center" 
+                                     Spacing="4">
                     <Label Text="{Binding Title}" 
                            TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" 
                            FontAttributes="Bold" 
-                           FontSize="16" 
+                           FontSize="15" 
                            LineBreakMode="TailTruncation" 
                            MaxLines="2"/>
-                    <HorizontalStackLayout Spacing="4" Margin="0,6,0,0">
-                        <Label Text="📅" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSubDark}}"/>
-                        <Label Text="{Binding Cycle}" 
-                               TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSubDark}}" 
-                               FontSize="13" 
-                               FontAttributes="None" 
-                               TextTransform="Uppercase"/>
-                    </HorizontalStackLayout>
-                </VerticalStackLayout>
-            </Grid>
 
-            <!-- Description -->
-            <Label Grid.Row="1" 
-                   Text="{Binding Description}" 
-                   TextColor="{AppThemeBinding Light=#4b5563, Dark={StaticResource TextSubDark}}" 
-                   FontSize="14" 
-                   Margin="0,12,0,16" 
-                   LineBreakMode="TailTruncation" 
-                   MaxLines="2"/>
-
-            <!-- Footer: Status and Action -->
-            <Grid Grid.Row="2" ColumnDefinitions="Auto, *">
-                <Border Grid.Column="0" 
-                        StrokeThickness="0" 
-                        BackgroundColor="{Binding StatusBackgroundColor}" 
-                        StrokeShape="RoundRectangle 999" 
-                        Padding="10,4">
-                    <HorizontalStackLayout Spacing="8">
-                        <BoxView Color="{Binding StatusColor}" HeightRequest="8" WidthRequest="8" CornerRadius="4" VerticalOptions="Center"/>
+                    <HorizontalStackLayout Spacing="6">
+                        <!-- Status Dot + Text -->
+                        <BoxView Color="{Binding StatusColor}" 
+                                 HeightRequest="8" 
+                                 WidthRequest="8" 
+                                 CornerRadius="4"
+                                 VerticalOptions="Center"/>
                         <Label Text="{Binding StatusText}" 
                                TextColor="{Binding StatusTextColor}" 
-                               FontSize="13" 
-                               FontAttributes="Bold"/>
+                               FontSize="12" 
+                               FontAttributes="Bold"
+                               VerticalOptions="Center"/>
                     </HorizontalStackLayout>
-                </Border>
-                
-                <!-- Score if Evaluated -->
+                </VerticalStackLayout>
+
+                <!-- Right: Score (only if evaluated) -->
                 <Border Grid.Column="1" 
                         IsVisible="{Binding IsEvaluated}"
-                        HorizontalOptions="End"
+                        VerticalOptions="Center"
                         StrokeThickness="0"
                         BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray800}}"
-                        StrokeShape="RoundRectangle 8"
-                        Padding="8,2">
-                        <HorizontalStackLayout Spacing="4">
-                            <Label Text="⭐" FontSize="13" VerticalOptions="Center"/>
-                            <Label Text="{Binding Score}" FontAttributes="Bold" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" VerticalOptions="Center"/>
-                            <Label Text="/70" FontSize="11" TextColor="{StaticResource Gray400}" VerticalOptions="Center"/>
-                        </HorizontalStackLayout>
+                        StrokeShape="RoundRectangle 10"
+                        Padding="10,6">
+                    <HorizontalStackLayout Spacing="4">
+                        <Label Text="⭐" FontSize="14" VerticalOptions="Center"/>
+                        <Label Text="{Binding Score}" 
+                               FontAttributes="Bold" 
+                               FontSize="14" 
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" 
+                               VerticalOptions="Center"/>
+                        <Label Text="/70" 
+                               FontSize="11" 
+                               TextColor="{StaticResource Gray400}" 
+                               VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
                 </Border>
-                
-                    <!-- Arrow if Pending -->
-                <Label Grid.Column="1" 
-                        IsVisible="{Binding IsPending}"
-                        Text=">" 
-                        FontSize="20" 
-                        TextColor="{StaticResource Gray300}" 
-                        HorizontalOptions="End" 
-                        VerticalOptions="Center"/>
             </Grid>
         </Grid>
     </Border>
