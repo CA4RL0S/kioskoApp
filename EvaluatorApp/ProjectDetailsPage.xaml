@@ -67,7 +67,7 @@
                                     Source="{Binding VideoSource}"
                                     Aspect="AspectFill"
                                     ShouldShowPlaybackControls="True"
-                                    ShouldAutoPlay="False"
+                                    ShouldAutoPlay="True"
                                     BackgroundColor="Black"/>
                                 
                                 <Border VerticalOptions="End" HorizontalOptions="Start" Margin="12" BackgroundColor="#33FFFFFF" StrokeThickness="1" Stroke="White" StrokeShape="RoundRectangle 4" Padding="8,4" InputTransparent="True">
@@ -121,21 +121,34 @@
                  <!-- Team Section -->
                 <Grid ColumnDefinitions="*, Auto" Padding="16,12">
                      <HorizontalStackLayout Spacing="12" VerticalOptions="Center">
-                        <!-- Avatars (Keep simulated for now as we don't have student data) -->
-                        <Grid WidthRequest="80">
-                             <Border StrokeShape="RoundRectangle 16" HeightRequest="32" WidthRequest="32" Stroke="White" StrokeThickness="2" HorizontalOptions="Start" Margin="0">
-                                 <Image Source="https://lh3.googleusercontent.com/aida-public/AB6AXuB-Cw4hUhJ4lJOxxyB3QpVbOTtQxMroYWm-iGgHq7rSuQMM7WT9Xmm_IKqrhiJqM7f4VEhlFyeE745fALKWzZq2wETGS4NmO3uE1eucqDwbJuqaQRd6Jevg1XCX122dvKztrfZIAgEc1Wj90CHlIk1SceVWM75La0xPCd_b8VGH6NfSqFJqd7rwN7jVyGpfrQr8fQk4ZMqT2258Ty-dbIbJlaHKTcUDtPlFbyhYS0zit2byO-kjKX3iXLXBjI6qArb-2QBNqX37FpY" Aspect="AspectFill"/>
-                             </Border>
-                             <Border StrokeShape="RoundRectangle 16" HeightRequest="32" WidthRequest="32" Stroke="White" StrokeThickness="2" HorizontalOptions="Start" Margin="24,0,0,0">
-                                 <Image Source="https://lh3.googleusercontent.com/aida-public/AB6AXuAtSFWqD8Mq2wwYGVcAkNX3s0m3ER0i8kD_IiayoKjD2xLU5OyUt_8pfG8V3YCH1KAAVG3FRlCbFAQkKgeTz10xYQzKUDK_mJ_ys-wSxdD6XXhKXigKBHyYjhunNDuczhazhYPyECv-avYEktq4K0Z6_VFReiV4iCjhdQluS9XKxMHwoD2ID5RBIUOOb5WjQ2zlFSqM7zvqrBZW4aDiy2y_BieMwRZJXmemiDhd0iQ0-W1Q1cppBv8Xshc68JdBoA7HhpJexpo9lbo" Aspect="AspectFill"/>
-                             </Border>
-                             <Border StrokeShape="RoundRectangle 16" HeightRequest="32" WidthRequest="32" Stroke="White" StrokeThickness="2" HorizontalOptions="Start" Margin="48,0,0,0">
-                                 <Image Source="https://lh3.googleusercontent.com/aida-public/AB6AXuC_XK1MnWnDo7sMcHhO6cjTl3kSbQ_wiNMFmaZxPPtVgDId8YZowF4LJVDGWN6OAA2Tq18acfPUscR-jV3XPqBs0SZxBL81BRIQ1Y5zQNWjppMkvVUqMl4SWCq2zwbQpyw0eOGcIDSZ8f2V0Xui1X6dY9Qzk0QAnbxQmNSDWRJcOY1UNeVne-natM9gOGreCWvHPCU3LuYwAeV9yxf6r5_F6tRwPMyD3WcKizpzlNK7cez-0ztd5eroKwYdYS91cOm4xmnpBCUnPXg" Aspect="AspectFill"/>
-                             </Border>
+                        <!-- Dynamic Avatars from Project.Members -->
+                        <Grid>
+                            <StackLayout x:Name="MemberAvatarsLayout"
+                                         BindableLayout.ItemsSource="{Binding Project.Members}"
+                                         Orientation="Horizontal"
+                                         Spacing="-8">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border StrokeShape="RoundRectangle 16"
+                                                HeightRequest="32" WidthRequest="32"
+                                                Stroke="White" StrokeThickness="2"
+                                                BackgroundColor="{StaticResource Primary}">
+                                            <Label Text="{Binding ., StringFormat='{0}'}"
+                                                   FontSize="10"
+                                                   FontAttributes="Bold"
+                                                   TextColor="White"
+                                                   HorizontalOptions="Center"
+                                                   VerticalOptions="Center"
+                                                   LineBreakMode="TailTruncation"
+                                                   MaxLines="1"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </StackLayout>
                         </Grid>
                         <Label Text="Equipo Estudiantes" TextColor="{StaticResource TextSecondary}" FontSize="14" FontAttributes="Bold" VerticalOptions="Center"/>
                     </HorizontalStackLayout>
-                    <Label Grid.Column="1" Text="Ver Perfil" TextColor="{StaticResource Primary}" FontSize="14" FontAttributes="Bold" VerticalOptions="Center"/>
+                    <Label Grid.Column="1" Text="{Binding Project.Members.Count, StringFormat='{0} miembros'}" TextColor="{StaticResource Primary}" FontSize="14" FontAttributes="Bold" VerticalOptions="Center"/>
                 </Grid>
 
                  <!-- Abstract -->

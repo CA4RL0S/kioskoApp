@@ -12,14 +12,6 @@ public partial class LoginPage : ContentPage
         _mongoDBService = mongoDBService;
 	}
 
-    // Default constructor for cases where DI might fail or previewer (optional)
-    // But normally Maui DI handles it if registered.
-    // However, if App.xaml.cs creates MainPage directly before DI, we need to be careful.
-    // AppShell usually sets pages. 
-    // Let's modify App.xaml.cs if needed, but usually defining it in MauiProgram is enough if Shell uses routes?
-    // Wait, Shell ContentTemplate creates instances. If checking AppShell.xaml, <ShellContent ContentTemplate="{DataTemplate local:LoginPage}" />
-    // This supports DI in .NET MAUI.
-    
     private async void OnLoginClicked(object sender, EventArgs e)
     {
         string email = EmailEntry.Text?.Trim().ToLower();
@@ -31,14 +23,17 @@ public partial class LoginPage : ContentPage
             return;
         }
 
-        IsBusy = true; // Should ideally bind a loading indicator
+        // Show loading state
+        LoginBtn.IsVisible = false;
+        LoadingOverlay.IsVisible = true;
+
         try
         {
              var user = await _mongoDBService.Login(email, password);
              if (user != null)
              {
                  // Store session data
-                 Preferences.Set("UserFullName", user.FullName ?? user.Username); // Fallback if FullName null
+                 Preferences.Set("UserFullName", user.FullName ?? user.Username);
                  Preferences.Set("UserEmail", user.Email);
                  Preferences.Set("UserRole", user.Role);
                  Preferences.Set("UserId", user.Id);
@@ -60,9 +55,12 @@ public partial class LoginPage : ContentPage
         }
         finally
         {
-            IsBusy = false;
+            // Hide loading state
+            LoadingOverlay.IsVisible = false;
+            LoginBtn.IsVisible = true;
         }
     }
+
     private async void OnSignUpClicked(object sender, EventArgs e)
     {
         await Shell.Current.GoToAsync(nameof(SignUpPage));

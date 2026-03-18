@@ -7,6 +7,7 @@ namespace EvaluatorApp;
 public partial class RankingPage : ContentPage, System.ComponentModel.INotifyPropertyChanged
 {
     private readonly IMongoDBService _mongoDBService;
+    private const string RankingPrefsKey = "PreviousRanking";
     
     private RankedProject _rank1;
     public RankedProject Rank1
@@ -75,6 +76,9 @@ public partial class RankingPage : ContentPage, System.ComponentModel.INotifyPro
                 .OrderByDescending(p => p.ScoreValue)
                 .ToList();
 
+            // Load previous ranking from Preferences
+            var previousRanking = LoadPreviousRanking();
+
             // Clear previous
             Rank1 = null;
             Rank2 = null;
@@ -82,9 +86,15 @@ public partial class RankingPage : ContentPage, System.ComponentModel.INotifyPro
             RestProjects.Clear();
 
             int rank = 1;
+            var currentRanking = new Dictionary<string, int>();
+
             foreach (var proj in sortedProjects)
             {
-                var rankedProj = new RankedProject(proj, rank);
+                // Calculate rank change
+                int previousRank = previousRanking.ContainsKey(proj.Id) ? previousRanking[proj.Id] : -1;
+                var rankedProj = new RankedProject(proj, rank, previousRank);
+
+                currentRanking[proj.Id] = rank;
 
                 if (rank == 1) Rank1 = rankedProj;
                 else if (rank == 2) Rank2 = rankedProj;
@@ -93,6 +103,9 @@ public partial class RankingPage : ContentPage, System.ComponentModel.INotifyPro
 
                 rank++;
             }
+
+            // Save current ranking for next comparison
+            SaveCurrentRanking(currentRanking);
         }
         catch (Exception ex)
         {
@@ -100,17 +113,44 @@ public partial class RankingPage : ContentPage, System.ComponentModel.INotifyPro
         }
     }
 
+    private Dictionary<string, int> LoadPreviousRanking()
+    {
+        var result = new Dictionary<string, int>();
+        try
+        {
+            var json = Preferences.Get(RankingPrefsKey, string.Empty);
+            if (!string.IsNullOrEmpty(json))
+            {
+                var pairs = json.Split(';', StringSplitOptions.RemoveEmptyEntries);
+                foreach (var pair in pairs)
+                {
+                    var parts = pair.Split(':');
+                    if (parts.Length == 2 && int.TryParse(parts[1], out int r))
+                    {
+                        result[parts[0]] = r;
+                    }
+                }
+            }
+        }
+        catch { /* ignore parsing errors */ }
+        return result;
+    }
+
+    private void SaveCurrentRanking(Dictionary<string, int> ranking)
+    {
+        var pairs = ranking.Select(kvp => $"{kvp.Key}:{kvp.Value}");
+        Preferences.Set(RankingPrefsKey, string.Join(";", pairs));
+    }
+
     private async void OnBackClicked(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync("//MainPage"); // Changed to Main or back to Dashboard
+        await Shell.Current.GoToAsync("//MainPage");
     }
 
     private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-         // Handle selection if needed
          if (e.CurrentSelection.FirstOrDefault() is RankedProject selected)
          {
-             // Navigation logic here if details page is desired
          }
          ((CollectionView)sender).SelectedItem = null;
     }
@@ -123,15 +163,40 @@ public class RankedProject
 {
     public Project Project { get; private set; }
     public int Rank { get; private set; }
+    public int PreviousRank { get; private set; }
 
     public bool IsRank1 => Rank == 1;
     public bool IsRank2 => Rank == 2;
     public bool IsRank3 => Rank == 3;
     public bool IsRankOther => Rank > 3;
 
-    public RankedProject(Project project, int rank)
+    // Rank change: positive = went UP, negative = went DOWN, 0 = same
+    public int RankChange { get; private set; }
+
+    // Display properties
+    public string RankChangeIcon => RankChange > 0 ? "arrow_drop_up" : RankChange < 0 ? "arrow_drop_down" : "remove";
+    public Color RankChangeColor => RankChange > 0 ? Color.FromArgb("#10B981") : RankChange < 0 ? Color.FromArgb("#EF4444") : Color.FromArgb("#6B7280");
+    public string RankChangeText => RankChange == 0 ? "—" : Math.Abs(RankChange).ToString();
+    public bool IsNewEntry { get; private set; }
+    public bool HasRankChange => !IsNewEntry;
+
+    public RankedProject(Project project, int rank, int previousRank = -1)
     {
         Project = project;
         Rank = rank;
+        PreviousRank = previousRank;
+
+        if (previousRank < 0)
+        {
+            // New entry — no previous data
+            IsNewEntry = true;
+            RankChange = 0;
+        }
+        else
+        {
+            IsNewEntry = false;
+            // If previousRank was 5 and now is 3, that's going UP by 2 (positive)
+            RankChange = previousRank - rank;
+        }
     }
 }

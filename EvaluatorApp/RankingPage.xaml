@@ -196,10 +196,15 @@
                                     
                                     <VerticalStackLayout Grid.Column="3" HorizontalOptions="End" VerticalOptions="Center" Spacing="0">
                                         <Label Text="{Binding Project.Score}" FontSize="14" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark=White}" HorizontalOptions="End"/>
-                                        <HorizontalStackLayout Spacing="2" HorizontalOptions="End">
-                                            <Label Text="arrow_drop_up" FontFamily="MaterialIcons" FontSize="13" TextColor="#10B981" VerticalOptions="Center"/>
-                                            <Label Text="2" FontSize="11" FontAttributes="Bold" TextColor="#10B981" VerticalOptions="Center"/>
+                                        <!-- Rank change indicator (Spotify-style) -->
+                                        <HorizontalStackLayout Spacing="2" HorizontalOptions="End" IsVisible="{Binding HasRankChange}">
+                                            <Label Text="{Binding RankChangeIcon}" FontFamily="MaterialIcons" FontSize="13" TextColor="{Binding RankChangeColor}" VerticalOptions="Center"/>
+                                            <Label Text="{Binding RankChangeText}" FontSize="11" FontAttributes="Bold" TextColor="{Binding RankChangeColor}" VerticalOptions="Center"/>
                                         </HorizontalStackLayout>
+                                        <!-- NEW badge for first-time entries -->
+                                        <Border IsVisible="{Binding IsNewEntry}" StrokeThickness="0" BackgroundColor="#1E40AF" StrokeShape="RoundRectangle 4" Padding="6,1" HorizontalOptions="End">
+                                            <Label Text="NEW" FontSize="9" FontAttributes="Bold" TextColor="White"/>
+                                        </Border>
                                     </VerticalStackLayout>
                                 </Grid>
                             </DataTemplate>
