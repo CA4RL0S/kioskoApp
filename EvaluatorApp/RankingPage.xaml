@@ -44,7 +44,10 @@
             <!-- Filters (Chips) -->
             <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" Padding="24,0,24,16">
                 <HorizontalStackLayout Spacing="8">
-                    <Button Text="Todos" 
+                    <Button x:Name="BtnRankAll"
+                            Text="Todos" 
+                            Clicked="OnRankingFilterClicked"
+                            CommandParameter="All"
                             FontSize="13"
                             FontAttributes="Bold"
                             TextColor="White" 
@@ -53,7 +56,10 @@
                             HeightRequest="32" 
                             Padding="16,0"/>
                     
-                    <Button Text="Ingeniería" 
+                    <Button x:Name="BtnRankJuego"
+                            Text="Juegos" 
+                            Clicked="OnRankingFilterClicked"
+                            CommandParameter="Juego"
                             FontSize="13"
                             TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" 
                             BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource Gray900}}" 
@@ -63,17 +69,10 @@
                             HeightRequest="32" 
                             Padding="16,0"/>
 
-                    <Button Text="Diseño" 
-                            FontSize="13"
-                            TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" 
-                            BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource Gray900}}" 
-                            BorderColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
-                            BorderWidth="1"
-                            CornerRadius="16" 
-                            HeightRequest="32" 
-                            Padding="16,0"/>
-
-                    <Button Text="Negocios" 
+                    <Button x:Name="BtnRankProyecto"
+                            Text="Proyectos" 
+                            Clicked="OnRankingFilterClicked"
+                            CommandParameter="Proyecto"
                             FontSize="13"
                             TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" 
                             BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource Gray900}}" 

@@ -8,6 +8,8 @@ public partial class RankingPage : ContentPage, System.ComponentModel.INotifyPro
 {
     private readonly IMongoDBService _mongoDBService;
     private const string RankingPrefsKey = "PreviousRanking";
+    private List<RankedProject> _allRanked = new();
+    private string _currentRankingFilter = "All";
     
     private RankedProject _rank1;
     public RankedProject Rank1
@@ -79,38 +81,93 @@ public partial class RankingPage : ContentPage, System.ComponentModel.INotifyPro
             // Load previous ranking from Preferences
             var previousRanking = LoadPreviousRanking();
 
-            // Clear previous
-            Rank1 = null;
-            Rank2 = null;
-            Rank3 = null;
-            RestProjects.Clear();
-
+            _allRanked = new List<RankedProject>();
             int rank = 1;
             var currentRanking = new Dictionary<string, int>();
 
             foreach (var proj in sortedProjects)
             {
-                // Calculate rank change
                 int previousRank = previousRanking.ContainsKey(proj.Id) ? previousRanking[proj.Id] : -1;
                 var rankedProj = new RankedProject(proj, rank, previousRank);
-
                 currentRanking[proj.Id] = rank;
-
-                if (rank == 1) Rank1 = rankedProj;
-                else if (rank == 2) Rank2 = rankedProj;
-                else if (rank == 3) Rank3 = rankedProj;
-                else RestProjects.Add(rankedProj);
-
+                _allRanked.Add(rankedProj);
                 rank++;
             }
 
-            // Save current ranking for next comparison
             SaveCurrentRanking(currentRanking);
+            RebuildRankingDisplay(_currentRankingFilter);
         }
         catch (Exception ex)
         {
              System.Diagnostics.Debug.WriteLine($"Error loading ranking: {ex.Message}");
         }
+    }
+
+    private void RebuildRankingDisplay(string filter)
+    {
+        IEnumerable<RankedProject> source = filter switch
+        {
+            "Juego" => _allRanked.Where(r => r.Project.ProjectType == "Juego"),
+            "Proyecto" => _allRanked.Where(r => r.Project.ProjectType == "Proyecto" || string.IsNullOrEmpty(r.Project.ProjectType)),
+            _ => _allRanked
+        };
+
+        var filtered = source.ToList();
+
+        // Re-rank within the filtered subset
+        Rank1 = null;
+        Rank2 = null;
+        Rank3 = null;
+        RestProjects.Clear();
+
+        int displayRank = 1;
+        foreach (var item in filtered)
+        {
+            var reranked = new RankedProject(item.Project, displayRank, item.PreviousRank);
+            if (displayRank == 1) Rank1 = reranked;
+            else if (displayRank == 2) Rank2 = reranked;
+            else if (displayRank == 3) Rank3 = reranked;
+            else RestProjects.Add(reranked);
+            displayRank++;
+        }
+    }
+
+    private void OnRankingFilterClicked(object sender, EventArgs e)
+    {
+        if (sender is Button btn && btn.CommandParameter is string filter)
+        {
+            _currentRankingFilter = filter;
+            RebuildRankingDisplay(filter);
+            UpdateRankingChipVisuals(btn);
+        }
+    }
+
+    private void UpdateRankingChipVisuals(Button selected)
+    {
+        ResetRankingChip(BtnRankAll);
+        ResetRankingChip(BtnRankJuego);
+        ResetRankingChip(BtnRankProyecto);
+
+        selected.BackgroundColor = (Color)Application.Current!.Resources["Primary"];
+        selected.TextColor = Colors.White;
+        selected.BorderWidth = 0;
+        selected.FontAttributes = FontAttributes.Bold;
+    }
+
+    private void ResetRankingChip(Button btn)
+    {
+        bool isDark = Application.Current!.UserAppTheme == AppTheme.Dark;
+        btn.BackgroundColor = isDark
+            ? (Color)Application.Current.Resources["Gray900"]
+            : Colors.White;
+        btn.TextColor = isDark
+            ? (Color)Application.Current.Resources["Gray300"]
+            : (Color)Application.Current.Resources["Gray500"];
+        btn.BorderColor = isDark
+            ? (Color)Application.Current.Resources["Gray600"]
+            : (Color)Application.Current.Resources["Gray200"];
+        btn.BorderWidth = 1;
+        btn.FontAttributes = FontAttributes.None;
     }
 
     private Dictionary<string, int> LoadPreviousRanking()

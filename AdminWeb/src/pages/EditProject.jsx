@@ -7,9 +7,9 @@ export default function EditProject() {
     const { id } = useParams();
     const [formData, setFormData] = useState({
         title: '',
-        cycle: '',
         description: '',
         members: '',
+        projectType: 'Proyecto',
         imageUrl: '',
         videoUrl: ''
     });
@@ -110,8 +110,8 @@ export default function EditProject() {
             const projectPayload = {
                 id: id,
                 title: formData.title,
-                cycle: formData.cycle,
                 description: formData.description,
+                projectType: formData.projectType || 'Proyecto',
                 imageUrl: finalImageUrl,
                 members: formData.members.split(',').map(m => m.trim()).filter(m => m),
                 statusText: formData.statusText || "Pendiente de Evaluación",
@@ -184,15 +184,31 @@ export default function EditProject() {
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-sm font-semibold text-gray-700">Ciclo Escolar</label>
-                            <input
-                                type="text"
-                                name="cycle"
-                                required
-                                className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
-                                value={formData.cycle}
-                                onChange={handleChange}
-                            />
+                            <label className="text-sm font-semibold text-gray-700">Tipo de Proyecto</label>
+                            <div className="flex gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData(prev => ({ ...prev, projectType: 'Proyecto' }))}
+                                    className={`flex-1 py-1 lg:py-2.5 rounded-lg border-2 font-semibold text-sm transition-all ${
+                                        formData.projectType === 'Proyecto'
+                                            ? 'border-blue-600 bg-blue-600 text-white'
+                                            : 'border-gray-200 bg-white text-gray-600 hover:border-blue-300'
+                                    }`}
+                                >
+                                    📋 Proyecto Integrador
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData(prev => ({ ...prev, projectType: 'Juego' }))}
+                                    className={`flex-1 py-1 lg:py-2.5 rounded-lg border-2 font-semibold text-sm transition-all ${
+                                        formData.projectType === 'Juego'
+                                            ? 'border-purple-600 bg-purple-600 text-white'
+                                            : 'border-gray-200 bg-white text-gray-600 hover:border-purple-300'
+                                    }`}
+                                >
+                                    🎮 Juego
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -260,6 +276,8 @@ export default function EditProject() {
                             )}
                         </div>
                     </div>
+
+
 
                     <div className="space-y-2">
                         <label className="text-sm font-semibold text-gray-700">Integrantes (Matrículas)</label>

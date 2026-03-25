@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using EvaluatorApp.Models;
@@ -261,7 +261,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
         PendingEvaluationsLayout.Children.Clear();
 
         var pending = _allProjects
-            .Where(p => p.IsPending)
+            .Where(p => p.IsPending && (p.ProjectType == "Proyecto" || string.IsNullOrEmpty(p.ProjectType)))
             .Take(5)
             .ToList();
 

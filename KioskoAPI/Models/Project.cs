@@ -18,6 +18,9 @@ public class Project
     [BsonElement("informacion")] 
     public string? Description { get; set; }
 
+    [BsonElement("projectType")]
+    public string? ProjectType { get; set; } = "Proyecto";
+
     [BsonElement("imageUrl")]
     public string? ImageUrl { get; set; }
 

@@ -21,6 +21,9 @@ public class Project
     [BsonElement("informacion")] // Renamed from "description" as per request
 	public string? Description { get; set; }
 
+    [BsonElement("projectType")]
+    public string? ProjectType { get; set; } = "Proyecto";
+
     [BsonElement("imageUrl")]
 	public string? ImageUrl { get; set; }
 

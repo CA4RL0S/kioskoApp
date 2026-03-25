@@ -193,13 +193,13 @@ public partial class ProjectsPage : ContentPage, INotifyPropertyChanged
                 filtered = _allProjects.Where(p => p.IsEvaluated);
                 EmptyStatusText = "No hay proyectos evaluados";
                 break;
-            case "2024-A":
-                filtered = _allProjects.Where(p => p.Cycle == "Ciclo 2024-A");
-                EmptyStatusText = "No hay proyectos del ciclo 2024-A";
+            case "Juego":
+                filtered = _allProjects.Where(p => p.ProjectType == "Juego");
+                EmptyStatusText = "No hay juegos registrados";
                 break;
-            case "2023-B":
-                filtered = _allProjects.Where(p => p.Cycle == "Ciclo 2023-B");
-                EmptyStatusText = "No hay proyectos del ciclo 2023-B";
+            case "Proyecto":
+                filtered = _allProjects.Where(p => p.ProjectType == "Proyecto" || string.IsNullOrEmpty(p.ProjectType));
+                EmptyStatusText = "No hay proyectos integradores";
                 break;
             case "All":
             default:
@@ -232,8 +232,8 @@ public partial class ProjectsPage : ContentPage, INotifyPropertyChanged
         ResetButtonVisual(BtnAll);
         ResetButtonVisual(BtnPending);
         ResetButtonVisual(BtnEvaluated);
-        ResetButtonVisual(Btn2024A);
-        ResetButtonVisual(Btn2023B);
+        ResetButtonVisual(BtnJuego);
+        ResetButtonVisual(BtnProyecto);
 
         // Highlight selected
         selectedBtn.BackgroundColor = (Color)Application.Current.Resources["Primary"];

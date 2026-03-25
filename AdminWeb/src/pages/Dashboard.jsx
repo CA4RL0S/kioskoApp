@@ -103,7 +103,7 @@ export default function Dashboard() {
                         <thead>
                             <tr className="bg-gray-50/50 border-b border-gray-100 text-gray-500 text-sm uppercase tracking-wider">
                                 <th className="p-4 font-semibold">Proyecto</th>
-                                <th className="p-4 font-semibold">Ciclo</th>
+                                <th className="p-4 font-semibold">Tipo</th>
                                 <th className="p-4 font-semibold">Estado</th>
                                 <th className="p-4 font-semibold text-center">Score</th>
                                 <th className="p-4 font-semibold text-right">Acciones</th>
@@ -147,8 +147,11 @@ export default function Dashboard() {
                                             </div>
                                         </td>
                                         <td className="p-4">
-                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
-                                                {project.cycle || 'N/A'}
+                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${project.projectType === 'Juego'
+                                                ? 'bg-purple-50 text-purple-700 border-purple-200'
+                                                : 'bg-blue-50 text-blue-700 border-blue-200'
+                                                }`}>
+                                                {project.projectType === 'Juego' ? '🎮 Juego' : '📋 Proyecto'}
                                             </span>
                                         </td>
                                         <td className="p-4">
